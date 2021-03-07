@@ -22,12 +22,14 @@ services:
     depends_on:
       - pgdb
   pgdb:
+    env_file:
+      - ./backend/core/.env
     image: postgres
     container_name: pgdb
     environment:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_PASSWORD={DB_PASSWORD}
     volumes:
       - ./data/:/data
       - pgdata:/var/lib/postgresql/data/
