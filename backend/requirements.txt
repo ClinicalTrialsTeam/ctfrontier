@@ -6,7 +6,16 @@
 #
 asgiref==3.3.1
     # via django
+django-filter==2.4.0
+    # via -r requirements.in
 django==3.1.7
+    # via
+    #   -r requirements.in
+    #   django-filter
+    #   djangorestframework
+djangorestframework==3.12.2
+    # via -r requirements.in
+markdown==3.3.4
     # via -r requirements.in
 psycopg2-binary==2.8.6
     # via -r requirements.in

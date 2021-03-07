@@ -16,7 +16,7 @@ services:
     working_dir: /usr/src/app
     volumes:
       - ./backend:/usr/src/app
-    command: /bin/bash -c "pip install -r requirements.txt && python manage.py migrate && pip list && python manage.py runserver 0.0.0.0:8000"
+    command: /bin/bash -c "pip-compile && pip install -r requirements.txt && python manage.py migrate && pip list && python manage.py runserver 0.0.0.0:8000"
     ports:
       - "8000:8000"
     depends_on:
