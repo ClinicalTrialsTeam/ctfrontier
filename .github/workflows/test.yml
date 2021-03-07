@@ -15,5 +15,7 @@ jobs:
           check-latest: true
       - name: Install dependencies
         run: npm install
+        working-directory: frontend
       - name: Run test command
         run: npm run test
+        working-directory: frontend
