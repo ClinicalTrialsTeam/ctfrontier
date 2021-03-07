@@ -8,6 +8,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
-      - uses: psf/black@20.8b1
         with:
-          args: "backend --check"
+          python-version: 3.9
+      - run: pip install black
+      - run: black backend --check
+      - run: black cdk --check
