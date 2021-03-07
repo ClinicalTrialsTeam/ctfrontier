@@ -87,7 +87,8 @@ will be cached and it will not take so long.
 	.
 	├── .gitignore
 	├── README.md
-	├── backend 	
+	├── backend 
+	├── cdk 	
 	├── frontend
 	├── scripts				
 	└── docker-compose.yml
@@ -96,9 +97,11 @@ will be cached and it will not take so long.
 
 `backend` - Folder for all Django server code.
 
+`cdk` - AWS CDK infrastructure code
+
 `frontend` - Folder for all React client code.
 
-`scripts` - Folder for any helptul scripts not directly part of the project.
+`scripts` - Folder for any helpful scripts not directly part of the project.
 
 `docker-compose.yml` - A docker file that defines how the react, django and pgdb docker containers will be run together. (The pgdb doesn't have its own docker file because the base setup for the postgres container is using a predefined image from dockerhub `image: postgres` without much additional setup needed).
 
