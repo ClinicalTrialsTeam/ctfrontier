@@ -1,3 +1,6 @@
+[![python build](https://github.com/ClinicalTrialsTeam/ctfrontier/actions/workflows/python-checks.yml/badge.svg?branch=main)](https://github.com/ClinicalTrialsTeam/ctfrontier/actions/workflows/python-checks.yml)
+[![react build](https://github.com/ClinicalTrialsTeam/ctfrontier/actions/workflows/react-checks.yml/badge.svg)](https://github.com/ClinicalTrialsTeam/ctfrontier/actions/workflows/react-checks.yml)
+
 # Clinical Trials Project
 
 ## Prerequisites
