@@ -1,9 +1,12 @@
-name: Unit Tests
+name: react build
 
-on:  [push, pull_request]
+on:
+  workflow_dispatch:
+  push:
+  pull_request:
 
 jobs:
-  test:
+  react-tests:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository

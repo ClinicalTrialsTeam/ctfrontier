@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # load dotenv
 dotenv_path = join(dirname(__file__), ".env")
-load_dotenv(dotenv_path, override=True)
+load_dotenv(dotenv_path)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
@@ -97,6 +97,7 @@ DATABASES = {
         "PORT": 5432,
     },
 }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators

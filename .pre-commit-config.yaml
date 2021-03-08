@@ -5,6 +5,9 @@ repos:
     - id: black
       language_version: python3.9
       args: [backend]
+    - id: black
+    language_version: python3.9
+    args: [cdk]
 -   repo: https://gitlab.com/pycqa/flake8
     rev: 3.7.9
     hooks:

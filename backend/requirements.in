@@ -4,3 +4,7 @@ python-dotenv
 djangorestframework
 markdown
 django-filter
+pytest-django
+pytest-cov
+pytest-env
+pytest-postgresql
