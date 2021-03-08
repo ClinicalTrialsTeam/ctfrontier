@@ -1,4 +1,4 @@
 # Django project
 
 ### Run tests and see test coverage
-`pytest --cov=. tests`
+Run `pytest tests` from the `backend` directory
