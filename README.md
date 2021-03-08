@@ -6,9 +6,8 @@
 ## Prerequisites
 
 * Docker installed and running
-* Python 3.x for running the linter locally (the project uses Python 3.9 but this is set up in the docker configuration)
-* npm - [https://www.npmjs.com/get-npm](https://www.npmjs.com/get-npm)
-* django - just for generating the secrets
+* Python 3.9
+* npm 7.6.1+
 
 
 ## Setup
