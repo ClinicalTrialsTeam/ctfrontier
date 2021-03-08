@@ -6,6 +6,10 @@
 #
 asgiref==3.3.1
     # via django
+attrs==20.3.0
+    # via pytest
+coverage==5.5
+    # via pytest-cov
 django-filter==2.4.0
     # via -r requirements.in
 django==3.1.7
@@ -15,13 +19,33 @@ django==3.1.7
     #   djangorestframework
 djangorestframework==3.12.2
     # via -r requirements.in
+iniconfig==1.1.1
+    # via pytest
 markdown==3.3.4
     # via -r requirements.in
+packaging==20.9
+    # via pytest
+pluggy==0.13.1
+    # via pytest
 psycopg2-binary==2.8.6
     # via -r requirements.in
+py==1.10.0
+    # via pytest
+pyparsing==2.4.7
+    # via packaging
+pytest-cov==2.11.1
+    # via -r requirements.in
+pytest-django==4.1.0
+    # via -r requirements.in
+pytest==6.2.2
+    # via
+    #   pytest-cov
+    #   pytest-django
 python-dotenv==0.15.0
     # via -r requirements.in
 pytz==2021.1
     # via django
 sqlparse==0.4.1
     # via django
+toml==0.10.2
+    # via pytest
