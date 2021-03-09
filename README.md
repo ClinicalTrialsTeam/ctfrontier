@@ -1,11 +1,13 @@
+[![python build](https://github.com/ClinicalTrialsTeam/ctfrontier/actions/workflows/python-checks.yml/badge.svg)](https://github.com/ClinicalTrialsTeam/ctfrontier/actions/workflows/python-checks.yml)
+[![react build](https://github.com/ClinicalTrialsTeam/ctfrontier/actions/workflows/react-checks.yml/badge.svg)](https://github.com/ClinicalTrialsTeam/ctfrontier/actions/workflows/react-checks.yml)
+
 # Clinical Trials Project
 
 ## Prerequisites
 
 * Docker installed and running
-* Python 3.x for running the linter locally (the project uses Python 3.9 but this is set up in the docker configuration)
-* npm - [https://www.npmjs.com/get-npm](https://www.npmjs.com/get-npm)
-* django - just for generating the secrets
+* Python 3.9
+* npm 7.6.1+
 
 
 ## Setup
@@ -47,7 +49,7 @@ There is also a Github action that automatically checks for linting errors. See 
 
 1. Run the project with `docker-compose up`
 1. If all goes well, your React app should be accessible at: [http://localhost:3000](http://localhost:3000)
-1. The Django REST API should be at [http://http://127.0.0.1:8000/](http://http://127.0.0.1:8000/)
+1. The Django REST API should be at [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
 1. Run `docker-compose down` or just `ctrl-C` to take everything down
 
 

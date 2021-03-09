@@ -43,15 +43,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
+    "ctgov",
 ]
-
-REST_FRAMEWORK = {
-    # Use Django's standard `django.contrib.auth` permissions,
-    # or allow read-only access for unauthenticated users.
-    "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly"
-    ]
-}
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -89,12 +82,12 @@ WSGI_APPLICATION = "core.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "postgres",
+        "NAME": "aact",
         "USER": "postgres",
         "PASSWORD": getenv("DB_PASSWORD"),
         "HOST": "pgdb",
         "PORT": 5432,
-    }
+    },
 }
 
 

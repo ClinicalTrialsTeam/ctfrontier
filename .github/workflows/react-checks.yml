@@ -1,0 +1,24 @@
+name: react build
+
+on:
+  workflow_dispatch:
+  push:
+  pull_request:
+
+jobs:
+  react-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Setup Node
+        uses: actions/setup-node@v2-beta
+        with:
+          node-version: '15'
+          check-latest: true
+      - name: Install dependencies
+        run: npm install
+        working-directory: frontend
+      - name: Run test command
+        run: npm run test
+        working-directory: frontend

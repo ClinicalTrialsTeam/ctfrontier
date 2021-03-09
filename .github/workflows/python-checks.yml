@@ -1,24 +1,21 @@
-name: Unit Tests
+name: python build
 
-on:  [push, pull_request]
+on:
+  workflow_dispatch:
+  push:
+  pull_request:
 
 jobs:
-  react-tests:
+  python-lint-check:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-      - name: Setup Node
-        uses: actions/setup-node@v2-beta
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
         with:
-          node-version: '15'
-          check-latest: true
-      - name: Install dependencies
-        run: npm install
-        working-directory: frontend
-      - name: Run test command
-        run: npm run test
-        working-directory: frontend
+          python-version: 3.9
+      - run: pip install black
+      - run: black backend --check
+      - run: black cdk --check
   django-tests:
     runs-on: ubuntu-latest
     steps:
@@ -35,4 +32,3 @@ jobs:
         env:
           DJANGO_SECRET: fake-secret
         working-directory: backend
-    
