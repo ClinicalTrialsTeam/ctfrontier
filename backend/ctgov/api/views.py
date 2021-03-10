@@ -11,3 +11,7 @@ class BriefSummariesListApiView(APIView):
         summaries = BriefSummaries.objects.all()[:10]
         serializer = BriefSummariesSerializer(summaries, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+class SearchApiView(APIView):
+    def get(self, request, *args, **kwargs):
+       return Response('search results here', status=status.HTTP_200_OK)
