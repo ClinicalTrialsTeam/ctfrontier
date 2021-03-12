@@ -10,11 +10,14 @@ attrs==20.3.0
     # via pytest
 coverage==5.5
     # via pytest-cov
+django-cors-headers==3.7.0
+    # via -r requirements.in
 django-filter==2.4.0
     # via -r requirements.in
 django==3.1.7
     # via
     #   -r requirements.in
+    #   django-cors-headers
     #   django-filter
     #   djangorestframework
 djangorestframework==3.12.2

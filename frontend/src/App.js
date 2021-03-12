@@ -1,8 +1,24 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import logo from './logo.svg';
 import './App.css';
+import project from './apis/project';
 
-function App() {
+const App = () => {
+  const [exampleInfo, setExampleInfo] = useState([]);
+
+  const fetchExample = async () => {
+    try {
+      const response = await project.get('brief_summaries');
+      setExampleInfo(response.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchExample();
+  }, []);
+
   return (
     <div className="App">
       <header className="App-header">
@@ -21,8 +37,13 @@ function App() {
           Learn React
         </a>
       </header>
+      <div>
+        <h1>Example API Response</h1>
+        <h2>{exampleInfo.length}</h2>
+        {console.log(exampleInfo)}
+      </div>
     </div>
   );
-}
+};
 
 export default App;

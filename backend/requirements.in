@@ -8,3 +8,4 @@ pytest-django
 pytest-cov
 pytest-env
 pytest-postgresql
+django-cors-headers
