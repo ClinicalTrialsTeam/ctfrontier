@@ -2,11 +2,11 @@
 
 from django_elasticsearch_dsl import Document
 from django_elasticsearch_dsl.registries import registry
-from .models import Car
+from .models import Eligibilities, Facilities
 
 
 @registry.register_document
-class Eligibilities(Document):
+class EligibilitiesDocument(Document):
     class Index:
         # Name of the Elasticsearch index
         name = "eligibilities"
@@ -41,7 +41,7 @@ class Eligibilities(Document):
 
 
 @registry.register_document
-class Facilities(Document):
+class FacilitiesDocument(Document):
     class Index:
 
         name = "facilities"
