@@ -22,6 +22,7 @@ jobs:
       - name: Run test command
         run: npm run test
         working-directory: frontend
-      - name: Run eslint check
-        run: eslint .
+      - run: npm install eslint
+        working-directory: frontend
+      - run: npm run lint
         working-directory: frontend
