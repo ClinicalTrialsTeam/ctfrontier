@@ -5,23 +5,23 @@ import TopLevelSearchForm from '../../components/organisms/TopLevelSearchForm/To
 import TopLevelSearchLogo from '../../components/atoms/logos/TopLevelSearchLogo/TopLevelSearchLogo';
 
 import './TopLevelSearchView.css';
-import 'antd/dist/antd.css'
+import 'antd/dist/antd.css';
 
 const { Footer } = Layout;
 
 class TopLevelSearchView extends Component {
-    render() {
-        return (
-            <Layout className="layout">
-                <ParallaxStarsBackground/>
-                <div id="wrapper">
-                    <TopLevelSearchLogo/>
-                    <TopLevelSearchForm/>
-                </div>
-                <Footer style={{ textAlign: 'center' }}>Clinical Trials Frontier ©2021</Footer>
-            </Layout>
-        );
-    }
+  render() {
+    return (
+      <Layout className="layout">
+        <ParallaxStarsBackground />
+        <div id="wrapper">
+          <TopLevelSearchLogo />
+          <TopLevelSearchForm />
+        </div>
+        <Footer style={{ textAlign: 'center' }}>Clinical Trials Frontier ©2021</Footer>
+      </Layout>
+    );
+  }
 }
 
 export default TopLevelSearchView;

@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 // import App from './App';
-import TopLevelSearchView from './views/TopLevelSearchView/TopLevelSearchView'
+import TopLevelSearchView from './views/TopLevelSearchView/TopLevelSearchView';
 import reportWebVitals from './reportWebVitals';
 
 ReactDOM.render(
