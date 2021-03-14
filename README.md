@@ -84,6 +84,8 @@ will be cached and it will not take so long.
  ctgov  | conditions                 | table | postgres
  ctgov  | countries                  | table | postgres
 ```
+12. Create view "basic_search" in aact database. View definition is available in the file backend/database_scripts/basic_search.sql.
+Command to run: psql -U postgres -d aact <<EOF {insert statements from basic_search.sql} EOF
 
 
 ## File Structure
