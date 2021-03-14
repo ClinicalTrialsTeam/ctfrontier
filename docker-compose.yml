@@ -27,6 +27,7 @@ services:
       - ./backend/core/.env
     image: postgres
     container_name: pgdb
+    shm_size: 1g
     environment:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
