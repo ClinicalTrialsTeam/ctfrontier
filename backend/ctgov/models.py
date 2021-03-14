@@ -5,6 +5,7 @@
 #   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
+
 from django.db import models
 
 
@@ -1065,3 +1066,241 @@ class Y2018MeshTerms(models.Model):
     class Meta:
         managed = False
         db_table = "y2018_mesh_terms"
+
+
+class BasicSearch(models.Model):
+    status = models.TextField(blank=True, null=True)
+    brief_title = models.TextField(blank=True, null=True)
+    official_title = models.TextField(blank=True, null=True)
+    nct_id = models.TextField(blank=True, null=True)
+    condition_name = models.TextField(blank=True, null=True)
+    study_detailed_desc = models.TextField(blank=True, null=True)
+    country_name = models.TextField(blank=True, null=True)
+    intervention_name = models.TextField(blank=True, null=True)
+    keywords = models.TextField(blank=True, null=True)
+    eligibility_criteria = models.TextField(blank=True, null=True)
+    location_name = models.TextField(blank=True, null=True)
+    study_brief_desc = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False  # Created from a view. Don't remove.
+        db_table = "basic_search"
+
+
+class AllBrowseConditions(models.Model):
+    nct_id = models.TextField(blank=True, null=True)
+    names = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False  # Created from a view. Don't remove.
+        db_table = "all_browse_conditions"
+
+
+class AllBrowseInterventions(models.Model):
+    nct_id = models.TextField(blank=True, null=True)
+    names = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False  # Created from a view. Don't remove.
+        db_table = "all_browse_interventions"
+
+
+class AllCities(models.Model):
+    nct_id = models.TextField(blank=True, null=True)
+    names = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False  # Created from a view. Don't remove.
+        db_table = "all_cities"
+
+
+class AllConditions(models.Model):
+    nct_id = models.TextField(blank=True, null=True)
+    names = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False  # Created from a view. Don't remove.
+        db_table = "all_conditions"
+
+
+class AllCountries(models.Model):
+    nct_id = models.TextField(blank=True, null=True)
+    names = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False  # Created from a view. Don't remove.
+        db_table = "all_countries"
+
+
+class AllDesignOutcomes(models.Model):
+    nct_id = models.TextField(blank=True, null=True)
+    names = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False  # Created from a view. Don't remove.
+        db_table = "all_design_outcomes"
+
+
+class AllFacilities(models.Model):
+    nct_id = models.TextField(blank=True, null=True)
+    names = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False  # Created from a view. Don't remove.
+        db_table = "all_facilities"
+
+
+class AllGroupTypes(models.Model):
+    nct_id = models.TextField(blank=True, null=True)
+    names = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False  # Created from a view. Don't remove.
+        db_table = "all_group_types"
+
+
+class AllIdInformation(models.Model):
+    nct_id = models.TextField(blank=True, null=True)
+    names = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False  # Created from a view. Don't remove.
+        db_table = "all_id_information"
+
+
+class AllInterventionTypes(models.Model):
+    nct_id = models.TextField(blank=True, null=True)
+    names = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False  # Created from a view. Don't remove.
+        db_table = "all_intervention_types"
+
+
+class AllInterventions(models.Model):
+    nct_id = models.TextField(blank=True, null=True)
+    names = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False  # Created from a view. Don't remove.
+        db_table = "all_interventions"
+
+
+class AllKeywords(models.Model):
+    nct_id = models.TextField(blank=True, null=True)
+    names = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False  # Created from a view. Don't remove.
+        db_table = "all_keywords"
+
+
+class AllOverallOfficialAffiliations(models.Model):
+    nct_id = models.TextField(blank=True, null=True)
+    names = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False  # Created from a view. Don't remove.
+        db_table = "all_overall_official_affiliations"
+
+
+class AllOverallOfficials(models.Model):
+    nct_id = models.TextField(blank=True, null=True)
+    names = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False  # Created from a view. Don't remove.
+        db_table = "all_overall_officials"
+
+
+class AllPrimaryOutcomeMeasures(models.Model):
+    nct_id = models.TextField(blank=True, null=True)
+    names = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False  # Created from a view. Don't remove.
+        db_table = "all_primary_outcome_measures"
+
+
+class AllSecondaryOutcomeMeasures(models.Model):
+    nct_id = models.TextField(blank=True, null=True)
+    names = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False  # Created from a view. Don't remove.
+        db_table = "all_secondary_outcome_measures"
+
+
+class AllSponsors(models.Model):
+    nct_id = models.TextField(blank=True, null=True)
+    names = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False  # Created from a view. Don't remove.
+        db_table = "all_sponsors"
+
+
+class AllStates(models.Model):
+    nct_id = models.TextField(blank=True, null=True)
+    names = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False  # Created from a view. Don't remove.
+        db_table = "all_states"
+
+
+class Covid19Studies(models.Model):
+    nct_id = models.TextField(blank=True, null=True)
+    overall_status = models.TextField(blank=True, null=True)
+    study_type = models.TextField(blank=True, null=True)
+    official_title = models.TextField(blank=True, null=True)
+    acronym = models.TextField(blank=True, null=True)
+    phase = models.TextField(blank=True, null=True)
+    why_stopped = models.TextField(blank=True, null=True)
+    has_dmc = models.BooleanField(blank=True, null=True)
+    enrollment = models.IntegerField(blank=True, null=True)
+    is_fda_regulated_device = models.BooleanField(blank=True, null=True)
+    is_fda_regulated_drug = models.BooleanField(blank=True, null=True)
+    is_unapproved_device = models.BooleanField(blank=True, null=True)
+    has_expanded_access = models.BooleanField(blank=True, null=True)
+    study_first_submitted_date = models.DateField(blank=True, null=True)
+    last_update_posted_date = models.DateField(blank=True, null=True)
+    results_first_posted_date = models.DateField(blank=True, null=True)
+    start_date = models.DateField(blank=True, null=True)
+    primary_completion_date = models.DateField(blank=True, null=True)
+    completion_date = models.DateField(blank=True, null=True)
+    study_first_posted_date = models.DateField(blank=True, null=True)
+    number_of_facilities = models.IntegerField(blank=True, null=True)
+    has_single_facility = models.BooleanField(blank=True, null=True)
+    nlm_download_date = models.DateField(blank=True, null=True)
+    number_of_arms = models.IntegerField(blank=True, null=True)
+    number_of_groups = models.IntegerField(blank=True, null=True)
+    lead_sponsor = models.TextField(blank=True, null=True)
+    other_ids = models.TextField(blank=True, null=True)
+    gender = models.TextField(blank=True, null=True)
+    gender_based = models.BooleanField(blank=True, null=True)
+    gender_description = models.TextField(blank=True, null=True)
+    population = models.TextField(blank=True, null=True)
+    minimum_age = models.TextField(blank=True, null=True)
+    maximum_age = models.TextField(blank=True, null=True)
+    criteria = models.TextField(blank=True, null=True)
+    healthy_volunteers = models.TextField(blank=True, null=True)
+    keywords = models.TextField(blank=True, null=True)
+    interventions = models.TextField(blank=True, null=True)
+    conditions = models.TextField(blank=True, null=True)
+    primary_purpose = models.TextField(blank=True, null=True)
+    allocation = models.TextField(blank=True, null=True)
+    observational_model = models.TextField(blank=True, null=True)
+    intervention_model = models.TextField(blank=True, null=True)
+    masking = models.TextField(blank=True, null=True)
+    subject_masked = models.BooleanField(blank=True, null=True)
+    caregiver_masked = models.BooleanField(blank=True, null=True)
+    investigator_masked = models.BooleanField(blank=True, null=True)
+    outcomes_assessor_masked = models.BooleanField(blank=True, null=True)
+    design_outcomes = models.TextField(blank=True, null=True)
+    brief_summary = models.TextField(blank=True, null=True)
+    detailed_description = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False  # Created from a view. Don't remove.
+        db_table = "covid_19_studies"
