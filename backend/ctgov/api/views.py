@@ -49,10 +49,10 @@ class BasicSearchApiView(APIView):
         if condition:
             filters["condition_name__contains"] = condition
         if other_terms:
-            filters["keywords__contains"] = other_terms
-            filters["official_title__contains"] = other_terms
+            # filters["keywords__contains"] = other_terms
+            # filters["official_title__contains"] = other_terms
             filters["brief_title__contains"] = other_terms
-            filters["study_brief_desc__contains"] = other_terms
+            # filters["study_brief_desc__contains"] = other_terms
         if country:
             filters["country_name__contains"] = country
         if intervention:
