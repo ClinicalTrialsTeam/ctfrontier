@@ -12,7 +12,6 @@ from os.path import join, dirname
 from dotenv import load_dotenv
 from lxml.html import fromstring
 import json
-from pprint import pprint
 
 # load dotenv
 dotenv_path = join(dirname(__file__), ".env")
