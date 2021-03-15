@@ -9,7 +9,7 @@ services:
       - ./frontend:/app/frontend
       - node-modules:/app/frontend/node_modules
     ports:
-      - "3000:3000"
+      - 3000:3000
   django:
     build: ./backend
     container_name: django
@@ -18,7 +18,7 @@ services:
       - ./backend:/usr/src/app
     command: /bin/bash -c "pip-compile && pip install -r requirements.txt && python manage.py migrate && pip list && python manage.py runserver 0.0.0.0:8000"
     ports:
-      - "8000:8000"
+      - 8000:8000
     depends_on:
       - elasticsearch
       - pgdb
@@ -37,10 +37,14 @@ services:
       - pgdata:/var/lib/postgresql/data/
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.11.2
-    container_name: elasticsearch
+    container_name: es01
+    restart: always
     environment:
+      - node.name=es01
+      - cluster.name=es-docker-cluster
       - xpack.security.enabled=false
       - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     ulimits:
       memlock:
         soft: -1
@@ -51,21 +55,33 @@ services:
     cap_add:
       - IPC_LOCK
     ports:
-      - "9200:9200"
-      - "9300:9300"
+      - 9200:9200
+      - 9300:9300
     volumes:
-      - elsdata:/var/lib/elasticsearch/data
+      - elsdata:/usr/share/elasticsearch/data
+    networks:
+      - elastic
   kibana:
     container_name: kibana
-    image: docker.elastic.co/kibana/kibana:7.4.0
+    image: docker.elastic.co/kibana/kibana:7.11.2
     environment:
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
     ports:
       - 5601:5601
     depends_on:
       - elasticsearch
+    networks:
+      - elastic
 
 volumes:
   pgdata:
+    driver: local
   elsdata:
+    driver: local
   node-modules:
+    driver: local
+
+networks:
+  elastic:
+    driver: bridge
