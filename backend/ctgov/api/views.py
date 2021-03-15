@@ -81,17 +81,5 @@ class BasicSearchApiView(APIView):
             )[first:last]
         )
 
-        # search_results = BasicSearch.objects.filter(
-        #                     Q(status__contains=study_status),
-        #                     Q(condition_name__contains=condition),
-        #                     Q(study_brief_desc__contains=other_terms) | Q(official_title__contains=other_terms) |
-        #                     Q(keywords__contains=other_terms) | Q(condition_name__contains=other_terms),
-        #                     Q(country_name__contains=country),
-        #                     Q(intervention_name__contains=intervention),
-        #                     Q(keywords__contains=target_moa) | Q(study_brief_desc__contains=target_moa),
-        #                     Q(nct_id__contains=nct_id),
-        #                     Q(eligibility_criteria__contains=eligibility_criteria)
-        #                     ).all().values("status","brief_title","nct_id","condition_name","intervention_name","location_name")[first:last]
-
         serializer = BasicSearchSerializer(search_results, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
