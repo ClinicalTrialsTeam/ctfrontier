@@ -7,7 +7,7 @@ The end point for Basic Search API is:
 http://127.0.0.1:8000/ctgov/api/basic_search
 
 The post format for the basic_search API should be:
-
+```
 {
 
     "status":"Recruiting",
@@ -22,9 +22,12 @@ The post format for the basic_search API should be:
     "last":""
 
 }
+```
+
 
 Sample result below. Note that 'intervention_name' and 'location_name' are pipe delimited values. You have to parse them to display as a list in html.
 
+```
 {
 
     "status": "Recruiting",
@@ -34,6 +37,7 @@ Sample result below. Note that 'intervention_name' and 'location_name' are pipe 
     "intervention_name": "BMS-986165|Placebo",
     "location_name": "Local Institution|Local Institution|Local Institution"
 }
+```
 
 1. Pass all of the above 'post' parameters with exact name even though one of the parameter may be blank. If it is blank, pass "".
 
