@@ -20,12 +20,14 @@ services:
     ports:
       - "8000:8000"
     depends_on:
+      - elasticsearch
       - pgdb
   pgdb:
     env_file:
       - ./backend/core/.env
     image: postgres
     container_name: pgdb
+    shm_size: 1g
     environment:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
@@ -33,7 +35,37 @@ services:
     volumes:
       - ./data/:/data
       - pgdata:/var/lib/postgresql/data/
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.11.2
+    container_name: elasticsearch
+    environment:
+      - xpack.security.enabled=false
+      - discovery.type=single-node
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    cap_add:
+      - IPC_LOCK
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - elsdata:/var/lib/elasticsearch/data
+  kibana:
+    container_name: kibana
+    image: docker.elastic.co/kibana/kibana:7.4.0
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    ports:
+      - 5601:5601
+    depends_on:
+      - elasticsearch
 
 volumes:
   pgdata:
+  elsdata:
   node-modules:
