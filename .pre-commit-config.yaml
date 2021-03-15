@@ -12,3 +12,9 @@ repos:
     rev: 3.7.9
     hooks:
     - id: flake8
+-   repo: https://github.com/pre-commit/mirrors-eslint
+    sha: v3.18.0
+    hooks:
+    - id: eslint
+      args: [frontend]
+      additional_dependencies: ['eslint', 'eslint-plugin-react']
