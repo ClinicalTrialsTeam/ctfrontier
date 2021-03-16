@@ -1,14 +1,20 @@
 repos:
--   repo: https://github.com/ambv/black
+-   repo: https://github.com/psf/black
     rev: 20.8b1
     hooks:
     - id: black
       language_version: python3.9
       args: [backend]
     - id: black
-    language_version: python3.9
-    args: [cdk]
+      language_version: python3.9
+      args: [cdk]
 -   repo: https://gitlab.com/pycqa/flake8
     rev: 3.7.9
     hooks:
     - id: flake8
+-   repo: https://github.com/pre-commit/mirrors-eslint
+    sha: v3.18.0
+    hooks:
+    - id: eslint
+      args: [frontend]
+      additional_dependencies: ['eslint', 'eslint-plugin-react']

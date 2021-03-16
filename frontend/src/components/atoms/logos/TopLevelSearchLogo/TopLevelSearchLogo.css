@@ -1,0 +1,14 @@
+.ctf-logo {
+    width: 150px;
+    /* background-size: contain; */
+    margin: auto;
+}
+
+.ctf-logo-wrapper {
+    width: 150px;
+    display: block;
+    margin-top: 70px;
+    margin-bottom: 30px;
+    margin-left: auto;
+    margin-right: auto;
+}

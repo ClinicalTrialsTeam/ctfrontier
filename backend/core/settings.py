@@ -33,6 +33,12 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# Elastic Search
+# https://django-elasticsearch-dsl.readthedocs.io/en/latest/quickstart.html
+ELASTICSEARCH_DSL = {
+    "default": {"hosts": "localhost:9200"},
+}
+
 # Application definition
 
 INSTALLED_APPS = [
