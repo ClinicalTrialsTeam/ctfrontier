@@ -35,6 +35,32 @@ from .models import (
     FacilityInvestigators,
     IdInformation,
     InterventionOtherNames,
+    Interventions,
+    IpdInformationTypes,
+    Keywords,
+    Links,
+    MeshHeadings,
+    MeshTerms,
+    Milestones,
+    OutcomeAnalyses,
+    OutcomeAnalysisGroups,
+    OutcomeCounts,
+    OutcomeMeasurements,
+    Outcomes,
+    OverallOfficials,
+    ParticipantFlows,
+    PendingResults,
+    ProvidedDocuments,
+    ReportedEventTotals,
+    ReportedEvents,
+    ResponsibleParties,
+    ResultAgreements,
+    ResultContacts,
+    ResultGroups,
+    Sponsors,
+    Studies,
+    StudyReferences,
+    StudySearches,
 )
 
 
@@ -628,4 +654,590 @@ class InterventionOtherNamesDocument(Document):
             "nct",
             "intervention",
             "name",
+        ]
+
+
+@registry.register_document
+class IpdInformationTypesDocument(Document):
+    class Index:
+
+        name = "ipd_information_types"
+
+        settings = {"number_of_shards": 1, "number_of_replicas": 0}
+
+    class Django:
+        model = IpdInformationTypes
+
+        fields = [
+            "nct",
+            "name",
+        ]
+
+
+@registry.register_document
+class KeywordsDocument(Document):
+    class Index:
+
+        name = "keywords"
+
+        settings = {"number_of_shards": 1, "number_of_replicas": 0}
+
+    class Django:
+        model = Keywords
+
+        fields = ["nct", "name", "downcase_name"]
+
+
+@registry.register_document
+class LinksDocument(Document):
+    class Index:
+
+        name = "links"
+
+        settings = {"number_of_shards": 1, "number_of_replicas": 0}
+
+    class Django:
+        model = Links
+
+        fields = ["nct", "url", "description"]
+
+
+@registry.register_document
+class MeshHeadingsDocument(Document):
+    class Index:
+
+        name = "mesh_headings"
+
+        settings = {"number_of_shards": 1, "number_of_replicas": 0}
+
+    class Django:
+        model = MeshHeadings
+
+        fields = ["qualifier", "heading", "subcategory"]
+
+
+@registry.register_document
+class MeshTermsDocument(Document):
+    class Index:
+
+        name = "mesh_terms"
+
+        settings = {"number_of_shards": 1, "number_of_replicas": 0}
+
+    class Django:
+        model = MeshTerms
+
+        fields = [
+            "qualifier",
+            "tree_number",
+            "description",
+            "mesh_term",
+            "downcase_mesh_term",
+        ]
+
+
+@registry.register_document
+class MilestonesDocument(Document):
+    class Index:
+
+        name = "milestones"
+
+        settings = {"number_of_shards": 1, "number_of_replicas": 0}
+
+    class Django:
+        model = Milestones
+
+        fields = [
+            "nct",
+            "result_group",
+            "ctgov_group_code",
+            "title",
+            "period",
+            "description",
+            "count",
+        ]
+
+
+@registry.register_document
+class OutcomeAnalysesDocument(Document):
+    class Index:
+
+        name = "outcome_analyses"
+
+        settings = {"number_of_shards": 1, "number_of_replicas": 0}
+
+    class Django:
+        model = OutcomeAnalyses
+
+        fields = [
+            "nct",
+            "outcome",
+            "non_inferiority_type",
+            "non_inferiority_description",
+            "param_type",
+            "param_value",
+            "dispersion_type",
+            "dispersion_value",
+            "p_value_modifier",
+            "p_value",
+            "ci_n_sides",
+            "ci_percent",
+            "ci_lower_limit",
+            "ci_upper_limit",
+            "ci_upper_limit_na_comment",
+            "p_value_description",
+            "method",
+            "method_description",
+            "estimate_description",
+            "groups_description",
+            "other_analysis_description",
+        ]
+
+
+@registry.register_document
+class OutcomeAnalysisGroupsDocument(Document):
+    class Index:
+
+        name = "outcome_analysis_groups"
+
+        settings = {"number_of_shards": 1, "number_of_replicas": 0}
+
+    class Django:
+        model = OutcomeAnalysisGroups
+
+        fields = [
+            "nct",
+            "outcome_analysis",
+            "result_group",
+            "ctgov_group_code",
+        ]
+
+
+@registry.register_document
+class OutcomeCountsDocument(Document):
+    class Index:
+
+        name = "outcome_counts"
+
+        settings = {"number_of_shards": 1, "number_of_replicas": 0}
+
+    class Django:
+        model = OutcomeCounts
+
+        fields = [
+            "nct",
+            "outcome",
+            "result_group",
+            "ctgov_group_code",
+            "scope",
+            "units",
+            "count",
+        ]
+
+
+@registry.register_document
+class OutcomeMeasurementsDocument(Document):
+    class Index:
+
+        name = "outcome_measurements"
+
+        settings = {"number_of_shards": 1, "number_of_replicas": 0}
+
+    class Django:
+        model = OutcomeMeasurements
+
+        fields = [
+            "nct",
+            "outcome",
+            "result_group",
+            "ctgov_group_code",
+            "classification",
+            "category",
+            "title",
+            "description",
+            "outcome",
+            "units",
+            "param_type",
+            "param_value",
+            "param_value_num",
+            "dispersion_type",
+            "dispersion_value",
+            "dispersion_value_num",
+            "dispersion_lower_limit",
+            "dispersion_upper_limit",
+            "explanation_of_na",
+        ]
+
+
+@registry.register_document
+class OutcomesDocument(Document):
+    class Index:
+
+        name = "outcomes"
+
+        settings = {"number_of_shards": 1, "number_of_replicas": 0}
+
+    class Django:
+        model = Outcomes
+
+        fields = [
+            "nct",
+            "outcome_type",
+            "title",
+            "description",
+            "time_frame",
+            "population",
+            "anticipated_posting_date",
+            "anticipated_posting_month_year",
+            "units",
+            "units_analyzed",
+            "dispersion_type",
+            "param_type",
+        ]
+
+
+@registry.register_document
+class OverallOfficialsDocument(Document):
+    class Index:
+
+        name = "overall_officials"
+
+        settings = {"number_of_shards": 1, "number_of_replicas": 0}
+
+    class Django:
+        model = OverallOfficials
+
+        fields = [
+            "nct",
+            "role",
+            "name",
+            "affiliation",
+        ]
+
+
+@registry.register_document
+class ParticipantFlowsDocument(Document):
+    class Index:
+
+        name = "participant_flows"
+
+        settings = {"number_of_shards": 1, "number_of_replicas": 0}
+
+    class Django:
+        model = ParticipantFlows
+
+        fields = [
+            "nct",
+            "recruitment_details",
+            "pre_assignment_details",
+        ]
+
+
+@registry.register_document
+class PendingResultsDocument(Document):
+    class Index:
+
+        name = "pending_results"
+
+        settings = {"number_of_shards": 1, "number_of_replicas": 0}
+
+    class Django:
+        model = PendingResults
+
+        fields = ["nct", "event", "event_date_description", "event_date"]
+
+
+@registry.register_document
+class ProvidedDocumentsDocument(Document):
+    class Index:
+
+        name = "provided_documents"
+
+        settings = {"number_of_shards": 1, "number_of_replicas": 0}
+
+    class Django:
+        model = ProvidedDocuments
+
+        fields = [
+            "nct",
+            "document_type",
+            "has_protocol",
+            "has_icf",
+            "has_sap",
+            "document_date",
+            "url",
+        ]
+
+
+@registry.register_document
+class ReportedEventTotalsDocument(Document):
+    class Index:
+
+        name = "reported_event_totals"
+
+        settings = {"number_of_shards": 1, "number_of_replicas": 0}
+
+    class Django:
+        model = ReportedEventTotals
+
+        fields = [
+            "nct",
+            "ctgov_group_code",
+            "event_type",
+            "classification",
+            "subjects_affected",
+            "subjects_at_risk",
+            "created_at",
+            "updated_at",
+        ]
+
+
+@registry.register_document
+class ReportedEventsDocument(Document):
+    class Index:
+
+        name = "reported_events"
+
+        settings = {"number_of_shards": 1, "number_of_replicas": 0}
+
+    class Django:
+        model = ReportedEvents
+
+        fields = [
+            "nct",
+            "result_group",
+            "ctgov_group_code",
+            "time_frame",
+            "event_type",
+            "default_vocab",
+            "default_assessment",
+            "subjects_affected",
+            "subjects_at_risk",
+            "description",
+            "event_count",
+            "organ_system",
+            "adverse_event_term",
+            "frequency_threshold",
+            "vocab",
+            "assessment",
+        ]
+
+
+@registry.register_document
+class ResponsiblePartiesDocument(Document):
+    class Index:
+
+        name = "responsible_parties"
+
+        settings = {"number_of_shards": 1, "number_of_replicas": 0}
+
+    class Django:
+        model = ResponsibleParties
+
+        fields = [
+            "nct",
+            "responsible_party_type",
+            "name",
+            "title",
+            "organization",
+            "affiliation",
+        ]
+
+
+@registry.register_document
+class ResultAgreementsDocument(Document):
+    class Index:
+
+        name = "result_agreements"
+
+        settings = {"number_of_shards": 1, "number_of_replicas": 0}
+
+    class Django:
+        model = ResultAgreements
+
+        fields = [
+            "pi_employee",
+            "agreement",
+            "restriction_type",
+            "other_details",
+            "restrictive_agreement",
+        ]
+
+
+@registry.register_document
+class ResultContactsDocument(Document):
+    class Index:
+
+        name = "result_contacts"
+
+        settings = {"number_of_shards": 1, "number_of_replicas": 0}
+
+    class Django:
+        model = ResultContacts
+
+        fields = [
+            "nct",
+            "organization",
+            "name",
+            "phone",
+            "email",
+        ]
+
+
+@registry.register_document
+class ResultGroupsDocument(Document):
+    class Index:
+
+        name = "result_groups"
+
+        settings = {"number_of_shards": 1, "number_of_replicas": 0}
+
+    class Django:
+        model = ResultGroups
+
+        fields = [
+            "nct",
+            "ctgov_group_code",
+            "result_type",
+            "title",
+            "description",
+        ]
+
+
+@registry.register_document
+class SponsorsDocument(Document):
+    class Index:
+
+        name = "sponsors"
+
+        settings = {"number_of_shards": 1, "number_of_replicas": 0}
+
+    class Django:
+        model = Sponsors
+
+        fields = [
+            "nct",
+            "agency_class",
+            "lead_or_collaborator",
+            "name",
+        ]
+
+
+@registry.register_document
+class StudiesDocument(Document):
+    class Index:
+
+        name = "studies"
+
+        settings = {"number_of_shards": 1, "number_of_replicas": 0}
+
+    class Django:
+        model = Studies
+
+        fields = [
+            "nct_id",
+            "nlm_download_date_description",
+            "study_first_submitted_date",
+            "results_first_submitted_date",
+            "disposition_first_submitted_date",
+            "last_update_submitted_date",
+            "study_first_submitted_qc_date",
+            "study_first_posted_date",
+            "study_first_posted_date_type",
+            "results_first_submitted_qc_date",
+            "results_first_posted_date",
+            "results_first_posted_date_type",
+            "disposition_first_submitted_qc_date",
+            "disposition_first_posted_date",
+            "disposition_first_posted_date_type",
+            "last_update_submitted_qc_date",
+            "last_update_posted_date",
+            "last_update_posted_date_type",
+            "start_month_year",
+            "start_date_type",
+            "start_date",
+            "verification_month_year",
+            "verification_date",
+            "completion_month_year",
+            "completion_date_type",
+            "completion_date",
+            "primary_completion_month_year",
+            "primary_completion_date_type",
+            "primary_completion_date",
+            "target_duration",
+            "study_type",
+            "acronym",
+            "baseline_population",
+            "brief_title",
+            "official_title",
+            "overall_status",
+            "last_known_status",
+            "phase",
+            "enrollment",
+            "enrollment_type",
+            "source",
+            "limitations_and_caveats",
+            "number_of_arms",
+            "number_of_groups",
+            "why_stopped",
+            "has_expanded_access",
+            "expanded_access_type_individual",
+            "expanded_access_type_intermediate",
+            "expanded_access_type_treatment",
+            "has_dmc",
+            "is_fda_regulated_drug",
+            "is_fda_regulated_device",
+            "is_unapproved_device",
+            "is_ppsd",
+            "is_us_export",
+            "biospec_retention",
+            "biospec_description",
+            "ipd_time_frame",
+            "ipd_access_criteria",
+            "ipd_url",
+            "plan_to_share_ipd",
+            "plan_to_share_ipd_description",
+            "created_at",
+            "updated_at",
+        ]
+
+
+@registry.register_document
+class StudyReferencesDocument(Document):
+    class Index:
+
+        name = "study_references"
+
+        settings = {"number_of_shards": 1, "number_of_replicas": 0}
+
+    class Django:
+        model = StudyReferences
+
+        fields = [
+            "nct",
+            "pmid",
+            "reference_type",
+            "citation",
+        ]
+
+
+@registry.register_document
+class StudySearchesDocument(Document):
+    class Index:
+
+        name = "study_searches"
+
+        settings = {"number_of_shards": 1, "number_of_replicas": 0}
+
+    class Django:
+        model = StudySearches
+
+        fields = [
+            "save_tsv",
+            "query",
+            "grouping",
+            "name",
+            "beta_api",
+            "created_at",
+            "updated_at",
         ]
