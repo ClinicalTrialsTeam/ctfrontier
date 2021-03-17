@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   react:
-    build: ./frontend
+    build: ./frontenddddd
     container_name: react
     command: /bin/bash -c "npm update --legacy-peer-deps && npm start"
     volumes:
