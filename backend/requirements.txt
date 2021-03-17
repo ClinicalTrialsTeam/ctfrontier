@@ -8,9 +8,13 @@ asgiref==3.3.1
     # via django
 attrs==20.3.0
     # via pytest
+certifi==2020.12.5
+    # via elasticsearch
 coverage==5.5
     # via pytest-cov
 django-cors-headers==3.7.0
+    # via -r requirements.in
+django-elasticsearch-dsl==7.1.4
     # via -r requirements.in
 django-filter==2.4.0
     # via -r requirements.in
@@ -22,6 +26,10 @@ django==3.1.7
     #   djangorestframework
 djangorestframework==3.12.2
     # via -r requirements.in
+elasticsearch-dsl==7.3.0
+    # via django-elasticsearch-dsl
+elasticsearch==7.11.0
+    # via elasticsearch-dsl
 iniconfig==1.1.1
     # via pytest
 markdown==3.3.4
@@ -56,11 +64,20 @@ pytest==6.2.2
     #   pytest-django
     #   pytest-env
     #   pytest-postgresql
+python-dateutil==2.8.1
+    # via elasticsearch-dsl
 python-dotenv==0.15.0
     # via -r requirements.in
 pytz==2021.1
     # via django
+six==1.15.0
+    # via
+    #   django-elasticsearch-dsl
+    #   elasticsearch-dsl
+    #   python-dateutil
 sqlparse==0.4.1
     # via django
 toml==0.10.2
     # via pytest
+urllib3==1.26.3
+    # via elasticsearch
