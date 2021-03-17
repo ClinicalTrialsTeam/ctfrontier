@@ -4,14 +4,13 @@ import {
 } from 'antd';
 import { InfoCircleOutlined } from '@ant-design/icons';
 
-// import 'antd/dist/antd.dark.css';
 import './TopLevelSearchForm.css';
 
 import {
   recruitment, access, countries,
 } from '../../../variables/TopLevelSearchData';
 
-const TopLevelSearchFormFields = () => {
+const TopLevelSearchForm = () => {
   const { Panel } = Collapse;
   const { Option } = Select;
 
@@ -42,7 +41,7 @@ const TopLevelSearchFormFields = () => {
     setRequiredMarkType(requiredMarkValue);
   };
 
-  const text = 'More more content will be added here';
+  const text = 'More content will be added here';
 
   const recruitmentCheckboxes = [];
 
@@ -235,4 +234,4 @@ const TopLevelSearchFormFields = () => {
   );
 };
 
-export default TopLevelSearchFormFields;
+export default TopLevelSearchForm;

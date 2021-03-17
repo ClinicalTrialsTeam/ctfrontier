@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { Layout } from 'antd';
+import { Layout, Card } from 'antd';
 import ParallaxStarsBackground from '../../components/atoms/backgrounds/ParallaxStars/ParallaxStars';
-import TopLevelSearchContainer from '../../components/organisms/TopLevelSearchContainer/TopLevelSearchContainer';
+// import FrostedCard from '../../components/molecules/cards/Frosted/Frosted';
+import TopLevelSearchForm from '../../components/organisms/TopLevelSearchForm/TopLevelSearchForm';
 import TopLevelSearchLogo from '../../components/atoms/logos/TopLevelSearchLogo/TopLevelSearchLogo';
 
 import './TopLevelSearchView.css';
@@ -16,7 +17,11 @@ class TopLevelSearchView extends Component {
         <ParallaxStarsBackground />
         <div id="wrapper">
           <TopLevelSearchLogo />
-          <TopLevelSearchContainer />
+          {/* <FrostedCard> */}
+          <Card id="frostedcard">
+            <TopLevelSearchForm />
+          </Card>
+          {/* </FrostedCard> */}
         </div>
         <Footer style={{ textAlign: 'center' }}>Clinical Trials Frontier ©2021</Footer>
       </Layout>
