@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Layout } from 'antd';
 import ParallaxStarsBackground from '../../components/atoms/backgrounds/ParallaxStars/ParallaxStars';
-import TopLevelSearchForm from '../../components/organisms/TopLevelSearchForm/TopLevelSearchForm';
+import TopLevelSearchContainer from '../../components/organisms/TopLevelSearchContainer/TopLevelSearchContainer';
 import TopLevelSearchLogo from '../../components/atoms/logos/TopLevelSearchLogo/TopLevelSearchLogo';
 
 import './TopLevelSearchView.css';
@@ -16,7 +16,7 @@ class TopLevelSearchView extends Component {
         <ParallaxStarsBackground />
         <div id="wrapper">
           <TopLevelSearchLogo />
-          <TopLevelSearchForm />
+          <TopLevelSearchContainer />
         </div>
         <Footer style={{ textAlign: 'center' }}>Clinical Trials Frontier ©2021</Footer>
       </Layout>
