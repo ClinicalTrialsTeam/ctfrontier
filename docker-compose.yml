@@ -4,7 +4,7 @@ services:
   react:
     build: ./frontend
     container_name: react
-    command: /bin/bash -c "npm update && npm start"
+    command: /bin/bash -c "npm update --legacy-peer-deps && npm start"
     volumes:
       - ./frontend:/app/frontend
       - node-modules:/app/frontend/node_modules
