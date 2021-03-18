@@ -6,3 +6,4 @@ clinical_trials.zip
 
 # These should only exist in the frontend folder
 package.json
+package-lock.json
