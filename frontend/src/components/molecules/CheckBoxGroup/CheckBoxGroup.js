@@ -12,25 +12,22 @@ class CheckBoxGroup extends Component {
       >
         <Checkbox.Group>
           <Row>
-            {checkboxes.map( (value) =>
-              <Checkbox
-                value={value}
-              />
-            )}
+            {checkboxes.map((value) => {
+              return (
+                <Checkbox
+                  value={value}
+                />
+              );
+            })}
           </Row>
         </Checkbox.Group>
       </Form.Item>
-        );
+    );
   }
 }
 
-
-        CheckBoxGroup.propTypes = {
-  checkboxes: PropTypes.array.isRequired,
-};
-
 CheckBoxGroup.propTypes = {
-  value: PropTypes.array.isRequired,
+  checkboxes: PropTypes.array.isRequired,
 };
 
 export default CheckBoxGroup;

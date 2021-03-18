@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import { Checkbox, Col, Collapse, Form, Input, Row, Select } from 'antd';
+import { Checkbox, Col, Collapse, Form, Input, Row } from 'antd';
 import { InfoCircleOutlined } from '@ant-design/icons';
-import { recruitment } from '../../../variables/TopLevelSearchData';
 import PropTypes from 'prop-types';
 
 class BasicSearchAccordion extends Component {

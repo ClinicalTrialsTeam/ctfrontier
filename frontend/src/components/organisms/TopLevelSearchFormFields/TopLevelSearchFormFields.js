@@ -24,7 +24,6 @@ class TopLevelSearchFormFields extends Component {
       target: '',
       country: '',
       otherTerms: '',
-      displaySearchResults: false,
       searchResults: '',
     };
   }
@@ -61,10 +60,8 @@ class TopLevelSearchFormFields extends Component {
     try {
       const response = await ctgov.post('basic_search', payload);
       this.setState({
-        displaySearchResults: true,
         searchResults: response.data,
       });
-      console.log(response.data);
     } catch (err) {
       console.log(err);
     }
