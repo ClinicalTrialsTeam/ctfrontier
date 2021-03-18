@@ -6,5 +6,5 @@ clinical_trials.zip
 /.github/
 
 # These should only exist in the frontend folder
-package.jsongit
+package.json
 package-lock.json
