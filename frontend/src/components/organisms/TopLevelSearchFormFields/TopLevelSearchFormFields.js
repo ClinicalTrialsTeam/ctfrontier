@@ -3,7 +3,7 @@ import { Form, Select } from 'antd';
 import ctgov from '../../../apis/ctgov';
 import TextInputField from '../../atoms/TextInputField/TextInputField';
 import SelectField from '../../atoms/SelectField/SelectField';
-import Button from '../../atoms/button/button';
+import Button from '../../atoms/Button/Button';
 import BasicSearchAccordion from '../../molecules/BasicSearchAccordion/BasicSearchAccordion';
 
 import './TopLevelSearchFormFields.css';
