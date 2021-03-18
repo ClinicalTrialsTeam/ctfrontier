@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form } from 'antd';
+import { Form, Select } from 'antd';
 import ctgov from '../../../apis/ctgov';
 import TextInputField from '../../atoms/TextInputField/TextInputField';
 import SelectField from '../../atoms/SelectField/SelectField';
@@ -77,6 +77,7 @@ class TopLevelSearchFormFields extends Component {
   }
 
   render() {
+    const { Option } = Select;
     const layout = {
       labelCol: {
         span: 8,
@@ -121,7 +122,6 @@ class TopLevelSearchFormFields extends Component {
           tooltip="The 'Country' field is used to find clinical studies with locations in a specific country. For example, if you choose the United States, you can then narrow your search by selecting a state and identifying a city and distance."
           placeholder="Select the country"
           options={countryList}
-          name="country"
           handleInputChange={this.handleCountryChange}
         />
         <TextInputField

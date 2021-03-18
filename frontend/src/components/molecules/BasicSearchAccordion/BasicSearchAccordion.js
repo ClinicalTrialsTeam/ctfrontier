@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import { Checkbox, Col, Collapse, Form, Input, Row } from 'antd';
+import {
+  Checkbox, Col, Collapse, Form, Input, Row,
+} from 'antd';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import PropTypes from 'prop-types';
 
