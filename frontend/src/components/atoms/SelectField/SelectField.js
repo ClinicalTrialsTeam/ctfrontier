@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { InfoCircleOutlined } from '@ant-design/icons';
-import { Form, Input, Select } from 'antd';
+import { Form, Select } from 'antd';
 import PropTypes from 'prop-types';
 
 class SelectField extends Component {
@@ -18,7 +18,7 @@ class SelectField extends Component {
         name={name}
         label={label}
         tooltip={{
-          title: {tooltip},
+          title: { tooltip },
           icon: <InfoCircleOutlined />,
         }}
       >
@@ -39,7 +39,7 @@ SelectField.propTypes = {
   label: PropTypes.string.isRequired,
   tooltip: PropTypes.string.isRequired,
   placeholder: PropTypes.string.isRequired,
-  options:PropTypes.array.isRequired,
+  options: PropTypes.isRequired,
   handleInputChange: PropTypes.func.isRequired,
 };
 

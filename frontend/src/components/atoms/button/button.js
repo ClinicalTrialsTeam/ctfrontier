@@ -4,9 +4,9 @@ import PropTypes from 'prop-types';
 
 class Button extends Component {
   render() {
-    const { type, text, clickHandler } = this.props;
+    const { inputType, text, clickHandler } = this.props;
     return (
-      <AntButton type={type} onClick={clickHandler}>
+      <AntButton type={inputType} onClick={clickHandler}>
         {text}
       </AntButton>
     );
@@ -14,13 +14,13 @@ class Button extends Component {
 }
 
 Button.propTypes = {
-  type: PropTypes.string.isRequired,
+  inputType: PropTypes.string,
   text: PropTypes.string.isRequired,
   clickHandler: PropTypes.func.isRequired,
 };
 
 Button.defaultProps = {
-  type: 'default',
+  inputType: 'default',
 };
 
 export default Button;

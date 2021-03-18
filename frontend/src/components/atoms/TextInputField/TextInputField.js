@@ -5,7 +5,9 @@ import PropTypes from 'prop-types';
 
 class TextInputField extends Component {
   render() {
-    const { label, title, name, handleInputChange } = this.props;
+    const {
+      label, title, name, handleInputChange,
+    } = this.props;
     return (
       <Form.Item
         label={label}

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Checkbox, Form, Row } from 'antd';
 import PropTypes from 'prop-types';
 
-class CheckboxGroup extends Component {
+class CheckBoxGroup extends Component {
   render() {
     const { checkboxes } = this.props;
 
@@ -25,12 +25,12 @@ class CheckboxGroup extends Component {
 }
 
 
-        CheckboxGroup.propTypes = {
+        CheckBoxGroup.propTypes = {
   checkboxes: PropTypes.array.isRequired,
 };
 
-CheckboxGroup.propTypes = {
+CheckBoxGroup.propTypes = {
   value: PropTypes.array.isRequired,
 };
 
-export default CheckboxGroup;
+export default CheckBoxGroup;

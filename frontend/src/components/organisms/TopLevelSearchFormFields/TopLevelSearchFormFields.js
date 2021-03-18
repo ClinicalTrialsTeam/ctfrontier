@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import { Form} from 'antd';
+import { Form } from 'antd';
 import ctgov from '../../../apis/ctgov';
-import TextInputField from '../../atoms/text-input-field/text-input-field';
-import SelectField from '../../atoms/select-field/select-field';
+import TextInputField from '../../atoms/TextInputField/TextInputField';
+import SelectField from '../../atoms/SelectField/SelectField';
 import Button from '../../atoms/button/button';
-import BasicSearchAccordion from '../../molecules/basic-search-accordion/basic-search-accordion';
+import BasicSearchAccordion from '../../molecules/BasicSearchAccordion/BasicSearchAccordion';
 
 import './TopLevelSearchFormFields.css';
 
@@ -13,33 +13,31 @@ import {
 } from '../../../variables/TopLevelSearchData';
 
 class TopLevelSearchFormFields extends Component {
-  constructor(props)
-  {
+  constructor(props) {
     super(props);
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleCountryChange = this.handleCountryChange.bind(this);
     this.handleSearch = this.handleSearch.bind(this);
     this.handleClear = this.handleClear.bind(this);
     this.state = {
-      condition : '',
-      target:'',
-      country:'',
-      otherTerms:'',
+      condition: '',
+      target: '',
+      country: '',
+      otherTerms: '',
       displaySearchResults: false,
       searchResults: '',
     };
   }
 
   handleInputChange(e) {
-    const {target} = e;
-    const value = target.type === 'checkbox' ? target.checked : target.value;
-    const {name} = target;
+    const { target } = e;
+    const value = target.inputType === 'checkbox' ? target.checked : target.value;
+    const { name } = target;
 
     this.setState({
       [name]: value,
     });
   }
-
 
   handleCountryChange(e) {
     this.setState({
@@ -49,16 +47,16 @@ class TopLevelSearchFormFields extends Component {
 
   async handleSearch() {
     const payload = {
-        "status": "",
-        "condition": this.state.condition,
-        "other_terms": this.state.otherTerms,
-        "country": this.state.country,
-        "intervention": "",
-        "target": this.state.target,
-        "nct_id": "",
-        "eligibility_criteria":"",
-        "first": "",
-        "last": "",
+      status: '',
+      condition: this.state.condition,
+      other_terms: this.state.otherTerms,
+      country: this.state.country,
+      intervention: '',
+      target: this.state.target,
+      nct_id: '',
+      eligibility_criteria: '',
+      first: '',
+      last: '',
     };
     try {
       const response = await ctgov.post('basic_search', payload);
@@ -74,10 +72,10 @@ class TopLevelSearchFormFields extends Component {
 
   handleClear() {
     this.setState({
-      condition : '',
-      target:'',
-      country:'',
-      otherTerms:'',
+      condition: '',
+      target: '',
+      country: '',
+      otherTerms: '',
     });
   }
 
@@ -122,10 +120,10 @@ class TopLevelSearchFormFields extends Component {
         />
         <SelectField
           name="country"
-        label="Country"
-        tooltip="The 'Country' field is used to find clinical studies with locations in a specific country. For example, if you choose the United States, you can then narrow your search by selecting a state and identifying a city and distance."
-        placeholder="Select the country"
-        options={countryList}
+          label="Country"
+          tooltip="The 'Country' field is used to find clinical studies with locations in a specific country. For example, if you choose the United States, you can then narrow your search by selecting a state and identifying a city and distance."
+          placeholder="Select the country"
+          options={countryList}
           name="country"
           handleInputChange={this.handleCountryChange}
         />
@@ -144,11 +142,11 @@ class TopLevelSearchFormFields extends Component {
           <Button
             text="Clear"
             clickHandler={this.handleClear}
-            />
+          />
         </Form.Item>
         <BasicSearchAccordion
-        access={access}
-        recruitment={recruitment}
+          access={access}
+          recruitment={recruitment}
         />
         <div>{JSON.stringify(this.state.searchResults)}</div>
       </Form>
