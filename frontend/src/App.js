@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import './App.css';
 
 // Import local files
-import TopLevelSearchView from './views/TopLevelSearchView/TopLevelSearchView';
+import TopLevelSearchView from './components/views/TopLevelSearchView/TopLevelSearchView';
 
 class App extends Component {
   render() {
