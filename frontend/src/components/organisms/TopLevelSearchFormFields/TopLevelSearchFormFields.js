@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-
-import { Form } from 'antd';
+import { Form} from 'antd';
 import ctgov from '../../../apis/ctgov';
 import TextInputField from '../../atoms/text-input-field/text-input-field';
 import SelectField from '../../atoms/select-field/select-field';
@@ -26,6 +25,8 @@ class TopLevelSearchFormFields extends Component {
       target:'',
       country:'',
       otherTerms:'',
+      displaySearchResults: false,
+      searchResults: '',
     };
   }
 
@@ -38,6 +39,7 @@ class TopLevelSearchFormFields extends Component {
       [name]: value,
     });
   }
+
 
   handleCountryChange(e) {
     this.setState({
@@ -58,9 +60,12 @@ class TopLevelSearchFormFields extends Component {
         "first": "",
         "last": "",
     };
-    console.log(payload);
     try {
-      const response = await ctgov.get('basic_search');
+      const response = await ctgov.post('basic_search', payload);
+      this.setState({
+        displaySearchResults: true,
+        searchResults: response.data,
+      });
       console.log(response.data);
     } catch (err) {
       console.log(err);
@@ -145,6 +150,7 @@ class TopLevelSearchFormFields extends Component {
         access={access}
         recruitment={recruitment}
         />
+        <div>{JSON.stringify(this.state.searchResults)}</div>
       </Form>
     );
   }
