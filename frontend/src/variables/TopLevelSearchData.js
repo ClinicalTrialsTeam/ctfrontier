@@ -17,7 +17,14 @@ const access = [
   'Approved for marketing',
 ];
 
-const phases = [];
+const phases = [
+  'Early Phase 1',
+  'Phase 1',
+  'Phase 2',
+  'Phase 3',
+  'Phase 4',
+  'Not Applicable',
+];
 
 const countries = [
   'United States of America (the)',
@@ -272,7 +279,6 @@ const countries = [
 ];
 
 module.exports = {
-  // these 3 are used to create the tasks lists in TasksCard - Dashboard view
   recruitment,
   access,
   phases,

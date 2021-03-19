@@ -1,79 +1,174 @@
-import React from 'react';
+import React, { Component } from 'react';
 import {
-  Form, Input, Button, Checkbox,
+  Form, Select, Divider, Row, Col, Space,
 } from 'antd';
+import ctgov from '../../../apis/ctgov';
+import TextInputField from '../../atoms/TextInputField/TextInputField';
+import SelectField from '../../atoms/SelectField/SelectField';
+import Button from '../../atoms/buttons/Button/Button';
+import BasicSearchAccordion from '../../molecules/BasicSearchAccordion/BasicSearchAccordion';
 
-const layout = {
-  labelCol: {
-    span: 8,
-  },
-  wrapperCol: {
-    span: 16,
-  },
-};
-const tailLayout = {
-  wrapperCol: {
-    offset: 8,
-    span: 16,
-  },
-};
+import './NewForm.css';
 
-const NewForm = () => {
-//   const onFinish = (values) => {
-//     console.log('Success:', values);
-//   };
-//   const onFinishFailed = (errorInfo) => {
-//     console.log('Failed:', errorInfo);
-//   };
+import {
+  recruitment, access, countries,
+} from '../../../variables/TopLevelSearchData';
 
-  return (
-    <Form
-      labelCol={layout.labelCol}
-      wrapperCol={layout.wrapperCol}
-      name="basic"
-      initialValues={{
-        remember: true,
-      }}
-    //   onFinish={onFinish}
-    //   onFinishFailed={onFinishFailed}
-    >
-      <Form.Item
-        label="Username"
-        name="username"
-        rules={[
-          {
-            required: true,
-            message: 'Please input your username!',
-          },
-        ]}
-      >
-        <Input />
-      </Form.Item>
+class NewForm extends Component {
+  constructor(props) {
+    super(props);
+    this.handleInputChange = this.handleInputChange.bind(this);
+    this.handleCountryChange = this.handleCountryChange.bind(this);
+    this.handleSearch = this.handleSearch.bind(this);
+    this.handleClear = this.handleClear.bind(this);
+    this.state = {
+      condition: '',
+      target: '',
+      country: '',
+      otherTerms: '',
+      searchResults: '',
+    };
+  }
 
-      <Form.Item
-        label="Password"
-        name="password"
-        rules={[
-          {
-            required: true,
-            message: 'Please input your password!',
-          },
-        ]}
-      >
-        <Input.Password />
-      </Form.Item>
+  handleInputChange(e) {
+    const { target } = e;
+    const value = target.inputType === 'checkbox' ? target.checked : target.value;
+    const { name } = target;
 
-      <Form.Item wrapperCol={tailLayout.wrapperCol} name="remember" valuePropName="checked">
-        <Checkbox>Remember me</Checkbox>
-      </Form.Item>
+    this.setState({
+      [name]: value,
+    });
+  }
 
-      <Form.Item wrapperCol={tailLayout.wrapperCol}>
-        <Button type="primary" htmlType="submit">
-          Submit
-        </Button>
-      </Form.Item>
-    </Form>
-  );
-};
+  handleCountryChange(e) {
+    this.setState({
+      country: e,
+    });
+  }
+
+  async handleSearch() {
+    const payload = {
+      status: '',
+      condition: this.state.condition,
+      other_terms: this.state.otherTerms,
+      country: this.state.country,
+      intervention: this.state.intervention,
+      target: this.state.target,
+      nct_id: this.state.nct_id,
+      eligibility_criteria: '',
+      first: '',
+      last: '',
+    };
+    try {
+      const response = await ctgov.post('basic_search', payload);
+      this.setState({
+        searchResults: response.data,
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  handleClear() {
+    this.setState({
+      intervention: '',
+      condition: '',
+      target: '',
+      country: '',
+      otherTerms: '',
+      nct_id: '',
+    });
+  }
+
+  render() {
+    const { Option } = Select;
+    const countryList = [];
+
+    Array.from(countries.entries()).forEach(([, value]) => {
+      countryList.push(
+        <Option value={value}>{value}</Option>
+      );
+    });
+    return (
+      <>
+        <Divider orientation="left" style={{ marginTop: '24px' }}>Find a study (all fields are optional)</Divider>
+        <Form
+          layout="vertical"
+        >
+          <Row gutter={[16, 16]}>
+            <Col span={8}>
+              <TextInputField
+                label="NCT number"
+                title="A unique identification code given to each clinical study record registered on ClinicalTrials.gov. The format is 'NCT' followed by an 8-digit number (for example, NCT00000419). Also called the ClinicalTrials.gov identifier."
+                name="nct_id"
+                handleInputChange={this.handleInputChange}
+              />
+              <TextInputField
+                label="Condition or disease"
+                title="The disease, disorder, syndrome, illness, or injury that is being studied. On CTFrontier.com, conditions may also include other health-related issues, such as lifespan, quality of life, and health risks."
+                name="condition"
+                handleInputChange={this.handleInputChange}
+              />
+            </Col>
+            <Col span={8}>
+              <TextInputField
+                label="Intervention / treatment"
+                title="A process or action that is the focus of a clinical study. Interventions include drugs, medical devices, procedures, vaccines, and other products that are either investigational or already available. Interventions can also include noninvasive approaches, such as education or modifying diet and exercise."
+                name="intervention"
+                handleInputChange={this.handleInputChange}
+              />
+              <TextInputField
+                label="MOA or target"
+                title="Mechanism of action (MOA) describes how a drug or substance produces an effect in the body. A drug’s MOA could be how it affects a specific target in a cell, such as an enzyme, or a cell function, such as cell growth. Biological targets are most commonly proteins, such as enzymes, ion channels, and receptors."
+                name="target"
+                handleInputChange={this.handleInputChange}
+              />
+            </Col>
+            <Col span={8}>
+              <SelectField
+                name="country"
+                label="Country"
+                tooltip="The 'Country' field is used to find clinical studies with locations in a specific country. For example, if you choose the United States, you can then narrow your search by selecting a state and identifying a city and distance."
+                placeholder="Select the country"
+                options={countryList}
+                handleInputChange={this.handleCountryChange}
+              />
+              <TextInputField
+                label="Other terms"
+                title="The 'Other' terms field is used to narrow a search. For example,  you may enter the name of a drug or the NCT number of a clinical study to limit the search to study records that contain these words."
+                name="otherTerms"
+                handleInputChange={this.handleInputChange}
+              />
+            </Col>
+          </Row>
+          <Row justify="center">
+            <Form.Item>
+              <Space>
+                <Button
+                  type="primary"
+                  text="Search"
+                  clickHandler={this.handleSearch}
+                />
+                <Button
+                  text="Clear"
+                  clickHandler={this.handleClear}
+                />
+                <Button
+                  text="Show advanced options"
+                  clickHandler={this.handleClear}
+                />
+              </Space>
+            </Form.Item>
+          </Row>
+          <BasicSearchAccordion
+            access={access}
+            recruitment={recruitment}
+          />
+          <div style={{ display: 'none' }}>{JSON.stringify(this.state.searchResults)}</div>
+        </Form>
+      </>
+    );
+  }
+}
 
 export default NewForm;

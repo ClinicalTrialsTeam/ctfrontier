@@ -1,20 +1,27 @@
 import React, { Component } from 'react';
-import { Layout } from 'antd';
-import AltTopLevelSearchForm from '../../organisms/NewForm/NewForm';
+import { Layout, Tabs } from 'antd';
+import ListViewTable from '../../organisms/ListViewTable/ListViewTable';
 import CommonLogo from '../../atoms/logos/CommonLogo/CommonLogo';
 
-import './AltTopLevelSearchView.css';
 import 'antd/dist/antd.css';
 
 const { Footer, Content } = Layout;
+const { TabPane } = Tabs;
 
-class AltTopLevelSearchView extends Component {
+class TrialView extends Component {
   render() {
     return (
       <Layout className="layout" style={{ backgroundColor: 'white' }}>
         <CommonLogo />
         <Content id="content-bg">
-          <AltTopLevelSearchForm />
+          <Tabs defaultActiveKey="1">
+            <TabPane tab="List View" key="1">
+              <ListViewTable />
+            </TabPane>
+            <TabPane tab="Map View" key="2">
+              Content of Tab Pane 2
+            </TabPane>
+          </Tabs>
         </Content>
         <Footer style={{ textAlign: 'center', backgroundColor: 'white' }}>Clinical Trials Frontier ©2021</Footer>
       </Layout>
@@ -22,4 +29,4 @@ class AltTopLevelSearchView extends Component {
   }
 }
 
-export default AltTopLevelSearchView;
+export default TrialView;
