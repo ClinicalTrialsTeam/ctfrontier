@@ -10,11 +10,8 @@ Run `pytest tests` from the `backend` directory
 
 #### Prerequisite
 
-1. Connect to the postgres docker container 
-```docker exec -it --user postgres pgdb /bin/bash```
-2. Run the command: 
-
-`psql -d aact -f data/database_scripts/basic_search.sql`
+1. Connect to the postgres docker container: `docker exec -it --user postgres pgdb /bin/bash`
+2. Run the basic_search.sql script with the command: `psql -d aact -f pgdb/database_scripts/basic_search.sql`
 
 
 #### Parameters

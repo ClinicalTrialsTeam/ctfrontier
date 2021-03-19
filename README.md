@@ -56,13 +56,13 @@ There is also a Github action that automatically checks for linting errors. See 
 ## Initial load of CT.gov data
 
 1. Download `.zip` from [https://aact.ctti-clinicaltrials.org/snapshots](https://aact.ctti-clinicaltrials.org/snapshots)
-2. Unzip into `data` folder (`unzip <filename.zip> -d data`)
+2. Unzip into `data` folder (`unzip <filename.zip> -d pgdb/data`)
 3. Start running the docker containers `docker-compose up`. The first time you
 run this it will take a LONG time! After the first time, much of the build
 will be cached and it will not take so long.
 4. Connect to postgres container. `docker exec -it --user postgres pgdb /bin/bash`
 5. Create the database `createdb aact`
-6. Restore the database from the `.dmp` file. `pg_restore -e -v -O -x -d aact --no-owner data/postgres_data.dmp`
+6. Restore the database from the `.dmp` file. `pg_restore -e -v -O -x -d aact --no-owner pgdb/data/postgres_data.dmp`
 7. Start psql `psql`
 8. You should see the `postgres=#` prompt.
 9. Add ctgov schema to pSQL search path `alter role postgres in database aact set search_path = ctgov, public;`

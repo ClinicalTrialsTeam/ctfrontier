@@ -33,7 +33,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD={DB_PASSWORD}
     volumes:
-      - ./data/:/data
+      - ./pdgb/:/pgdb
       - pgdata:/var/lib/postgresql/data/
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.11.2
