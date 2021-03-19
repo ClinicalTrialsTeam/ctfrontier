@@ -1,0 +1,3 @@
+@import '~antd/dist/antd.css';
+
+.ant-table table { font-size: 12px; }

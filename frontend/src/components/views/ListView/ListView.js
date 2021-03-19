@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Layout, Menu } from 'antd';
 
 import './ListView.css';
-// import 'antd/dist/antd.css';
 
 const { Header, Content, Footer } = Layout;
 

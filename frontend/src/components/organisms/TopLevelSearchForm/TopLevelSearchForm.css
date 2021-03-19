@@ -1,51 +1,11 @@
-@import '~antd/dist/antd.dark.css';
-
-.ant-input {
-    color: white !important;
-    background-color: rgba(255, 255, 255, 0.15) !important;
-    border: 1px solid #939393 !important;
-}
-
-.ant-select:not(.ant-select-customize-input) .ant-select-selector {
-    color: white !important;
-    background-color: rgba(255, 255, 255, 0.15) !important;
-    border: 1px solid #939393 !important;
-}
-
-.ant-select-arrow {
-    color: whitesmoke !important;
-}
-
-.ant-checkbox-group {
-    display: inline !important;
-}
-
-.ant-checkbox-wrapper {
-    color: whitesmoke !important;
-}
-
-.ant-form-item-label > label {
-    color: whitesmoke !important;
-}
-
-.ant-form-item-label > label .ant-form-item-tooltip {
-    color: whitesmoke !important;
-}
-
-.ant-form-item-label > label .ant-form-item-optional {
-    color: whitesmoke !important;
-}
-
-.ant-collapse {
-    border: 1px solid #939393 !important;
-}
-
-.ant-collapse-content {
-    color: whitesmoke !important;
-    background-color: rgba(27, 39, 53, 0.95) !important;
-}
-
-.ant-collapse > .ant-collapse-item > .ant-collapse-header {
-    color: white !important;
-    background-color: rgba(27, 39, 53, 0.85) !important;
+#frostedcard {
+    border: none;
+    border-radius: 4px;
+    background: rgba(255, 245, 255, 0.2);
+    backdrop-filter: blur(3px);
+    /* background-color: aqua !important; */
+    margin: auto;
+    margin-bottom: 70px;
+    width: 50%;
+    min-width: 650px;
 }

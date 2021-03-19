@@ -1,4 +1,4 @@
-@import '~antd/dist/antd.css';
+@import '../../../../node_modules/antd/dist/antd.css';
 
 .site-layout-content {
   min-height: 280px;
