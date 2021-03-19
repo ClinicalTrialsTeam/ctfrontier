@@ -1,7 +1,10 @@
 **/.env
 node_modules/
 **.coverage
-data/
+data/*.png
+data/*.xlsx
+data/*.html
+data/*.dmp
 clinical_trials.zip
 
 # These should only exist in the frontend folder
