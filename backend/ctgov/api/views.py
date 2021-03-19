@@ -43,22 +43,24 @@ class BasicSearchApiView(APIView):
         target_moa = request.data.get("target")
         eligibility_criteria = request.data.get("eligibility_criteria")
 
-        filters = {"status__contains": study_status}
+        if not study_status:
+            study_status = "Completed"
+
+        filters = {"status__icontains": study_status}
         if nct_id:
-            filters["nct_id__contains"] = nct_id
+            filters["nct_id__icontains"] = nct_id
         if condition:
-            filters["condition_name__contains"] = condition
+            filters["condition_name__icontains"] = condition
         if other_terms:
-            filters["brief_title__contains"] = other_terms
+            filters["brief_title__icontains"] = other_terms
         if country:
-            filters["country_name__contains"] = country
+            filters["country_name__icontains"] = country
         if intervention:
-            filters["intervention_name__contains"] = intervention
+            filters["intervention_name__icontains"] = intervention
         if target_moa:
-            filters["keywords__contains"] = target_moa
-            filters["study_brief_desc__contains"] = target_moa
+            filters["study_brief_desc__icontains"] = target_moa
         if eligibility_criteria:
-            filters["eligibility_criteria__contains"] = eligibility_criteria
+            filters["eligibility_criteria__icontains"] = eligibility_criteria
 
         if not first:
             first = 0
