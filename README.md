@@ -7,7 +7,7 @@
 
 * Docker installed and running
 * Python 3.9
-* npm 7.6.1+
+* Node 15.4.0+
 
 
 ## Setup
