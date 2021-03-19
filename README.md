@@ -29,9 +29,15 @@ Copy this into a new `.env` file and fill it in (this .env file be in the "backe
 ## Running the project
 
 1. Run the project with `docker-compose up`
-1. If all goes well, your React app should be accessible at: [http://localhost:3000](http://localhost:3000)
-1. The Django REST API should be at [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
+1. If all goes well, the resources below ("where to find things") should be accessible.
 1. Run `docker-compose down` or just `ctrl-C` to take everything down
+
+#### Where to find things (list of containers and ports also available using `docker ps`)
+
+* React <http://localhost:3000>
+* Django REST API framework <http://localhost:8000> (see backend documentation for specific endpoints)
+* Elasticsearch <http://localhost:9200>
+* Kibana <http://localhost:5601>
 
 
 ## File Structure
