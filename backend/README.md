@@ -11,7 +11,7 @@ Run `pytest tests` from the `backend` directory
 #### Prerequisite
 
 1. Connect to the postgres docker container: `docker exec -it --user postgres pgdb /bin/bash`
-2. Run the basic_search.sql script with the command: `psql -d aact -f pgdb/database_scripts/basic_search.sql`
+2. Run the basic_search.sql script with the command: `psql -d aact -f data/database_scripts/basic_search.sql`
 
 
 #### Parameters
@@ -35,31 +35,25 @@ The post format for the basic_search API should be:
 	    "last":""
 	}
 
-Curl command
+Curl command with a timer:
 
-	curl -d '{"status":"Recruiting","condition":"","other_terms":"POETYK","country":"",
-		    "intervention":"",
-		    "target":"",
-		    "nct_id":"",
-		    "eligibility_criteria":"",
-		    "first":"",
-		    "last":""}' -H 'Content-Type: application/json' -X POST http://127.0.0.1:8000/ctgov/api/basic_search
+`time curl -X POST http://127.0.0.1:8000/ctgov/api/basic_search -d pgdb/database_scripts/basic_search_example_query.json`
 
 #### Output
 
 
 Sample result below. Note that 'intervention_name' and 'location_name' are pipe delimited values. You have to parse them to display as a list in html.
 
-```
-{
-    "status": "Recruiting",
-    "brief_title": "An Investigational Study to Evaluate Experimental Medication BMS-986165 Compared to Placebo in Participants With Plaque Psoriasis (POETYK-PSO-3) in Mainland China, Taiwan, and South Korea",
-    "nct_id": "NCT04167462",
-    "condition_name": "Psoriasis",
-    "intervention_name": "BMS-986165|Placebo",
-    "location_name": "Local Institution|Local Institution|Local Institution"
-}
-```
+
+	{
+	    "status": "Recruiting",
+	    "brief_title": "An Investigational Study to Evaluate Experimental Medication BMS-986165 Compared to Placebo in Participants With Plaque Psoriasis (POETYK-PSO-3) in Mainland China, Taiwan, and South Korea",
+	    "nct_id": "NCT04167462",
+	    "condition_name": "Psoriasis",
+	    "intervention_name": "BMS-986165|Placebo",
+	    "location_name": "Local Institution|Local Institution|Local Institution"
+	}
+
 
 1. Pass all of the above 'post' parameters with exact name even though one of the parameter may be blank. If it is blank, pass an empty double quoted string.
 
@@ -73,35 +67,33 @@ The end point for Countries API is:
 
 Countries API will return a unique list of countries associated with studies in the following format.
 
-```
-[
-    {
-        "country": ""
-    },
-    {
-        "country": "Afghanistan"
-    },
-    {
-        "country": "Albania"
-    },
-    {
-        "country": "Algeria"
-    },
-    {
-        "country": "American Samoa"
-    },
-    {
-        "country": "Andorra"
-    },
-    {
-        "country": "Angola"
-    },
-    {
-        "country": "Antarctica"
-    }
-    {
-        ...
-    }
-]
-```
+	[
+	    {
+	        "country": ""
+	    },
+	    {
+	        "country": "Afghanistan"
+	    },
+	    {
+	        "country": "Albania"
+	    },
+	    {
+	        "country": "Algeria"
+	    },
+	    {
+	        "country": "American Samoa"
+	    },
+	    {
+	        "country": "Andorra"
+	    },
+	    {
+	        "country": "Angola"
+	    },
+	    {
+	        "country": "Antarctica"
+	    }
+	    {
+	        ...
+	    }
+	]
 
