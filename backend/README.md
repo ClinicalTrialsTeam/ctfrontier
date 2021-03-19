@@ -11,7 +11,7 @@ Run `pytest tests` from the `backend` directory
 #### Prerequisite
 
 1. Connect to the postgres docker container: `docker exec -it --user postgres pgdb /bin/bash`
-1. Run the basic_search.sql script with the command: `psql -d aact -f pgdb/database_scripts/basic_search.sql`
+1. Run the basic_search.sql script with the command: `psql -d aact -f database/scripts/basic_search.sql`
 
 
 #### Parameters
@@ -19,7 +19,7 @@ Run `pytest tests` from the `backend` directory
 The end point for Basic Search API is:
 <http://127.0.0.1:8000/ctgov/api/basic_search>
 
-Example query located in`pgdb/database_scripts/basic_search_example_query.json`:
+Example query located in`database/examples/basic_search_query.json`:
 
 	{
 	    "status":"Recruiting",
@@ -36,7 +36,7 @@ Example query located in`pgdb/database_scripts/basic_search_example_query.json`:
 
 Example curl command with a timer using the example json:
 
-`time curl -X POST http://127.0.0.1:8000/ctgov/api/basic_search -d pgdb/database_scripts/basic_search_example_query.json`
+`time curl -X POST http://127.0.0.1:8000/ctgov/api/basic_search -d database/examples/basic_search_query.json`
 
 #### Output
 

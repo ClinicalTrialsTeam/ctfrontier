@@ -2,7 +2,7 @@
 node_modules/
 **.coverage
 clinical_trials.zip
-pgdb/data
+database/data
 
 # These should only exist in the frontend folder
 package.json
