@@ -82,10 +82,6 @@ Copy this into a new `.env` file and fill it in (this .env file be in the "backe
 
 `docker ps` - see your currently running docker containers
 
-### psql
-
-Here's a useful psql command cheat sheet: [https://gist.github.com/Kartones/dd3ff5ec5ea238d4c546](https://gist.github.com/Kartones/dd3ff5ec5ea238d4c546)
-
 ## Connect to the containers
 
 ### react

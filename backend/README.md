@@ -35,6 +35,9 @@ will be cached and it will not take so long.
 		 ctgov  | conditions                 | table | postgres
 		 ctgov  | countries                  | table | postgres
 
+### psql
+
+Here's a useful psql command cheat sheet: [https://gist.github.com/Kartones/dd3ff5ec5ea238d4c546](https://gist.github.com/Kartones/dd3ff5ec5ea238d4c546)
 
 ## API Endpoints
 
