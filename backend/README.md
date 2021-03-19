@@ -11,7 +11,7 @@ Run `pytest tests` from the `backend` directory
 #### Prerequisite
 
 1. Connect to the postgres docker container: `docker exec -it --user postgres pgdb /bin/bash`
-2. Run the basic_search.sql script with the command: `psql -d aact -f data/database_scripts/basic_search.sql`
+1. Run the basic_search.sql script with the command: `psql -d aact -f data/database_scripts/basic_search.sql`
 
 
 #### Parameters
@@ -19,8 +19,7 @@ Run `pytest tests` from the `backend` directory
 The end point for Basic Search API is:
 <http://127.0.0.1:8000/ctgov/api/basic_search>
 
-The post format for the basic_search API should be:
-
+Example query located in`pgdb/database_scripts/basic_search_example_query.json`:
 
 	{
 	    "status":"Recruiting",
@@ -35,7 +34,7 @@ The post format for the basic_search API should be:
 	    "last":""
 	}
 
-Curl command with a timer:
+Example curl command with a timer using the example json:
 
 `time curl -X POST http://127.0.0.1:8000/ctgov/api/basic_search -d pgdb/database_scripts/basic_search_example_query.json`
 
@@ -57,7 +56,7 @@ Sample result below. Note that 'intervention_name' and 'location_name' are pipe 
 
 1. Pass all of the above 'post' parameters with exact name even though one of the parameter may be blank. If it is blank, pass an empty double quoted string.
 
-2. 'first' and 'last' is for pagination. If it is blank, Django backend will assume first = 0 and last = 100. I think you can accomplish pagination using hidden fields in your html and keep incrementing with offset for every 'previous' or 'next' action.
+1. 'first' and 'last' is for pagination. If it is blank, Django backend will assume first = 0 and last = 100. I think you can accomplish pagination using hidden fields in your html and keep incrementing with offset for every 'previous' or 'next' action.
 
 
 ### Countries API
