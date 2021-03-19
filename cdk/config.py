@@ -1,9 +1,17 @@
 from cdk import names
 import boto3
+import json
+from enum import Enum
 
-SSM_BASE_PATH = f"/{names.PROJECT_NAME}/"
+SSM_BASE_PATH = f"/{names.PROJECT_NAME}"
 
 ssm = boto3.client("ssm")
+
+
+class ParamTypes(Enum):
+    STRING = "String"
+    STRING_LIST = "StringList"
+    SECURE_STRING = "SecureString"
 
 
 class Config:
@@ -14,11 +22,13 @@ class Config:
         """
         Create a new configuration.
         """
-        f = open(initial_config_file, "r")
-        print(f.read())
 
-        # Read json key, values
-        # Create parameters for each
+        # Read json key, values and create parameters for each
+        with open(initial_config_file, "r") as f:
+            data = json.load(f)
+
+        for key, val in data.items():
+            Param(key).create(val)
 
     def save(self):
         pass
@@ -28,15 +38,36 @@ class Config:
 
 
 class Param:
-    def __init__(self, param_name, param_type="SecureString"):
+    def __init__(self, param_name, param_type=ParamTypes.SECURE_STRING):
         self.name = param_name
+        self.path_name = f"{SSM_BASE_PATH}/{param_name}"
+        if param_type not in ParamTypes:
+            raise Exception(f"{param_type} is an invalid ssm parameter type")
         self.type = param_type
 
-    def create(self):
-        ssm.put_parameter()
+    def create(self, value):
+        resp = ssm.put_parameter(
+            Name=self.path_name,
+            Description=f"{names.PROJECT_NAME} environment variable {self.name}",
+            Value=value,
+            Type=self.type,
+            Overwrite=True,
+            Tags=[{"Key": "project", "Value": "CTF"}],
+            Tier="Standard",
+        )
+        print(f"Created ssm param {self.name},{value}: {resp}")
 
     def exists(self):
-        pass
+        resp = ssm.get_parameter(Name=self.path_name, WithDecryption=False)
+        print(f"Checked existence: {resp}")
 
-    def update(self, ssm_name):
-        pass
+    def update(self, value):
+        resp = ssm.put_parameter(
+            Name=self.path_name,
+            Value=value,
+        )
+        print(f"Updated ssm param {self.name} value to {value}: {resp}")
+
+    def delete(self):
+        resp = ssm.delete_parameter(Name=self.path_name)
+        print(f"Delted ssm param {self.name}: {resp}")
