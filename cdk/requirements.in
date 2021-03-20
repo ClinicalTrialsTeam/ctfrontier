@@ -1,7 +1,8 @@
+invoke
+boto3
+python-dotenv
 aws-cdk.core>=1.94.0
 aws-cdk.aws_s3>=1.94.0
 aws-cdk.aws_lambda>=1.94.0
 aws-cdk.aws_cloudwatch>=1.94.0
 aws-cdk.aws_logs>=1.94.0
-invoke
-boto3
