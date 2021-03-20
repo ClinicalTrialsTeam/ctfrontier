@@ -43,7 +43,7 @@ jobs:
 
   notify:
     name: Slack
-    needs: [test, lint] # We only check after the others jobs have run
+    needs: [react-test, react-lint] # We only check after the others jobs have run
     if: always() # Always runs even if one of the builds fails
     runs-on: ubuntu-latest
     steps:
