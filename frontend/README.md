@@ -1,6 +1,63 @@
-# Getting Started with Create React App
+## Dependency management
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+
+### What is package.json?
+
+`package.json` lists the dependencies of the project and defines the rules for
+which versions of the dependencies will be allowed. There is a separate category
+for app dependencies ("dependencies") vs development dependencies ("devDependencies").
+
+`package.json` uses semantic versioning rules to define which updates can be
+installed when `npm update` is run. For example, `^`, the most commonly
+use rule, only allows updates that do not change the leftmost non-zero number.
+For example, `^1.0.0` would allow updates to `1.1.1` but not to `2.0.0` and 
+`^1.1.0` would allow updates to `1.1.1` but not `1.2.0`.
+
+
+More details on npm semeantic versioning rules here: <https://nodejs.dev/learn/semantic-versioning-using-npm/>
+
+### How do I install new dependencies?
+
+To install new dependencies:
+
+1. Make sure your docker container is running, or start it with `docker-compose up` or `docker-compose up react` to only run the react container.
+1. Connect to the react docker container `docker exec -it react /bin/bash`
+1. Install with `npm i <package-name> --save` for an app dependency or
+`npm i <package-name> --save-dev` for a development dependency.
+
+
+### What is package-lock.json?
+
+`package-lock.json` Stores the versions of every dependency that are actually
+being used by the application. This makes the results of running the app
+reproducable. Running `npm update` will cause `package-lock.json`
+to update if there are any new package versions available  that fit the rules
+from `package.json` (there almost always are).
+
+If you see the error below when running `npm install` or `npm update`,
+you probably just need to add `--legacy-peer-deps` to your command.
+
+    npm ERR! ERESOLVE unable to resolve dependency tree
+    ....
+    npm ERR! Could not resolve dependency:
+    ...
+    npm ERR! Fix the upstream dependency conflict, or retry
+    npm ERR! this command with --force, or --legacy-peer-deps
+    npm ERR! to accept an incorrect (and potentially broken) dependency resolution.
+
+
+Periodically, `npm update` should be run to update the dependencies and the new `package-lock.json` file should be committed.
+
+## Fixing ESLint errors
+
+You can run ESLint from your terminal. First you should probably make sure
+that you have an updated version of Node (this project currently recommends
+at least version 15.4.0) and that you have ESLint installed.
+
+Then, from the frontend folder you can run an ESLint check with `eslint .`.
+You can automatically fix any ESLint problems that are automatically
+fixable with `eslint --fix`.
+(You can also automatically fix ESLint errors from your IDE)
 
 ## Available Scripts
 
