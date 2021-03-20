@@ -1,9 +1,8 @@
-name: react build
+name: linting and testing
 
 on:
   workflow_dispatch:
   push:
-  pull_request:
 
 jobs:
   react-test:
@@ -41,9 +40,40 @@ jobs:
       - run: npm run lint
         working-directory: frontend
 
+  django-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Install python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+      - name: Install pytest
+        run: pip install -r requirements.txt
+        working-directory: backend
+      - run: pytest tests
+        env:
+          DJANGO_SECRET: fake-secret
+        working-directory: backend
+  
+  python-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+      - run: pip install black
+      - run: black backend --check
+      - run: black cdk --check
+      - run: pip install flake8
+      - run: flake8 backend
+      - run: flake8 cdk
+  
   notify:
     name: Slack
-    needs: [react-test, react-lint] # We only check after the others jobs have run
+    needs: [react-test, react-lint, django-test, python-lint] # We only check after the others jobs have run
     if: always() # Always runs even if one of the builds fails
     runs-on: ubuntu-latest
     steps:
@@ -51,5 +81,3 @@ jobs:
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-
