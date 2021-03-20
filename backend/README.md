@@ -133,3 +133,18 @@ Countries API will return a unique list of countries associated with studies in 
 	    }
 	]
 
+## Changing your Postgres DB password
+
+If you want to change your posgres DB password, you need to
+update the password in the postgres database as well as in your `.env` file.
+
+Steps to take: 
+
+1. Set `DB_PASSWORD` to your current password in your `.env` file.
+1. Start the docker containers with `docker-compose up`
+1. Connect to the postgres container: `docker exec -it --user postgres pgdb /bin/bash`
+1. Connect to the database: `psql`
+1. Change your password: `ALTER USER postgres PASSWORD 'new password';`
+1. Shut down the docker containers: `docker-compose down`
+1. Update `DB_PASSWORD` in `.env` to have your new password.
+1. Re-start the docker containers: `docker-compose up`
