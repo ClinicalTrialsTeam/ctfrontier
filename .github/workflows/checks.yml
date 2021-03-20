@@ -1,4 +1,4 @@
-name: linting and testing
+name: Build checks
 
 on:
   workflow_dispatch:
