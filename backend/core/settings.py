@@ -36,7 +36,7 @@ ALLOWED_HOSTS = []
 # Elastic Search
 # https://django-elasticsearch-dsl.readthedocs.io/en/latest/quickstart.html
 ELASTICSEARCH_DSL = {
-    "default": {"hosts": "localhost:9200"},
+    "default": {"hosts": "host.docker.internal:9200"},
 }
 
 # Application definition
@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "ctgov",
+    "django_elasticsearch_dsl",
 ]
 
 MIDDLEWARE = [
