@@ -6,7 +6,7 @@ on:
   pull_request:
 
 jobs:
-  react-tests:
+  react-test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -22,7 +22,34 @@ jobs:
       - name: Run test command
         run: npm run test
         working-directory: frontend
+
+  react-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Setup Node
+        uses: actions/setup-node@v2-beta
+        with:
+          node-version: '15'
+          check-latest: true
+      - name: Install dependencies
+        run: npm install
+        working-directory: frontend
       - run: npm install eslint
         working-directory: frontend
       - run: npm run lint
         working-directory: frontend
+
+  notify:
+    name: Slack
+    needs: [test, lint] # We only check after the others jobs have run
+    if: always() # Always runs even if one of the builds fails
+    runs-on: ubuntu-latest
+    steps:
+      - uses: iRoachie/slack-github-actions@v2.3.0
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
