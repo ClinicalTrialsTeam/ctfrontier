@@ -2,3 +2,4 @@ pre-commit
 black
 flake8
 django>=3.1.7
+django-elasticsearch-dsl
