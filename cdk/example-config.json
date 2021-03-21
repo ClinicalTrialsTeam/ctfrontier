@@ -1,0 +1,4 @@
+{
+    "notification_email": "foo@example.com",
+    "foo": "bar"
+}

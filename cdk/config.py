@@ -8,7 +8,7 @@ from enum import Enum
 import os
 from os.path import join, dirname
 from dotenv import load_dotenv
-from pprint import pprint
+import click
 
 
 # load dotenv
@@ -17,6 +17,7 @@ load_dotenv(dotenv_path)
 
 SSM_BASE_PATH = f"/{names.PROJECT_NAME}"
 AWS_PROFILE = os.getenv("AWS_PROFILE")
+EXAMPLE_CONFIG = "example-config.json"
 
 if AWS_PROFILE:
     boto3.Session(profile_name=AWS_PROFILE)
@@ -24,9 +25,9 @@ if AWS_PROFILE:
 ssm = boto3.client("ssm")
 
 
-class ParamValidationError(Exception):
+class ConfigValidationError(Exception):
     def __init__(self, message=None, errors=[]):
-        super(ParamValidationError, self).__init__(message)
+        super(ConfigValidationError, self).__init__(message)
         self.errors = errors
 
 
@@ -37,9 +38,6 @@ class ParamTypes(Enum):
 
 
 class Config:
-    def __init__(self):
-        pass
-
     def new(self, initial_config_file):
         """
         Create a new configuration.
@@ -60,33 +58,30 @@ class Config:
     def edit(self):
         tf = TemporaryFile()
 
-        # while True:
-        #     try:
-        #         tf.open_editor()
-        #         changes = tf.diff()
-        #         if changes:
-        #             click.echo("\n".join(tf.diff()) + "\n")
-        #             if click.confirm("Accept changes?"):
-        #                 break
-        #             if click.confirm("Continue editing?", abort=True):
-        #                 continue
-        #         if not changes:
-        #             click.echo("No changes made")
-        #             return
-        #     except ParamSchemaValidationError as e:
-        #         click.echo("\nSchema validation failed:")
-        #         for error in e.errors:
-        #             click.echo(error, err=True)
-        #         click.confirm("Continue editing?", abort=True)
+        while True:
+            try:
+                tf.open_editor()
+                diff = tf.diff()
+                if diff:
+                    if click.confirm("Accept changes?"):
+                        break
+                    if click.confirm("Continue editing?", abort=True):
+                        continue
+                else:
+                    click.echo("No changes made")
+                    return
+            except ConfigValidationError as e:
+                click.echo("\nMissing required config variables:")
+                for error in e.errors:
+                    click.echo(error, err=True)
+                click.confirm("Continue editing?", abort=True)
 
-        # tf.push_updates()
-        # tf.delete()
-
-    def save(self):
-        pass
+        tf.push_updates()
+        tf.delete()
 
     def delete(self):
-        pass
+        for key in Param.current_parameters().keys():
+            Param(key).delete()
 
 
 class Param:
@@ -98,12 +93,23 @@ class Param:
         self.name = param_name
         self.path_name = f"{SSM_BASE_PATH}/{param_name}"
 
+    @classmethod
+    def current_parameters(cls):
+        # Load current parameters
+        resp = ssm.get_parameters_by_path(
+            Path=SSM_BASE_PATH, WithDecryption=True
+        )
+
+        return {
+            r["Name"].split("/")[-1]: r["Value"] for r in resp["Parameters"]
+        }
+
     def create(self, value, param_type=ParamTypes.SECURE_STRING):
         if param_type not in ParamTypes:
             raise Exception(f"{param_type} is an invalid ssm parameter type")
         self.type = param_type.value
 
-        resp = ssm.put_parameter(
+        ssm.put_parameter(
             Name=self.path_name,
             Description=f"{names.PROJECT_NAME} environment variable {self.name}",
             Value=value,
@@ -116,7 +122,7 @@ class Param:
             ],
             Tier="Standard",
         )
-        print(f"Created ssm param {self.name},{value}: {resp}")
+        print(f"Created ssm param {self.name}={value}")
 
     def exists(self):
         try:
@@ -126,146 +132,104 @@ class Param:
             return False
 
     def update(self, value):
-        resp = ssm.put_parameter(
-            Name=self.path_name, Value=value, Overwrite=True
-        )
-        print(f"Updated ssm param {self.name} value to {value}: {resp}")
+        ssm.put_parameter(Name=self.path_name, Value=value, Overwrite=True)
+        print(f"Updated ssm param {self.name} to {value}")
 
     def delete(self):
-        resp = ssm.delete_parameter(Name=self.path_name)
-        print(f"Delted ssm param {self.name}: {resp}")
+        ssm.delete_parameter(Name=self.path_name)
+        print(f"Deleted ssm param {self.name}")
 
 
 class TemporaryFile:
     def __init__(self, base_path=SSM_BASE_PATH):
-
-        # Load current parameters
-        resp = ssm.get_parameters_by_path(Path=base_path, WithDecryption=True)
-        pprint(resp["Parameters"])
-
-        self.current_params = {
-            r["Name"].split("/")[-1]: r["Value"] for r in resp["Parameters"]
-        }
+        self.current_params = Param().current_parameters()
 
         # write a temporary file with the current parameters
         with tempfile.NamedTemporaryFile(mode="w", delete=False) as f:
-            json.dump(self.current_params, f)
+            json.dump(self.current_params, f, indent=4)
 
         self.name = f.name
         self.new_params = {}
 
     def open_editor(self):
+        """
+        Open in editor and track changes made
+        """
         editor = os.environ.get("EDITOR")
         if not editor:
             editor = "vim"
 
         call([editor, self.name])
 
+        with open(self.name, "r") as tf:
+            self.new_params = json.load(tf)
+
         self.validate()
 
-        self.envs = {}
-        with open(self.name, "r") as tf:
-            lines = tf.readlines()
-            for line in lines:
-                env_name, env_value = line.strip().split("=")
-                self.envs[env_name] = env_value
+        self._create = {}
+        self._update = {}
+        self._delete = []
+
+        for key, val in self.new_params.items():
+            if key in self.current_params.keys():
+                if val != self.current_params[key]:
+                    self._update[key] = val
+            else:
+                self._create[key] = val
+
+        for key in self.current_params.keys():
+            if key not in self.new_params.keys():
+                self._delete.append(key)
 
     def validate(self):
-        with open("example-config.json", "r") as f:
+        """
+        Make sure required config variables are set
+        """
+        with open(EXAMPLE_CONFIG, "r") as f:
             data = json.load(f)
 
         required_params = set(data.keys())
-        existing_params = set(self.current_params.keys())
+        new_params = set(self.new_params.keys())
 
         errors = []
-        for missing in existing_params.difference(required_params):
-            errors.append(f"{missing} exists in SSM but is not required")
-        for missing in required_params.difference(existing_params):
+        for missing in required_params.difference(new_params):
             errors.append(f"{missing} required but missing from SSM")
         if errors:
-            raise ParamValidationError(errors=errors)
+            raise ConfigValidationError(errors=errors)
 
-    # def diff(self):
-    #     config = get_config(self.config_file)
-    #     schema = config["schema"]
-    #     existing_params = {p.name: p for p in self.stage.get_params()}
+    def diff(self):
+        """
+        Display changes made
+        """
+        for key, val in self._create.items():
+            click.echo(f"Create {key}={val}")
 
-    #     changes = []
-    #     for param in self.envs:
-    #         if param not in existing_params:
-    #             if self.envs[param]:
-    #                 # in schema but not yet in parameter store
-    #                 param_type = schema[param][0]
-    #                 changes.append(
-    #                     "Adding param of type {} {}={}."
-    #                     .format(param_type, param, self.envs[param])
-    #                 )
-    #             else:
-    #                 # not in schema
-    #                 changes.append(
-    #                     "Warning: param {} not defined in schema."
-    #                     " Add to schema before accepting changes.".format(param)
-    #                 )
-    #         else:
-    #             if existing_params[param].value != self.envs[param]:
-    #                 changes.append("Updating param {} from {} to {}"
-    #                                .format(param, existing_params[param].value,
-    #                                        self.envs[param]))
-    #             current_param_type = existing_params[param].type
-    #             schema_param_type = schema[param][0]
-    #             if current_param_type != schema_param_type:
-    #                 changes.append("Changing param {} from type {} to type {}."
-    #                                .format(
-    #                                     param,
-    #                                     current_param_type,
-    #                                     schema_param_type))
+        for key, val in self._update.items():
+            click.echo(f"Update {key} to {val}")
 
-    #     for param in self.deleted_params():
-    #         changes.append("Deleting param {}".format(param))
+        for key in self._delete:
+            click.echo(f"Delete {key}")
 
-    #     return changes
+        return self._create or self._update or self._delete
 
-    # def deleted_params(self):
-    #     deleted_params = {}
-    #     existing_params = {p.name: p.value for p in self.stage.get_params()}
+    def push_updates(self):
+        """
+        Push updates to SSM
+        """
+        for key, val in self._create.items():
+            Param(key).create(val)
 
-    #     for param in existing_params:
-    #         if param not in self.envs:
-    #             deleted_params[param] = existing_params[param]
+        for key, val in self._update.items():
+            Param(key).update(val)
 
-    #     return deleted_params
-
-    # def push_updates(self):
-    #     config = get_config(self.config_file)
-    #     schema = config["schema"]
-    #     tags = config.get("tags", {})
-
-    #     for param in self.envs:
-    #         if param not in schema:
-    #             click.echo(
-    #                 "Param {}(value={}) not in schema, skipping update"
-    #                 .format(param, self.envs[param])
-    #             )
-    #             continue
-    #         param_type = schema[param][0]
-    #         param_desc = None
-    #         if len(schema[param]) > 1:
-    #             param_desc = schema[param][1]
-    #         args = [param, self.envs[param], param_type, param_desc]
-
-    #         Param.create(
-    #             self.stage.project,
-    #             self.stage.name,
-    #             *args,
-    #             overwrite=True,
-    #             tags=tags
-    #         )
-
-    #     for param in self.deleted_params():
-    #         self.stage.delete(param)
+        for key in self._delete:
+            Param(key).delete()
 
     def delete(self):
+        """
+        Delete the temporary file
+        """
         os.unlink(self.name)
 
 
-tf = TemporaryFile()
+Config().edit()
