@@ -1,8 +1,8 @@
 **/.env
 node_modules/
 **.coverage
-data/
 clinical_trials.zip
+database/data
 
 # These should only exist in the frontend folder
 package.json
