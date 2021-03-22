@@ -8,12 +8,12 @@ from . import names
 
 
 class RawDataDownloadFunction(core.Construct):
-    def __init__(
-        self, scope: core.Construct, id: str, lambda_code_bucket, monitoring
-    ):
+    def __init__(self, scope: core.Construct, id: str, monitoring):
         super().__init__(scope, id)
 
         self.stack_name = core.Stack.of(self).stack_name
+
+        # Docker, ECR?? from_asset_image?
 
         function_props = {
             "function_name": f"{self.stack_name}-{names.RAW_DATA_DOWNLOAD_FUNCTION}",

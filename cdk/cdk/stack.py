@@ -22,10 +22,5 @@ class CtStack(core.Stack):
         # S3 bucket to store raw data at beginning of ETL pipeline
         CtfBucket(self, "RawDataFilesBucket", name=names.RAW_DATA_FILES_BUCKET)
 
-        # S3 bucket to store the lambda deployment package in
-        lambda_code_bucket = CtfBucket(
-            self, "LambdaCodeBucket", name=names.LAMBDA_CODE_BUCKET
-        )
-
         # Function to download files and save in S3
-        RawDataDownloadFunction(lambda_code_bucket, monitoring)
+        RawDataDownloadFunction(monitoring)
