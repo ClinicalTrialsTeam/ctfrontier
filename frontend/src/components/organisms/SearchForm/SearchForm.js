@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-  Form, Select, Divider, Row, Col, Space, Modal,
+  Form, Select, Divider, Row, Col, Space,
 } from 'antd';
 import { v4 as uuidv4 } from 'uuid';
 import ctgov from '../../../apis/ctgov';
@@ -28,20 +28,9 @@ class SearchForm extends Component {
       country: '',
       otherTerms: '',
       searchResults: '',
-      isModalVisible: false,
-      modalMessage: '',
-      modalTitle: '',
     };
   }
 
-  async componentDidMount() {
-    try {
-      const response = await fetch('http://localhost:8000/ctgov/api/countries');
-      this.setModalParams(true, 'Response Content', response);
-    } catch (err) {
-      this.setModalParams(true, 'Error Message', 'Failed to fetch countries');
-    }
-  }
 
   async handleSearch() {
     const payload = {
@@ -93,20 +82,6 @@ class SearchForm extends Component {
     });
   }
 
-  setModalParams(modalVisibility, modalTitle, modalMessage) {
-    this.setState({
-      isModalVisible: modalVisibility,
-      modalMessage,
-      modalTitle,
-    });
-  }
-
-  setModalVisible(isModalVisible) {
-    this.setState({
-      isModalVisible,
-    });
-  }
-
   render() {
     const { Option } = Select;
     const countryList = [];
@@ -118,15 +93,6 @@ class SearchForm extends Component {
     });
     return (
       <>
-        <Modal
-          // key=Math.random().toString(36).substr(2, 9)
-          title={this.state.modalTitle}
-          visible={this.state.isModalVisible}
-          onOk={() => { return this.setModalVisible(false); }}
-          onCancel={() => { return this.setModalVisible(false); }}
-        >
-          <p>{this.state.modalMessage}</p>
-        </Modal>
         <Divider
           orientation="left"
           style={{ marginTop: '24px' }}
