@@ -48,10 +48,12 @@ Here's a useful psql command cheat sheet: [https://gist.github.com/Kartones/dd3f
 
 #### Prerequisite
 
-1. Connect to the postgres docker container: `docker exec -it --user postgres pgdb /bin/bash`
+1. Run the pgdb container with `docker-compose up pgdb`
+1. In another terminal, connect to the postgres docker container: `docker exec -it --user postgres pgdb /bin/bash`
 1. Run the basic_search.sql script with the command: `psql -d aact -f database/scripts/basic_search.sql`
 1. Connect to the aact database `psql -d aact`
 1. Use the command `\dv` to list the views and verify that basic_search appears in the list of views.
+1. Ctrl + D twice to exit psql and then the postgres container. Then `docker-compose up` to bring up the whole app.
 
 
 #### Parameters
