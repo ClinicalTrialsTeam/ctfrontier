@@ -81,6 +81,19 @@ Copy this into a new `.env` file and fill it in (this .env file be in the "backe
 
 `docker ps` - see your currently running docker containers
 
+`docker-compose up -d` - Start docker in detatched mode if you don't want to
+see logs. However, if you do this don't forget to use `docker-compose down`
+to take them down later. Use `docker ps` to see if you have any images
+currently running that you might have forgotten about.
+
+`docker logs <service> --follow` - To see the live log output of a particular
+service. For example `docker logs react --follow`.
+
+`docker system prune -a` - To clear out all unused containers, networks and images.
+This may free up some space if you have some docker things laying around that you
+forgot about. However, `docker-compose up` will take longer the next time you run
+it because everything will have to rebuild.
+
 ## Connect to the containers
 
 ### react
