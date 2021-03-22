@@ -5,8 +5,8 @@
 ## Prerequisites
 
 * Docker installed and running
-* Python 3.9
-* Node.js 15.4.0+
+* Python 3.8
+* Node.js 15.12.0+
 
 
 ## Setup
@@ -87,7 +87,7 @@ Copy this into a new `.env` file and fill it in (this .env file be in the "backe
 `docker exec -it react /bin/bash`
 
 ### django
-`docker exec -it django /bin/bash`
+`docker exec -it django /bin/sh`
 
 ### pgdb
 `docker exec -it pgdb /bin/bash` (note: you can only access the db as the user postges so if you connect this way you may need to switch users)
