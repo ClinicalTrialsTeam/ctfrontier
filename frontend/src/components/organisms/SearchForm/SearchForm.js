@@ -31,7 +31,6 @@ class SearchForm extends Component {
     };
   }
 
-
   async handleSearch() {
     const payload = {
       status: '',
