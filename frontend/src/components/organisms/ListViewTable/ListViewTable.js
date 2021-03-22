@@ -5,6 +5,7 @@ import {
 import {
   GlobalOutlined, TableOutlined, BarChartOutlined, DownloadOutlined,
 } from '@ant-design/icons';
+import { v4 as uuidv4 } from 'uuid';
 
 import FacetedSearchGroup from '../../molecules/FacetedSearchGroup/FacetedSearchGroup';
 
@@ -15,39 +16,29 @@ import {
 import { columns, data } from './ListViewTableConfig';
 import './ListViewTable.css';
 
-const rowSelection = {
-  onChange: (selectedRowKeys, selectedRows) => {
-    console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-  },
-  getCheckboxProps: (record) => {
-    return {
-      name: record.name,
-    };
-  },
-};
-
 const ListViewTable = () => {
   return (
     <div>
-      <Row gutter={{
-        xs: 8,
-        sm: 12,
-        md: 12,
-        lg: 12,
-      }}
+      <Row
+        key={uuidv4()}
+        gutter={{
+          xs: 8,
+          sm: 12,
+          md: 12,
+          lg: 12,
+        }}
       >
-        <Col className="gutter-row" span={4}>
+        <Col key={uuidv4()} className="gutter-row" span={4}>
           <FacetedSearchGroup
             access={access}
             recruitment={recruitment}
             phases={phases}
           />
         </Col>
-        <Col className="gutter-row" span={20}>
+        <Col key={uuidv4()} className="gutter-row" span={20}>
           <Table
             rowSelection={{
               type: 'checkbox',
-              ...rowSelection,
             }}
             columns={columns}
             dataSource={data}
@@ -56,10 +47,10 @@ const ListViewTable = () => {
             title={() => {
               return (
                 <Space align="end">
-                  <Button icon={<BarChartOutlined />} size="large" />
-                  <Button icon={<TableOutlined />} size="large" />
-                  <Button icon={<GlobalOutlined />} size="large" />
-                  <Button icon={<DownloadOutlined />} size="large" className="float-right" />
+                  <Button key={uuidv4()} icon={<BarChartOutlined />} size="large" />
+                  <Button key={uuidv4()} icon={<TableOutlined />} size="large" />
+                  <Button key={uuidv4()} icon={<GlobalOutlined />} size="large" />
+                  <Button key={uuidv4()} icon={<DownloadOutlined />} size="large" className="float-right" />
                 </Space>
               );
             }}

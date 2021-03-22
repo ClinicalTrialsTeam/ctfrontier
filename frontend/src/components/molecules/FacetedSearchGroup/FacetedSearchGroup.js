@@ -75,7 +75,7 @@ class FacetedSearchGroup extends Component {
             <Panel header="Sponsor Type" key="8">
               <p>Data</p>
             </Panel>
-            <Panel header="Dates" key="8" style={{ marginBottom: 24 }}>
+            <Panel header="Dates" key="9" style={{ marginBottom: 24 }}>
               <p>Data</p>
             </Panel>
           </Collapse>
