@@ -1,3 +1,14 @@
+#### Prerequisite
+
+1. Connect to the postgres docker container 
+```docker exec -it --user postgres pgdb /bin/bash```
+2. Run the command:
+``` 
+psql -U postgres -d aact <<EOF
+*copy CREATE VIEW statement from the file backend/database_scripts/basic_search.sql*
+EOF
+```
+
 
 ## API End Points
 
@@ -43,16 +54,7 @@ Sample result below. Note that 'intervention_name' and 'location_name' are pipe 
 
 2. 'first' and 'last' is for pagination. If it is blank, Django backend will assume first = 0 and last = 100. I think you can accomplish pagination using hidden fields in your html and keep incrementing with offset for every 'previous' or 'next' action.
 
-#### Prerequisite
 
-1. Connect to the postgres docker container 
-```docker exec -it --user postgres pgdb /bin/bash```
-2. Run the command:
-``` 
-psql -U postgres -d aact <<EOF
-*copy CREATE VIEW statement from the file backend/database_scripts/basic_search.sql*
-EOF
-```
 
 ### Countries API
 
