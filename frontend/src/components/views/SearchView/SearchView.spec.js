@@ -4,15 +4,15 @@ import { Layout } from 'antd';
 
 import Adapter from '@wojtekmaj/enzyme-adapter-react-17';
 
-import TopLevelSearchView from './TopLevelSearchView';
+import SearchView from './SearchView';
 
 // Configure adapter
 Enzyme.configure({ adapter: new Adapter() });
 
-describe('src > views > TopLevelSearchView', () => {
+describe('src > views > SearchView', () => {
   it('should render without throwing an error', async () => {
     expect(
-      shallow(<TopLevelSearchView />).contains(<Layout className="layout" />)
+      shallow(<SearchView />).contains(<Layout className="layout" />)
     );
   });
 });
