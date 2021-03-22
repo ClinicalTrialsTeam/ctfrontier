@@ -84,7 +84,7 @@ Copy this into a new `.env` file and fill it in (this .env file be in the "backe
 
 `docker images` - see your docker images
 
-`docker ps` - see your currently running docker containers
+`docker ps` - see your currently running docker containers (If you have a container you want to kill you can run `docker kill <name>`, for example `docker kill pgdb`
 
 `docker-compose up -d` - Start docker in detatched mode if you don't want to
 see logs. However, if you do this don't forget to use `docker-compose down`
