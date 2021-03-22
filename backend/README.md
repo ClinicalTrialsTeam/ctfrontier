@@ -7,11 +7,11 @@ Run `pytest tests` from the `backend` directory
 ## Initial load of CT.gov data
 
 1. Download `.zip` from [https://aact.ctti-clinicaltrials.org/snapshots](https://aact.ctti-clinicaltrials.org/snapshots)
-2. Unzip into `data` folder (`unzip <filename.zip> -d pgdb/data`)
-3. Start running the docker containers `docker-compose up`. The first time you
+2. Unzip into `data` folder (`unzip <filename.zip> -d database/data`)
+3. Start running the postgres container with `docker-compose up pgdb`. The first time you
 run this it will take a LONG time! After the first time, much of the build
 will be cached and it will not take so long.
-4. Connect to postgres container. `docker exec -it --user postgres pgdb /bin/bash`
+4. In a new terminal tab/window connect to postgres container. `docker exec -it --user postgres pgdb /bin/bash`
 5. Create the database `createdb aact`
 6. Restore the database from the `.dmp` file. `pg_restore -e -v -O -x -d aact --no-owner database/data/postgres_data.dmp`
 7. Start psql `psql`
@@ -34,6 +34,8 @@ will be cached and it will not take so long.
 		 ctgov  | central_contacts           | table | postgres
 		 ctgov  | conditions                 | table | postgres
 		 ctgov  | countries                  | table | postgres
+12. Ctrl + D to get out of psql, Ctrl + D again to get out of the postgres container.
+13. Finally, `docker-compose down` to take down the postgres container and `docker-compose up` to start running the whole application.
 
 ### psql
 
@@ -135,16 +137,16 @@ Countries API will return a unique list of countries associated with studies in 
 
 ## Changing your Postgres DB password
 
-If you want to change your posgres DB password, you need to
-update the password in the postgres database as well as in your `.env` file.
+In order to run your docker containers, `DB_PASSWORD` in `backend/core/.env` must match the actual postgres database password. If you want to change your postgres database password, you cannot just changed the stored value in `.env`, you must connect to postgres and change the actual postgres database password first.
 
 Steps to take: 
 
-1. Set `DB_PASSWORD` to your current password in your `.env` file.
-1. Start the docker containers with `docker-compose up`
-1. Connect to the postgres container: `docker exec -it --user postgres pgdb /bin/bash`
-1. Connect to the database: `psql`
-1. Change your password: `ALTER USER postgres PASSWORD 'new password';`
-1. Shut down the docker containers: `docker-compose down`
-1. Update `DB_PASSWORD` in `.env` to have your new password.
-1. Re-start the docker containers: `docker-compose up`
+1. Make sure that `DB_PASSWORD` in your `.env` file is the current postgres database password. (The way you know is you can start your django container with no errors.)
+1. Start the docker containers with `docker-compose up`. If you get the error `django.db.utils.OperationalError: FATAL: password authentication failed for user “postgres”`, then the password in your `.env` is incorrect. You need to fix it and start docker again.
+1. Now that your docker cointainers are running. Open a new terminal and connect to the postgres container with: `docker exec -it --user postgres pgdb /bin/bash`
+1. In the same terminal, connect to the database: `psql`
+1. In the same terminal, change your password using the command: `ALTER USER postgres PASSWORD '<new password>';` but replace `<new password>` with your desired password.
+1. Press Ctrl + D twice to exit psql and then exit the postgres container.
+1. Shut down the docker containers with: `docker-compose down`
+1. Update `DB_PASSWORD` in `.env` to have the same password you just set the postgres database to have.
+1. Re-start the docker containers with: `docker-compose up`
