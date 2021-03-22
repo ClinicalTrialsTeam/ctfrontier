@@ -7,6 +7,7 @@ Run `pytest tests` from the `backend` directory
 ## Initial load of CT.gov data
 
 1. Download `.zip` from [https://aact.ctti-clinicaltrials.org/snapshots](https://aact.ctti-clinicaltrials.org/snapshots)
+1. Save this `.zip` file in the projec root directory `ctfrontier`. (You should also be in the project root directory in your terminal.)
 2. Unzip into `data` folder (`unzip <filename.zip> -d database/data`)
 3. Start running the postgres container with `docker-compose up pgdb`. The first time you
 run this it will take a LONG time! After the first time, much of the build
