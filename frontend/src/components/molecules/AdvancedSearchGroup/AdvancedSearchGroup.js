@@ -9,10 +9,8 @@ import TextInputField from '../../atoms/TextInputField/TextInputField';
 
 class AdvancedSearchGroup extends Component {
   render() {
-    const { access, recruitment } = this.props;
+    const { access, recruitment, handleInputChange } = this.props;
     const { Panel } = Collapse;
-
-    const handleInputChange = () => {};
 
     const text = 'More content will be added here';
 
@@ -99,28 +97,28 @@ class AdvancedSearchGroup extends Component {
                   label="Title / acronym"
                   title="The official title of a protocol used to identify a clinical study or a short title written in language intended for the lay public. The acronym or initials used to identify a clinical study (not all studies have one). For example, the title acronym for the Women's Health Initiative is 'WHI.'"
                   name="title"
-                  handleInputChange={handleInputChange()}
+                  handleInputChange={handleInputChange}
                 />
                 <TextInputField
                   key={uuidv4()}
                   label="Collaborator"
                   title="An organization other than the sponsor that provides support for a clinical study. This support may include activities related to funding, design, implementation, data analysis, or reporting."
                   name="title"
-                  handleInputChange={handleInputChange()}
+                  handleInputChange={handleInputChange}
                 />
                 <TextInputField
                   key={uuidv4()}
                   label="Outcome measure"
                   title="For clinical trials, a planned measurement described in the protocol that is used to determine the effect of an intervention/treatment on participants. For observational studies, a measurement or observation that is used to describe patterns of diseases or traits, or associations with exposures, risk factors, or treatment. Types of outcome measures include primary outcome measure and secondary outcome measure."
                   name="outcome"
-                  handleInputChange={handleInputChange()}
+                  handleInputChange={handleInputChange}
                 />
                 <TextInputField
                   key={uuidv4()}
                   label="Study IDs"
                   title="Identifiers that are assigned to a clinical study by the study's sponsor, funders, or others. They include unique identifiers from other trial study registries and National Institutes of Health grant numbers. Note: ClinicalTrials.gov assigns a unique identification code to each clinical study registered on ClinicalTrials.gov. Also called the NCT number, the format is 'NCT' followed by an 8-digit number (for example, NCT00000419)."
                   name="study_ids"
-                  handleInputChange={handleInputChange()}
+                  handleInputChange={handleInputChange}
                 />
               </Panel>
             </Collapse>
@@ -141,6 +139,7 @@ class AdvancedSearchGroup extends Component {
 AdvancedSearchGroup.propTypes = {
   access: PropTypes.array.isRequired,
   recruitment: PropTypes.array.isRequired,
+  handleInputChange: PropTypes.func.isRequired,
 };
 
 export default AdvancedSearchGroup;

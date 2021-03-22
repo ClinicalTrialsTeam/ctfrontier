@@ -213,6 +213,7 @@ class SearchForm extends Component {
           <AdvancedSearchGroup
             access={access}
             recruitment={recruitment}
+            handleInputChange={this.handleInputChange}
           />
           <div style={{ display: 'none' }}>{JSON.stringify(this.state.searchResults)}</div>
         </Form>
