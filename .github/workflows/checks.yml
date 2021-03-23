@@ -1,0 +1,72 @@
+name: Build checks
+
+on:
+  workflow_dispatch:
+  push:
+
+jobs:
+  react-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Setup Node
+        uses: actions/setup-node@v2-beta
+        with:
+          node-version: '15'
+          check-latest: true
+      - name: Install dependencies
+        run: npm install
+        working-directory: frontend
+      - name: Run test command
+        run: npm run test
+        working-directory: frontend
+
+  react-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Setup Node
+        uses: actions/setup-node@v2-beta
+        with:
+          node-version: '15'
+          check-latest: true
+      - name: Install dependencies
+        run: npm install
+        working-directory: frontend
+      - run: npm install eslint
+        working-directory: frontend
+      - run: npm run lint
+        working-directory: frontend
+
+  django-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Install python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+      - name: Install pytest
+        run: pip install -r requirements.txt
+        working-directory: backend
+      - run: pytest tests
+        env:
+          DJANGO_SECRET: fake-secret
+        working-directory: backend
+  
+  python-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+      - run: pip install black
+      - run: black backend --check
+      - run: black cdk --check
+      - run: pip install flake8
+      - run: flake8 backend
+      - run: flake8 cdk
