@@ -33,8 +33,8 @@ Copy this into a new `.env` file and fill it in (this .env file be in the "backe
 
 *Run the project with elasticsearch and kibana:*
 
-1. Bring the containers up with `docker-compose -f docker-compose.es.yml up`
-1. To take the containers down run `docker-compose -f docker-compose.es.yml down` in a new terminal
+1. Bring the containers up with `docker-compose -f elasticsearch.yml up`
+1. To take the containers down run `docker-compose -f elasticsearch.yml down` in a new terminal
 
 #### Where to find things (list of containers and ports also available using `docker ps`)
 
