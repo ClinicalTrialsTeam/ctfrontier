@@ -10,6 +10,8 @@ services:
       - node-modules:/app/frontend/node_modules
     ports:
       - 3000:3000
+    networks:
+      - ctf
   django:
     build: ./backend
     container_name: django
@@ -19,6 +21,8 @@ services:
     command: /bin/sh -c "pip-compile --quiet && pip install -r requirements.txt -q && python manage.py migrate && pip list && python manage.py runserver 0.0.0.0:8000"
     ports:
       - 8000:8000
+    networks:
+      - ctf
   pgdb:
     env_file:
       - ./backend/core/.env
@@ -32,9 +36,15 @@ services:
     volumes:
       - ./database/:/database
       - pgdata:/var/lib/postgresql/data/
+    networks:
+      - ctf
 
 volumes:
   pgdata:
     driver: local
   node-modules:
     driver: local
+
+networks:
+  ctf:
+    driver: bridge

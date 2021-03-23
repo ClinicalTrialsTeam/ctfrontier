@@ -41,7 +41,7 @@ services:
     volumes:
       - elsdata:/usr/share/elasticsearch/data
     networks:
-      - elastic
+      - ctf
   kibana:
     container_name: kibana
     image: docker.elastic.co/kibana/kibana:7.11.2
@@ -53,7 +53,7 @@ services:
     depends_on:
       - elasticsearch
     networks:
-      - elastic
+      - ctf
 
 volumes:
   pgdata:
@@ -64,5 +64,5 @@ volumes:
     driver: local
 
 networks:
-  elastic:
+  ctf:
     driver: bridge
