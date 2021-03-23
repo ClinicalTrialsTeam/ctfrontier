@@ -18,6 +18,7 @@ class TextInputField extends Component {
         onChange={handleInputChange}
       >
         <Input
+          allowClear
           name={name}
         />
       </Form.Item>
