@@ -4,7 +4,7 @@ services:
   react:
     build: ./frontend
     container_name: react
-    command: /bin/bash -c "npm update --legacy-peer-deps && npm start"
+    command: npm start
     volumes:
       - ./frontend:/app/frontend
       - node-modules:/app/frontend/node_modules
@@ -33,7 +33,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD={DB_PASSWORD}
     volumes:
-      - ./data/:/data
+      - ./database/:/database
       - pgdata:/var/lib/postgresql/data/
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.11.2
