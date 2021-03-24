@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "ctgov",
+    "corsheaders",
     "django_elasticsearch_dsl",
     "django_elasticsearch_dsl_drf",
 ]
