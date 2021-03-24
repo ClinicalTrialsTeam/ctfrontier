@@ -1,4 +1,4 @@
-invoke
+click
 boto3
 python-dotenv
 aws-cdk.core>=1.94.0

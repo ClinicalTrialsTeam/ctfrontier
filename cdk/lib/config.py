@@ -1,4 +1,4 @@
-from cdk import names
+from . import names
 import boto3
 from botocore.exceptions import ParamValidationError, ClientError
 import json
@@ -18,6 +18,12 @@ load_dotenv(dotenv_path)
 SSM_BASE_PATH = f"/{names.PROJECT_NAME}"
 AWS_PROFILE = os.getenv("AWS_PROFILE")
 EXAMPLE_CONFIG = "example-config.json"
+STACK_TAGS = [
+    {
+        "Key": "project",
+        "Value": "CTF",
+    }
+]
 
 if AWS_PROFILE:
     boto3.Session(profile_name=AWS_PROFILE)
@@ -114,12 +120,7 @@ class Param:
             Description=f"{names.PROJECT_NAME} environment variable {self.name}",
             Value=value,
             Type=self.type,
-            Tags=[
-                {
-                    "Key": "project",
-                    "Value": "CTF",
-                }
-            ],
+            Tags=STACK_TAGS,
             Tier="Standard",
         )
         print(f"Created ssm param {self.name}={value}")
@@ -130,6 +131,10 @@ class Param:
             return True
         except ssm.exceptions.ParameterNotFound:
             return False
+
+    @property
+    def value(self, decrypt=False):
+        ssm.get_parameter(Name=self.path_name, WithDecryption=decrypt)
 
     def update(self, value):
         ssm.put_parameter(Name=self.path_name, Value=value, Overwrite=True)
@@ -230,6 +235,3 @@ class TemporaryFile:
         Delete the temporary file
         """
         os.unlink(self.name)
-
-
-Config().edit()

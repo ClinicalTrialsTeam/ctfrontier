@@ -13,7 +13,6 @@ class RawDataDownloadFunction(core.Construct):
         self,
         scope: core.Construct,
         id: str,
-        repository,
         monitoring,
     ):
         super().__init__(scope, id)
