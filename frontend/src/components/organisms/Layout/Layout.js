@@ -21,7 +21,7 @@ const TrialsLayout = ({ children }) => {
 };
 
 TrialsLayout.propTypes = {
-  children: PropTypes.array.isRequired,
+  children: PropTypes.object.isRequired,
 };
 
 export default TrialsLayout;

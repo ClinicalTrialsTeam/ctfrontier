@@ -40,8 +40,8 @@ function RouteWrapper({
 }
 
 RouteWrapper.propTypes = {
-  component: PropTypes.array.isRequired,
-  layout: PropTypes.array.isRequired,
+  component: PropTypes.func.isRequired,
+  layout: PropTypes.func.isRequired,
 };
 
 export default App;
