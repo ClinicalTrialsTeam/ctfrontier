@@ -15,21 +15,34 @@ coverage==5.5
 django-cors-headers==3.7.0
     # via -r requirements.in
 django-elasticsearch-dsl==7.1.4
-    # via -r requirements.in
+    # via
+    #   -r requirements.in
+    #   django-elasticsearch-dsl-drf
 django-filter==2.4.0
     # via -r requirements.in
+django-nine==0.2.4
+    # via django-elasticsearch-dsl-drf
 django==3.1.7
     # via
     #   -r requirements.in
     #   django-cors-headers
     #   django-filter
+    #   django-nine
     #   djangorestframework
-djangorestframework==3.12.2
+django_elasticsearch_dsl_drf==0.18
     # via -r requirements.in
+djangorestframework==3.12.2
+    # via
+    #   -r requirements.in
+    #   django-elasticsearch-dsl-drf
 elasticsearch-dsl==7.3.0
-    # via django-elasticsearch-dsl
+    # via
+    #   django-elasticsearch-dsl
+    #   django-elasticsearch-dsl-drf
 elasticsearch==7.11.0
-    # via elasticsearch-dsl
+    # via
+    #   django-elasticsearch-dsl-drf
+    #   elasticsearch-dsl
 iniconfig==1.1.1
     # via pytest
 markdown==3.3.4
@@ -73,6 +86,7 @@ pytz==2021.1
 six==1.15.0
     # via
     #   django-elasticsearch-dsl
+    #   django-elasticsearch-dsl-drf
     #   elasticsearch-dsl
     #   python-dateutil
 sqlparse==0.4.1
