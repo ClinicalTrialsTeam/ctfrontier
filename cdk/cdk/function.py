@@ -5,31 +5,35 @@ from aws_cdk import (
     aws_logs as logs,
 )
 from . import names
+from os.path import join, dirname
 
 
 class RawDataDownloadFunction(core.Construct):
-    def __init__(self, scope: core.Construct, id: str, monitoring):
+    def __init__(
+        self,
+        scope: core.Construct,
+        id: str,
+        repository,
+        monitoring,
+    ):
         super().__init__(scope, id)
 
         self.stack_name = core.Stack.of(self).stack_name
 
-        # Docker, ECR?? from_asset_image?
-
-        function_props = {
-            "function_name": f"{self.stack_name}-{names.RAW_DATA_DOWNLOAD_FUNCTION}",
-            "runtime": aws_lambda.Runtime.PYTHON_3_8,
-            "code": aws_lambda.Code.from_bucket(
-                bucket=lambda_code_bucket,
-                key=f"{self.stack_name}/{names.RAW_DATA_DOWNLOAD_FUNCTION}.zip",
+        self.function = aws_lambda.DockerImageFunction(
+            self,
+            "function",
+            function_name=f"{self.stack_name}-{names.RAW_DATA_DOWNLOAD_FUNCTION}",
+            code=aws_lambda.DockerImageCode().from_image_asset(
+                directory=join(dirname(__file__), "../image")
             ),
-            "handler": f"{names.RAW_DATA_DOWNLOAD_FUNCTION}.handler",
-            "timeout": core.Duration.seconds(30),
-            "memory_size": 128,
-            "environment": {},
-            "log_retention": logs.RetentionDays.TWO_MONTHS,
-        }
+            environment={"TEST_ENV": "test_val"},
+            log_retention=logs.RetentionDays.ONE_WEEK,
+            memory_size=128,
+            timeout=core.Duration.seconds(30),
+            retry_attempts=0,
+        )
 
-        self.function = aws_lambda.Function(self, "function", **function_props)
         self.alias = aws_lambda.Alias(
             self,
             "alias",

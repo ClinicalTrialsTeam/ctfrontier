@@ -2,6 +2,7 @@ from aws_cdk import core, aws_s3 as s3
 from .monitoring import CtfMonitoring
 from .function import RawDataDownloadFunction
 from .bucket import CtfBucket
+from .repository import CtfRepository
 from . import names
 
 
@@ -22,5 +23,12 @@ class CtStack(core.Stack):
         # S3 bucket to store raw data at beginning of ETL pipeline
         CtfBucket(self, "RawDataFilesBucket", name=names.RAW_DATA_FILES_BUCKET)
 
+        # Docker image for data download lambda
+        repository = CtfRepository(
+            self,
+            "RawDataDownloadImage",
+            names.RAW_DATA_DOWNLOAD_IMAGE,
+        )
+
         # Function to download files and save in S3
-        RawDataDownloadFunction(monitoring)
+        RawDataDownloadFunction(repository, monitoring)
