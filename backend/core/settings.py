@@ -51,6 +51,8 @@ INSTALLED_APPS = [
     "rest_framework",
     "ctgov",
     "corsheaders",
+    "django_elasticsearch_dsl",
+    "django_elasticsearch_dsl_drf",
 ]
 
 MIDDLEWARE = [
