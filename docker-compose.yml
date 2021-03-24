@@ -61,8 +61,6 @@ services:
       - elsdata:/usr/share/elasticsearch/data
     networks:
       - elastic
-    logging:
-      driver: "none"
   kibana:
     container_name: kibana
     image: docker.elastic.co/kibana/kibana:7.11.2
