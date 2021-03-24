@@ -39,7 +39,7 @@ SelectField.propTypes = {
   label: PropTypes.string.isRequired,
   tooltip: PropTypes.string.isRequired,
   placeholder: PropTypes.string.isRequired,
-  options: PropTypes.isRequired,
+  options: PropTypes.array.isRequired,
   handleInputChange: PropTypes.func.isRequired,
 };
 
