@@ -5,7 +5,7 @@
 
 #### Python
 
-* Python 3.9
+* Python 3.8
 * The Python `virtualenv` package (or similar if you are used to using a different one)
 
 #### CDK
