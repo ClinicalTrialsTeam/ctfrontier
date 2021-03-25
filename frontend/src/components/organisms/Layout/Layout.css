@@ -1,0 +1,7 @@
+#content-bg {
+    padding: 0 50px;
+    min-height: '100vh';
+    background: #BE93C5;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #edf2f3, #e1f7ff);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #edf2f3, #e1f7ff); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  }
