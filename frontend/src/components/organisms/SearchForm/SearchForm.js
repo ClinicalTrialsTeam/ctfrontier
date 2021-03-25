@@ -57,6 +57,7 @@ class SearchForm extends Component {
   }
 
   handleClear() {
+    console.log('It is me!!');
     this.setState({
       intervention: '',
       condition: '',
@@ -100,9 +101,9 @@ class SearchForm extends Component {
       );
     }
 
-    Array.from(countries.entries()).forEach(([, value]) => {
+    Array.from(countries.entries()).forEach(([index, value]) => {
       countryList.push(
-        <Option key="11" value={value}>{value}</Option>
+        <Option key={index} value={value}>{value}</Option>
       );
     });
     return (
@@ -116,9 +117,9 @@ class SearchForm extends Component {
         <Form
           ref={this.formRef}
           layout="vertical"
-          key="15"
+          key="form_key"
         >
-          <Row gutter={[16, 16]}>
+          <Row key="form_row_1" gutter={[16, 16]}>
             <Col key="12" span={8}>
               <TextInputField
                 key="1"
@@ -170,12 +171,12 @@ class SearchForm extends Component {
               />
             </Col>
           </Row>
-          <Row key="7" justify="center">
+          <Row key="form_row_2" justify="center">
             <Form.Item>
               <Space>
                 <Button
                   key="8"
-                  type="primary"
+                  inputType="primary"
                   text="Search"
                   clickHandler={this.handleSearch}
                 />
