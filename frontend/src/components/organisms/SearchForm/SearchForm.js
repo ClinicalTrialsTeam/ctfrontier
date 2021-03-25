@@ -23,7 +23,9 @@ class SearchForm extends Component {
     this.handleCountryChange = this.handleCountryChange.bind(this);
     this.handleSearch = this.handleSearch.bind(this);
     this.handleClear = this.handleClear.bind(this);
+    this.formRef = React.createRef();
     this.state = {
+      intervention: '',
       condition: '',
       target: '',
       country: '',
@@ -64,6 +66,7 @@ class SearchForm extends Component {
       otherTerms: '',
       nct_id: '',
     });
+    this.formRef.current.resetFields();
   }
 
   handleInputChange(e) {
@@ -112,6 +115,7 @@ class SearchForm extends Component {
           Find a study (all fields are optional)
         </Divider>
         <Form
+          ref={this.formRef}
           layout="vertical"
         >
           <Row gutter={[16, 16]}>
