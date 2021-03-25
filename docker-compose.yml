@@ -73,7 +73,6 @@ services:
       - elasticsearch
     networks:
       - elastic
-
 volumes:
   pgdata:
     driver: local

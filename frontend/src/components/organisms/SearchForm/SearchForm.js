@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Redirect } from 'react-router-dom';
 import {
   Form, Select, Divider, Row, Col, Space,
 } from 'antd';
@@ -50,7 +51,7 @@ class SearchForm extends Component {
         searchResults: response.data,
       });
     } catch (err) {
-      this.setModalParams(true, 'Error Message', err);
+      console.log(err);
     }
   }
 
@@ -84,6 +85,18 @@ class SearchForm extends Component {
   render() {
     const { Option } = Select;
     const countryList = [];
+
+    if (this.state.searchResults !== '') {
+      return (
+        <Redirect
+          push
+          to={{
+            pathname: '/trials',
+            state: { data: this.state.searchResults },
+          }}
+        />
+      );
+    }
 
     Array.from(countries.entries()).forEach(([, value]) => {
       countryList.push(
