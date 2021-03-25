@@ -1,98 +1,94 @@
 {
-    "env": {
-        "browser": true,
-        "es2021": true,
-        "jest": true
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "jest": true
+  },
+  "extends": [
+    "plugin:react/recommended",
+    "airbnb"
+  ],
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
     },
-    "globals": {
-      "module": true
-    },
-    "extends": [
-        "eslint:recommended",
-        "plugin:react/recommended"
+    "ecmaVersion": 12,
+    "sourceType": "module"
+  },
+  "plugins": [
+    "react"
+  ],
+  "rules": {
+    "react/destructuring-assignment": [0],
+    "react/forbid-prop-types": [0],
+    "arrow-body-style": [
+      "warn",
+      "always"
     ],
-    "parserOptions": {
-        "ecmaFeatures": {
-            "jsx": true
+    "arrow-parens": [
+      "warn",
+      "always"
+    ],
+    "comma-dangle": [
+      "error",
+      {
+        "arrays": "always-multiline",
+        "objects": "always-multiline",
+        "imports": "always-multiline",
+        "exports": "always-multiline",
+        "functions": "never"
+      }
+    ],
+    "consistent-return": "off",
+    "id-length": "off",
+    "max-len": [
+      "error",
+      {
+        "code": 80,
+        "ignoreStrings": true,
+        "ignoreTemplateLiterals": true,
+        "ignoreUrls": true
+      }
+    ],
+    "newline-per-chained-call": [
+      "error",
+      {
+        "ignoreChainWithDepth": 2
+      }
+    ],
+    "no-plusplus": [
+      "warn",
+      {
+        "allowForLoopAfterthoughts": true
+      }
+    ],
+    "prefer-template": "off",
+    "prefer-destructuring": [
+      "error",
+      {
+        "VariableDeclarator": {
+          "array": false,
+          "object": true
         },
-        "ecmaVersion": 12,
-        "sourceType": "module"
-    },
-    "plugins": [
-        "react"
-    ],
-        "rules": {
-          "react/destructuring-assignment": [0],
-          "react/forbid-prop-types": [0],
-          "arrow-body-style": [
-            "warn",
-            "always"
-          ],
-          "arrow-parens": [
-            "warn",
-            "always"
-          ],
-          "comma-dangle": [
-            "error",
-            {
-              "arrays": "always-multiline",
-              "objects": "always-multiline",
-              "imports": "always-multiline",
-              "exports": "always-multiline",
-              "functions": "never"
-            }
-          ],
-          "consistent-return": "off",
-          "id-length": "off",
-          "max-len": [
-            "error",
-            {
-              "code": 80,
-              "ignoreStrings": true,
-              "ignoreTemplateLiterals": true,
-              "ignoreUrls": true
-            }
-          ],
-          "newline-per-chained-call": [
-            "error",
-            {
-              "ignoreChainWithDepth": 2
-            }
-          ],
-          "no-plusplus": [
-            "warn",
-            {
-              "allowForLoopAfterthoughts": true
-            }
-          ],
-          "prefer-template": "off",
-          "prefer-destructuring": [
-            "error",
-            {
-              "VariableDeclarator": {
-                "array": false,
-                "object": true
-              },
-              "AssignmentExpression": {
-                "array": false,
-                "object": true
-              }
-            },
-            {
-              "enforceForRenamedProperties": false
-            }
-          ],
-          "radix": "off",
-          "react/prefer-stateless-function": "off",
-          "react/jsx-filename-extension": "off",
-          "no-underscore-dangle": "off",
-          "no-await-in-loop": "off",
-          "max-params": [
-            "warn",
-            {
-              "max": 3
-            }
-          ],
-          "react/jsx-props-no-spreading": "off"
+        "AssignmentExpression": {
+          "array": false,
+          "object": true
         }
+      },
+      {
+        "enforceForRenamedProperties": false
+      }
+    ],
+    "radix": "off",
+    "react/prefer-stateless-function": "off",
+    "react/jsx-filename-extension": "off",
+    "no-underscore-dangle": "off",
+    "no-await-in-loop": "off",
+    "max-params": [
+      "warn",
+      {
+        "max": 3
+      }
+    ]
+  }
 }

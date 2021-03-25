@@ -23,11 +23,9 @@ class SearchForm extends Component {
     this.handleSearch = this.handleSearch.bind(this);
     this.handleClear = this.handleClear.bind(this);
     this.state = {
-      nct_id: '',
       condition: '',
       target: '',
       country: '',
-      intervention: '',
       otherTerms: '',
       searchResults: '',
     };
