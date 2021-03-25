@@ -4,9 +4,12 @@
     "es2021": true,
     "jest": true
   },
+  "globals": {
+    "module": true
+  },
   "extends": [
-    "plugin:react/recommended",
-    "airbnb"
+    "eslint:recommended",
+    "plugin:react/recommended"
   ],
   "parserOptions": {
     "ecmaFeatures": {
@@ -89,6 +92,7 @@
       {
         "max": 3
       }
-    ]
+    ],
+    "react/jsx-props-no-spreading": "off"
   }
 }
