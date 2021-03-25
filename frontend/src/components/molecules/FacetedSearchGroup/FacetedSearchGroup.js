@@ -3,7 +3,6 @@ import {
   Checkbox, Collapse, Form, Typography, Space,
 } from 'antd';
 import PropTypes from 'prop-types';
-import { v4 as uuidv4 } from 'uuid';
 
 class FacetedSearchGroup extends Component {
   render() {
@@ -15,9 +14,9 @@ class FacetedSearchGroup extends Component {
 
     const recruitmentCheckboxes = [];
 
-    Array.from(recruitment.entries()).forEach(([, value]) => {
+    Array.from(recruitment.entries()).forEach(([index, value]) => {
       recruitmentCheckboxes.push(
-        <Checkbox key={uuidv4()} value={value} style={{ lineHeight: '24px' }}>
+        <Checkbox key={index} value={value} style={{ lineHeight: '24px' }}>
           {value}
         </Checkbox>
       );
@@ -25,9 +24,9 @@ class FacetedSearchGroup extends Component {
 
     const accessCheckboxes = [];
 
-    Array.from(access.entries()).forEach(([, value]) => {
+    Array.from(access.entries()).forEach(([index, value]) => {
       accessCheckboxes.push(
-        <Checkbox key={uuidv4()} value={value} style={{ lineHeight: '24px' }}>
+        <Checkbox key={index} value={value} style={{ lineHeight: '24px' }}>
           {value}
         </Checkbox>
       );
@@ -35,9 +34,9 @@ class FacetedSearchGroup extends Component {
 
     const phasesCheckboxes = [];
 
-    Array.from(phases.entries()).forEach(([, value]) => {
+    Array.from(phases.entries()).forEach(([index, value]) => {
       phasesCheckboxes.push(
-        <Checkbox key={uuidv4()} value={value} style={{ lineHeight: '24px' }}>
+        <Checkbox key={index} value={value} style={{ lineHeight: '24px' }}>
           {value}
         </Checkbox>
       );
@@ -47,7 +46,7 @@ class FacetedSearchGroup extends Component {
       <>
         <Form>
           <Collapse>
-            <Panel key={uuidv4()} header="Status">
+            <Panel key="1" header="Status">
               <Title level={5}>Recruitment Status</Title>
               <Space direction="vertical">
                 {recruitmentCheckboxes}
@@ -55,28 +54,28 @@ class FacetedSearchGroup extends Component {
               </Space>
               {accessCheckboxes}
             </Panel>
-            <Panel key={uuidv4()} header="Phase">
+            <Panel key="2" header="Phase">
               {phasesCheckboxes}
             </Panel>
-            <Panel key={uuidv4()} header="Administration">
+            <Panel key="3" header="Administration">
               <p>{text}</p>
             </Panel>
-            <Panel key={uuidv4()} header="Target">
+            <Panel key="4" header="Target">
               <p>Data</p>
             </Panel>
-            <Panel key={uuidv4()} header="Modality">
+            <Panel key="5" header="Modality">
               <p>Data</p>
             </Panel>
-            <Panel key={uuidv4()} header="No. of patients">
+            <Panel key="6" header="No. of patients">
               <p>Data</p>
             </Panel>
-            <Panel key={uuidv4()} header="Sponsor">
+            <Panel key="7" header="Sponsor">
               <p>Data</p>
             </Panel>
-            <Panel key={uuidv4()} header="Sponsor Type">
+            <Panel key="8" header="Sponsor Type">
               <p>Data</p>
             </Panel>
-            <Panel key={uuidv4()} header="Dates" style={{ marginBottom: 24 }}>
+            <Panel key="9" header="Dates" style={{ marginBottom: 24 }}>
               <p>Data</p>
             </Panel>
           </Collapse>

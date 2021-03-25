@@ -57,7 +57,6 @@ class SearchForm extends Component {
   }
 
   handleClear() {
-    console.log('It is me!!');
     this.setState({
       intervention: '',
       condition: '',
