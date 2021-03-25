@@ -175,7 +175,7 @@ class SearchForm extends Component {
               <Space>
                 <Button
                   key={uuidv4()}
-                  type="primary"
+                  inputType="primary"
                   text="Search"
                   clickHandler={this.handleSearch}
                 />
