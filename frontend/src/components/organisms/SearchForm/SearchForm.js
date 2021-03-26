@@ -12,7 +12,7 @@ import AdvancedSearchGroup from '../../molecules/AdvancedSearchGroup/AdvancedSea
 import './SearchForm.css';
 
 import {
-  recruitment, access, countries,
+  recruitment, access,
 } from '../../../variables/TopLevelSearchData';
 
 class SearchForm extends Component {
@@ -30,6 +30,7 @@ class SearchForm extends Component {
       country: '',
       otherTerms: '',
       searchResults: '',
+      countries: [],
     };
   }
 
@@ -84,6 +85,20 @@ class SearchForm extends Component {
     });
   }
 
+  async componentDidMount() {
+    try {
+      const response = await ctgov.get('countries');
+      const countries = response.data.map((item) => {
+          return item.country;
+      });
+      this.setState({
+        countries,
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
   render() {
     const { Option } = Select;
     const countryList = [];
@@ -100,7 +115,7 @@ class SearchForm extends Component {
       );
     }
 
-    Array.from(countries.entries()).forEach(([index, value]) => {
+    Array.from(this.state.countries.entries()).forEach(([index, value]) => {
       countryList.push(
         <Option key={index} value={value}>{value}</Option>
       );
