@@ -34,29 +34,6 @@ class SearchForm extends Component {
     };
   }
 
-  async handleSearch() {
-    const payload = {
-      status: '',
-      condition: this.state.condition,
-      other_terms: this.state.otherTerms,
-      country: this.state.country,
-      intervention: this.state.intervention,
-      target: this.state.target,
-      nct_id: this.state.nct_id,
-      eligibility_criteria: '',
-      first: '',
-      last: '',
-    };
-    try {
-      const response = await ctgov.post('basic_search', payload);
-      this.setState({
-        searchResults: response.data,
-      });
-    } catch (err) {
-      console.log(err);
-    }
-  }
-
   handleClear() {
     this.setState({
       intervention: '',
@@ -89,10 +66,33 @@ class SearchForm extends Component {
     try {
       const response = await ctgov.get('countries');
       const countries = response.data.map((item) => {
-          return item.country;
+        return item.country;
       });
       this.setState({
         countries,
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  async handleSearch() {
+    const payload = {
+      status: '',
+      condition: this.state.condition,
+      other_terms: this.state.otherTerms,
+      country: this.state.country,
+      intervention: this.state.intervention,
+      target: this.state.target,
+      nct_id: this.state.nct_id,
+      eligibility_criteria: '',
+      first: '',
+      last: '',
+    };
+    try {
+      const response = await ctgov.post('basic_search', payload);
+      this.setState({
+        searchResults: response.data,
       });
     } catch (err) {
       console.log(err);
