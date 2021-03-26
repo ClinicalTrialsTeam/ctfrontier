@@ -1,22 +1,26 @@
 import React, { Component } from 'react';
 import {
-  Checkbox, Collapse, Form, Typography, Space,
+  Checkbox, Collapse, Form, Typography, Space, DatePicker,
 } from 'antd';
 import PropTypes from 'prop-types';
 
+import './FacetedSearchGroup.css';
+
+const { RangePicker } = DatePicker;
+
 class FacetedSearchGroup extends Component {
   render() {
-    const { access, recruitment, phases } = this.props;
+    const {
+      access, recruitment, phases, roa,
+    } = this.props;
     const { Panel } = Collapse;
-    const { Title } = Typography;
-
-    const text = 'Data';
+    const { Text } = Typography;
 
     const recruitmentCheckboxes = [];
 
-    Array.from(recruitment.entries()).forEach(([, value]) => {
+    Array.from(recruitment.entries()).forEach(([index, value]) => {
       recruitmentCheckboxes.push(
-        <Checkbox value={value} style={{ lineHeight: '24px' }}>
+        <Checkbox key={index} value={value} style={{ lineHeight: '24px' }}>
           {value}
         </Checkbox>
       );
@@ -24,9 +28,9 @@ class FacetedSearchGroup extends Component {
 
     const accessCheckboxes = [];
 
-    Array.from(access.entries()).forEach(([, value]) => {
+    Array.from(access.entries()).forEach(([index, value]) => {
       accessCheckboxes.push(
-        <Checkbox value={value} style={{ lineHeight: '24px' }}>
+        <Checkbox key={index} value={value} style={{ lineHeight: '24px' }}>
           {value}
         </Checkbox>
       );
@@ -34,9 +38,19 @@ class FacetedSearchGroup extends Component {
 
     const phasesCheckboxes = [];
 
-    Array.from(phases.entries()).forEach(([, value]) => {
+    Array.from(phases.entries()).forEach(([index, value]) => {
       phasesCheckboxes.push(
-        <Checkbox value={value} style={{ lineHeight: '24px' }}>
+        <Checkbox key={index} value={value} style={{ lineHeight: '24px' }}>
+          {value}
+        </Checkbox>
+      );
+    });
+
+    const roaCheckboxes = [];
+
+    Array.from(roa.entries()).forEach(([index, value]) => {
+      roaCheckboxes.push(
+        <Checkbox key={index} value={value} style={{ lineHeight: '24px' }}>
           {value}
         </Checkbox>
       );
@@ -45,38 +59,79 @@ class FacetedSearchGroup extends Component {
     return (
       <>
         <Form>
-          <Collapse>
-            <Panel header="Status" key="1">
-              <Title level={5}>Recruitment Status</Title>
-              <Space direction="vertical">
+          <Collapse className="fs-group-collapse">
+            <Panel
+              key="1"
+              header="Status"
+              className="fs-group-panel"
+            >
+              <Space key="recr-status-checkboxes" direction="vertical">
+                <Text key="txt-1" strong>Recruitment Status</Text>
                 {recruitmentCheckboxes}
-                <Title level={5}>Expanded Access</Title>
+                <Text key="txt-2" strong>Expanded Access</Text>
+                {accessCheckboxes}
               </Space>
-              {accessCheckboxes}
             </Panel>
-            <Panel header="Phase" key="2">
-              {phasesCheckboxes}
+            <Panel
+              key="2"
+              header="Phase"
+              className="fs-group-panel"
+            >
+              <Space direction="vertical">
+                {phasesCheckboxes}
+              </Space>
             </Panel>
-            <Panel header="Administration" key="3">
-              <p>{text}</p>
+            <Panel
+              key="3"
+              header="Administration"
+              className="fs-group-panel"
+            >
+              <Space direction="vertical">
+                {roaCheckboxes}
+              </Space>
             </Panel>
-            <Panel header="Target" key="4">
+            <Panel
+              key="4"
+              header="Target"
+              className="fs-group-panel"
+            >
               <p>Data</p>
             </Panel>
-            <Panel header="Modality" key="5">
+            <Panel
+              key="5"
+              header="Modality"
+              className="fs-group-panel"
+            >
               <p>Data</p>
             </Panel>
-            <Panel header="No. of patients" key="6">
+            <Panel
+              key="6"
+              header="No. of patients"
+              className="fs-group-panel"
+            >
               <p>Data</p>
             </Panel>
-            <Panel header="Sponsor" key="7">
+            <Panel
+              key="7"
+              header="Sponsor"
+              className="fs-group-panel"
+            >
               <p>Data</p>
             </Panel>
-            <Panel header="Sponsor Type" key="8">
+            <Panel
+              key="8"
+              header="Sponsor Type"
+              className="fs-group-panel"
+            >
               <p>Data</p>
             </Panel>
-            <Panel header="Dates" key="9" style={{ marginBottom: 24 }}>
-              <p>Data</p>
+            <Panel
+              key="9"
+              id="rangepicker-panel"
+              header="Dates"
+              className="fs-group-panel"
+            >
+              <RangePicker picker="month" size="small" />
             </Panel>
           </Collapse>
         </Form>
@@ -89,6 +144,7 @@ FacetedSearchGroup.propTypes = {
   access: PropTypes.array.isRequired,
   recruitment: PropTypes.array.isRequired,
   phases: PropTypes.array.isRequired,
+  roa: PropTypes.array.isRequired,
 };
 
 export default FacetedSearchGroup;

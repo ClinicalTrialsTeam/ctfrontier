@@ -2,13 +2,15 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import permissions
-from ctgov.models import BriefSummaries, BasicSearch, Studies, Facilities
+from ctgov.models import BriefSummaries, BasicSearchM, Studies, Facilities
 from .serializers import (
     BriefSummariesSerializer,
     BasicSearchSerializer,
     CountriesSerializer,
 )
 from django.db.models import Q
+from datetime import datetime
+import sys
 
 
 class BriefSummariesListApiView(APIView):
@@ -43,6 +45,33 @@ class BasicSearchApiView(APIView):
         target_moa = request.data.get("target")
         eligibility_criteria = request.data.get("eligibility_criteria")
 
+        # new fields based on client demo
+        modality = request.data.get("modality")
+        sponsor = request.data.get("sponsor")
+        phase = request.data.get("phase")
+        start_date_from = request.data.get("start_date_from")
+        start_date_to = request.data.get("start_date_to")
+        primary_completion_date_from = request.data.get(
+            "primary_completion_date_from"
+        )
+        primary_completion_date_to = request.data.get(
+            "primary_completion_date_to"
+        )
+        first_posted_date_from = request.data.get("first_posted_date_from")
+        first_posted_date_to = request.data.get("first_posted_date_to")
+        results_first_posted_date_from = request.data.get(
+            "results_first_posted_date_from"
+        )
+        results_first_posted_date_to = request.data.get(
+            "results_first_posted_date_to"
+        )
+        last_update_posted_date_from = request.data.get(
+            "last_update_posted_date_from"
+        )
+        last_update_posted_date_to = request.data.get(
+            "last_update_posted_date_to"
+        )
+
         if not study_status:
             study_status = "Completed"
 
@@ -61,6 +90,48 @@ class BasicSearchApiView(APIView):
             filters["study_brief_desc__icontains"] = target_moa
         if eligibility_criteria:
             filters["eligibility_criteria__icontains"] = eligibility_criteria
+        if modality:
+            filters["study_detailed_desc__icontains"] = modality
+        if sponsor:
+            filters["sponsor_name__icontains"] = sponsor
+        if phase:
+            filters["study_phase__icontains"] = phase
+        if valid_date(start_date_from):
+            filters["study_start_date__gte"] = convert_to_date(start_date_from)
+        if valid_date(start_date_to):
+            filters["study_start_date__lte"] = convert_to_date(start_date_to)
+        if valid_date(primary_completion_date_from):
+            filters["primary_completion_date__gte"] = convert_to_date(
+                primary_completion_date_from
+            )
+        if valid_date(primary_completion_date_to):
+            filters["primary_completion_date__lte"] = convert_to_date(
+                primary_completion_date_to
+            )
+        if valid_date(first_posted_date_from):
+            filters["study_first_posted_date__gte"] = convert_to_date(
+                first_posted_date_from
+            )
+        if valid_date(first_posted_date_to):
+            filters["study_first_posted_date__lte"] = convert_to_date(
+                first_posted_date_to
+            )
+        if valid_date(results_first_posted_date_from):
+            filters["results_first_posted_date__gte"] = convert_to_date(
+                results_first_posted_date_from
+            )
+        if valid_date(results_first_posted_date_to):
+            filters["results_first_posted_date__lte"] = convert_to_date(
+                results_first_posted_date_to
+            )
+        if valid_date(last_update_posted_date_from):
+            filters["last_update_posted_date__gte"] = convert_to_date(
+                last_update_posted_date_from
+            )
+        if valid_date(last_update_posted_date_to):
+            filters["last_update_posted_date__lte"] = convert_to_date(
+                last_update_posted_date_to
+            )
 
         if not first:
             first = 0
@@ -68,7 +139,7 @@ class BasicSearchApiView(APIView):
             last = 100
 
         search_results = (
-            BasicSearch.objects.filter(**filters)
+            BasicSearchM.objects.filter(**filters)
             .all()
             .values(
                 "status",
@@ -82,3 +153,18 @@ class BasicSearchApiView(APIView):
 
         serializer = BasicSearchSerializer(search_results, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+def convert_to_date(datestr):
+    date = datetime.strptime(datestr, "%Y-%m-%d")
+    return date
+
+
+def valid_date(datestr):
+    status = True
+    try:
+        datetime.strptime(datestr, "%Y-%m-%d")
+    except ValueError:
+        status = False
+
+    return status

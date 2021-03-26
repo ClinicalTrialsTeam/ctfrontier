@@ -26,6 +26,22 @@ const phases = [
   'Not Applicable',
 ];
 
+const roa = [
+  'Oral',
+  'Intradermal',
+  'Intravenous',
+  'Subcutaneous',
+  'Intramuscular',
+  'Sublingual',
+  'Topical',
+  'Rectal',
+  'Ocular',
+  'Otic',
+  'Vaginal',
+  'Nasal',
+  'Other',
+];
+
 const countries = [
   'United States of America (the)',
   'Afghanistan',
@@ -283,4 +299,5 @@ module.exports = {
   access,
   phases,
   countries,
+  roa,
 };
