@@ -8,11 +8,11 @@ import './FacetedSearchGroup.css';
 
 class FacetedSearchGroup extends Component {
   render() {
-    const { access, recruitment, phases } = this.props;
+    const {
+      access, recruitment, phases, roa,
+    } = this.props;
     const { Panel } = Collapse;
-    const { Title } = Typography;
-
-    const text = 'Data';
+    const { Text } = Typography;
 
     const recruitmentCheckboxes = [];
 
@@ -44,6 +44,16 @@ class FacetedSearchGroup extends Component {
       );
     });
 
+    const roaCheckboxes = [];
+
+    Array.from(roa.entries()).forEach(([index, value]) => {
+      roaCheckboxes.push(
+        <Checkbox key={index} value={value} style={{ lineHeight: '24px' }}>
+          {value}
+        </Checkbox>
+      );
+    });
+
     return (
       <>
         <Form>
@@ -53,26 +63,30 @@ class FacetedSearchGroup extends Component {
               header="Status"
               className="fs-group-panel"
             >
-              <Title key="recr-status-title" level={5}>Recruitment Status</Title>
               <Space key="recr-status-checkboxes" direction="vertical">
+                <Text key="txt-1" strong>Recruitment Status</Text>
                 {recruitmentCheckboxes}
-                <Title key="expanded-access-title" level={5}>Expanded Access</Title>
+                <Text key="txt-2" strong>Expanded Access</Text>
+                {accessCheckboxes}
               </Space>
-              {accessCheckboxes}
             </Panel>
             <Panel
               key="2"
               header="Phase"
               className="fs-group-panel"
             >
-              {phasesCheckboxes}
+              <Space direction="vertical">
+                {phasesCheckboxes}
+              </Space>
             </Panel>
             <Panel
               key="3"
               header="Administration"
               className="fs-group-panel"
             >
-              <p>{text}</p>
+              <Space direction="vertical">
+                {roaCheckboxes}
+              </Space>
             </Panel>
             <Panel
               key="4"
@@ -127,6 +141,7 @@ FacetedSearchGroup.propTypes = {
   access: PropTypes.array.isRequired,
   recruitment: PropTypes.array.isRequired,
   phases: PropTypes.array.isRequired,
+  roa: PropTypes.array.isRequired,
 };
 
 export default FacetedSearchGroup;

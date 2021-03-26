@@ -1,6 +1,9 @@
 @import '~antd/dist/antd.css';
 
-.trials-table .ant-table table { font-size: 12px; }
+.trials-table .ant-table table { 
+    font-size: 12px;
+    overflow-x: auto;
+ }
 
 .trials-table .ant-table-thead > tr > th {
     border-top: 1px solid #c0c0c0;
@@ -17,7 +20,7 @@
 }
 
 #fs-group-col {
-    min-width: 153px;
+    min-width: 163px;
 }
 
 #trials-modal-btn-row {

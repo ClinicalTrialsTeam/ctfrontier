@@ -10,7 +10,7 @@ import {
 import FacetedSearchGroup from '../../molecules/FacetedSearchGroup/FacetedSearchGroup';
 
 import {
-  recruitment, access, phases,
+  recruitment, access, phases, roa,
 } from '../../../variables/TopLevelSearchData';
 
 import { columns } from './ListViewTableConfig';
@@ -55,6 +55,7 @@ const ListViewTable = () => {
               access={access}
               recruitment={recruitment}
               phases={phases}
+              roa={roa}
             />
           </Col>
           <Col key="trails_table-col" className="gutter-row" span={20}>
