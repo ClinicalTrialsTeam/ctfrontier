@@ -32,3 +32,11 @@
 .fs-group-collapse > .ant-collapse-item > .ant-collapse-header .ant-collapse-arrow {
     padding: 10px 5px 8px 0px;
 }
+
+.fs-group-collapse .ant-picker-input > input {
+    font-size: 10px;
+}
+
+#rangepicker-panel .ant-collapse-content > .ant-collapse-content-box {
+    padding: 12px 3px;
+}

@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import {
-  Checkbox, Collapse, Form, Typography, Space,
+  Checkbox, Collapse, Form, Typography, Space, DatePicker,
 } from 'antd';
 import PropTypes from 'prop-types';
 
 import './FacetedSearchGroup.css';
+
+const { RangePicker } = DatePicker;
 
 class FacetedSearchGroup extends Component {
   render() {
@@ -125,10 +127,11 @@ class FacetedSearchGroup extends Component {
             </Panel>
             <Panel
               key="9"
+              id="rangepicker-panel"
               header="Dates"
               className="fs-group-panel"
             >
-              <p>Data</p>
+              <RangePicker picker="month" size="small" />
             </Panel>
           </Collapse>
         </Form>
