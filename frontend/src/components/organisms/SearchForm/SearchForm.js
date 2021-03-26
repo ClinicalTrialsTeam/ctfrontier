@@ -22,7 +22,9 @@ class SearchForm extends Component {
     this.handleCountryChange = this.handleCountryChange.bind(this);
     this.handleSearch = this.handleSearch.bind(this);
     this.handleClear = this.handleClear.bind(this);
+    this.formRef = React.createRef();
     this.state = {
+      intervention: '',
       condition: '',
       target: '',
       country: '',
@@ -63,6 +65,7 @@ class SearchForm extends Component {
       otherTerms: '',
       nct_id: '',
     });
+    this.formRef.current.resetFields();
   }
 
   handleInputChange(e) {
@@ -97,9 +100,9 @@ class SearchForm extends Component {
       );
     }
 
-    Array.from(countries.entries()).forEach(([, value]) => {
+    Array.from(countries.entries()).forEach(([index, value]) => {
       countryList.push(
-        <Option key="11" value={value}>{value}</Option>
+        <Option key={index} value={value}>{value}</Option>
       );
     });
     return (
@@ -111,10 +114,11 @@ class SearchForm extends Component {
           Find a study (all fields are optional)
         </Divider>
         <Form
+          ref={this.formRef}
           layout="vertical"
-          key="15"
+          key="form_key"
         >
-          <Row gutter={[16, 16]}>
+          <Row key="form_row_1" gutter={[16, 16]}>
             <Col key="12" span={8}>
               <TextInputField
                 key="1"
@@ -166,12 +170,12 @@ class SearchForm extends Component {
               />
             </Col>
           </Row>
-          <Row key="7" justify="center">
+          <Row key="form_row_2" justify="center">
             <Form.Item>
               <Space>
                 <Button
                   key="8"
-                  type="primary"
+                  inputType="primary"
                   text="Search"
                   clickHandler={this.handleSearch}
                 />
