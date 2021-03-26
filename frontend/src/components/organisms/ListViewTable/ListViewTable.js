@@ -1,4 +1,5 @@
 import React from 'react';
+import { useLocation } from 'react-router-dom';
 import {
   Table, Space, Button, Row, Col,
 } from 'antd';
@@ -13,10 +14,21 @@ import {
   recruitment, access, phases,
 } from '../../../variables/TopLevelSearchData';
 
-import { columns, data } from './ListViewTableConfig';
+import { columns } from './ListViewTableConfig';
 import './ListViewTable.css';
 
 const ListViewTable = () => {
+  const location = useLocation();
+  const parsedResults = location.state.data.map((result) => {
+    return {
+      nct_id: result.nct_id,
+      brief_title: result.brief_title,
+      condition_name: result.condition_name !== null ? result.condition_name.split('|').join(', ') : '',
+      intervention_name: result.intervention_name !== null ? result.intervention_name.split('|').join(', ') : '',
+      status: result.status,
+    };
+  });
+
   return (
     <div>
       <Row
@@ -41,7 +53,7 @@ const ListViewTable = () => {
               type: 'checkbox',
             }}
             columns={columns}
-            dataSource={data}
+            dataSource={parsedResults}
             bordered
             size="small"
             title={() => {

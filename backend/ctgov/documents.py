@@ -1,9 +1,8 @@
-# documents.py
-
-from django_elasticsearch_dsl import Document
+from django_elasticsearch_dsl import Document, fields
 from django_elasticsearch_dsl.registries import registry
+from elasticsearch_dsl import analyzer, tokenizer
 from ctgov.models import Documents
-from .models import Sponsors, ReportedEvents, Studies
+from .models import Sponsors, ReportedEvents, Studies, BasicSearch
 
 
 @registry.register_document
@@ -51,94 +50,83 @@ class SearchDocuments(Document):
 
 
 @registry.register_document
-class SponsorsDocuments(Document):
+class ClinicalTrialsBasicSearch(Document):
     class Index:
-        name = "sponsors"
-        settings = {"number_of_shards": 1, "number_of_replicas": 0}
+        name = "basic_search"
+
+        text_analyzer = analyzer(
+            "text_analyzer",
+            tokenizer="standard",
+            filter=["standard", "lowercase", "stop", "snowball"],
+            char_filter=["html_strip"],
+        )
+
+        fuzzy_analyzer = analyzer(
+            "fuzzy_analyzer",
+            tokenizer=tokenizer(
+                "trigram", "edge_gram", min_gram=1, max_gram=20
+            ),
+            filter=["standard", "lowercase", "stop", "snowball"],
+            char_filter=["html_strip"],
+        )
+
+        status = fields.TextField(
+            analyzer=text_analyzer,
+            fields={"raw": fields.TextField(analyzer="keyword")},
+        )
+
+        brief_title = fields.TextField(
+            analyzer=fuzzy_analyzer,
+            fields={"raw": fields.TextField(analyzer="keyword")},
+        )
+
+        nct_id = fields.TextField(
+            analyzer=text_analyzer,
+            fields={"raw": fields.TextField(analyzer="keyword")},
+        )
+
+        condition_name = fields.TextField(
+            analyzer=fuzzy_analyzer,
+            fields={"raw": fields.TextField(analyzer="keyword")},
+        )
+
+        study_detailed_desc = fields.TextField(
+            analyzer=fuzzy_analyzer,
+            fields={"raw": fields.TextField(analyzer="keyword")},
+        )
+
+        country_name = fields.TextField(
+            analyzer=text_analyzer,
+            fields={"raw": fields.TextField(analyzer="keyword")},
+        )
+
+        intervention_name = fields.TextField(
+            analyzer=fuzzy_analyzer,
+            fields={"raw": fields.TextField(analyzer="keyword")},
+        )
+
+        eligibility_criteria = fields.TextField(
+            analyzer=fuzzy_analyzer,
+            fields={"raw": fields.TextField(analyzer="keyword")},
+        )
+
+        study_brief_desc = fields.TextField(
+            analyzer=fuzzy_analyzer,
+            fields={"raw": fields.TextField(analyzer="keyword")},
+        )
 
     class Django:
-        model = Sponsors
+        model = BasicSearch
 
         fields = [
-            "agency_class",
-            "lead_or_collaborator",
-            "name",
-        ]
-
-
-@registry.register_document
-class StudiesDocuments(Document):
-    class Index:
-        name = "studies"
-        settings = {"number_of_shards": 1, "number_of_replicas": 0}
-
-    class Django:
-        model = Studies
-
-        fields = [
-            "id",
-            "nct_id",
-            "nlm_download_date_description",
-            "study_first_submitted_date",
-            "results_first_submitted_date",
-            "disposition_first_submitted_date",
-            "last_update_submitted_date",
-            "study_first_submitted_qc_date",
-            "study_first_posted_date",
-            "study_first_posted_date_type",
-            "results_first_submitted_qc_date",
-            "results_first_posted_date",
-            "results_first_posted_date_type",
-            "disposition_first_submitted_qc_date",
-            "disposition_first_posted_date",
-            "disposition_first_posted_date_type",
-            "last_update_submitted_qc_date",
-            "last_update_posted_date",
-            "last_update_posted_date_type",
-            "start_month_year",
-            "start_date_type",
-            "start_date",
-            "verification_month_year",
-            "verification_date",
-            "completion_month_year",
-            "completion_date_type",
-            "completion_date",
-            "primary_completion_month_year",
-            "primary_completion_date_type",
-            "primary_completion_date",
-            "target_duration",
-            "study_type",
-            "acronym",
-            "baseline_population",
+            "status",
             "brief_title",
-            "official_title",
-            "overall_status",
-            "last_known_status",
-            "phase",
-            "enrollment",
-            "enrollment_type",
-            "source",
-            "limitations_and_caveats",
-            "number_of_arms",
-            "number_of_groups",
-            "why_stopped",
-            "has_expanded_access",
-            "expanded_access_type_individual",
-            "expanded_access_type_intermediate",
-            "expanded_access_type_treatment",
-            "has_dmc",
-            "is_fda_regulated_drug",
-            "is_fda_regulated_device",
-            "is_unapproved_device",
-            "is_ppsd",
-            "is_us_export",
-            "biospec_retention",
-            "biospec_description",
-            "ipd_time_frame",
-            "ipd_access_criteria",
-            "ipd_url",
-            "plan_to_share_ipd",
-            "plan_to_share_ipd_description",
-            "created_at",
-            "updated_at",
+            "nct_id",
+            "condition_name",
+            "study_detailed_desc",
+            "country_name",
+            "intervention_name",
+            "eligibility_criteria",
+            "study_brief_desc",
+            "location_name",
         ]

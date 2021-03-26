@@ -1,11 +1,3 @@
-# This is an auto-generated Django model module.
-# You'll have to do the following manually to clean this up:
-#   * Rearrange models' order
-#   * Make sure each model has one field with primary_key=True
-#   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
-#   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
-# Feel free to rename the models, but don't rename db_table values or field names.
-
 from django.db import models
 
 
@@ -1068,25 +1060,6 @@ class Y2018MeshTerms(models.Model):
         db_table = "y2018_mesh_terms"
 
 
-class BasicSearch(models.Model):
-    status = models.TextField(blank=True, null=True)
-    brief_title = models.TextField(blank=True, null=True)
-    official_title = models.TextField(blank=True, null=True)
-    nct_id = models.TextField(blank=True, null=True)
-    condition_name = models.TextField(blank=True, null=True)
-    study_detailed_desc = models.TextField(blank=True, null=True)
-    country_name = models.TextField(blank=True, null=True)
-    intervention_name = models.TextField(blank=True, null=True)
-    keywords = models.TextField(blank=True, null=True)
-    eligibility_criteria = models.TextField(blank=True, null=True)
-    location_name = models.TextField(blank=True, null=True)
-    study_brief_desc = models.TextField(blank=True, null=True)
-
-    class Meta:
-        managed = False  # Created from a view. Don't remove.
-        db_table = "basic_search"
-
-
 class AllBrowseConditions(models.Model):
     nct_id = models.TextField(blank=True, null=True)
     names = models.TextField(blank=True, null=True)
@@ -1304,3 +1277,55 @@ class Covid19Studies(models.Model):
     class Meta:
         managed = False  # Created from a view. Don't remove.
         db_table = "covid_19_studies"
+
+
+class BasicSearchM(models.Model):
+    status = models.TextField(blank=True, null=True)
+    brief_title = models.TextField(blank=True, null=True)
+    official_title = models.TextField(blank=True, null=True)
+    nct_id = models.TextField(blank=True, null=True)
+    condition_name = models.TextField(blank=True, null=True)
+    study_detailed_desc = models.TextField(blank=True, null=True)
+    country_name = models.TextField(blank=True, null=True)
+    intervention_name = models.TextField(blank=True, null=True)
+    keywords = models.TextField(blank=True, null=True)
+    eligibility_criteria = models.TextField(blank=True, null=True)
+    location_name = models.TextField(blank=True, null=True)
+    study_brief_desc = models.TextField(blank=True, null=True)
+    sponsor_name = models.TextField(blank=True, null=True)
+    study_phase = models.TextField(blank=True, null=True)
+    study_start_date = models.DateField(blank=True, null=True)
+    primary_completion_date = models.DateField(blank=True, null=True)
+    study_first_posted_date = models.DateField(blank=True, null=True)
+    results_first_posted_date = models.DateField(blank=True, null=True)
+    last_update_posted_date = models.DateField(blank=True, null=True)
+
+    class Meta:
+        managed = False  # Created from a view. Don't remove.
+        db_table = "basic_search_m"
+
+
+class BasicSearch(models.Model):
+    status = models.TextField(blank=True, null=True)
+    brief_title = models.TextField(blank=True, null=True)
+    official_title = models.TextField(blank=True, null=True)
+    nct_id = models.TextField(blank=True, null=True)
+    condition_name = models.TextField(blank=True, null=True)
+    study_detailed_desc = models.TextField(blank=True, null=True)
+    country_name = models.TextField(blank=True, null=True)
+    intervention_name = models.TextField(blank=True, null=True)
+    keywords = models.TextField(blank=True, null=True)
+    eligibility_criteria = models.TextField(blank=True, null=True)
+    location_name = models.TextField(blank=True, null=True)
+    study_brief_desc = models.TextField(blank=True, null=True)
+    sponsor_name = models.TextField(blank=True, null=True)
+    study_phase = models.TextField(blank=True, null=True)
+    study_start_date = models.DateField(blank=True, null=True)
+    primary_completion_date = models.DateField(blank=True, null=True)
+    study_first_posted_date = models.DateField(blank=True, null=True)
+    results_first_posted_date = models.DateField(blank=True, null=True)
+    last_update_posted_date = models.DateField(blank=True, null=True)
+
+    class Meta:
+        managed = False  # Created from a view. Don't remove.
+        db_table = "basic_search"
