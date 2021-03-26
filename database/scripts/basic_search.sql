@@ -1,4 +1,4 @@
-CREATE VIEW basic_search AS
+CREATE MATERIALIZED VIEW basic_search_m AS
 SELECT 
 	A.overall_status status, 
 	A.brief_title, 
@@ -11,7 +11,14 @@ SELECT
 	F.names keywords,
 	G.criteria eligibility_criteria,
 	H.names location_name,
-	I.description study_brief_desc
+	I.description study_brief_desc,
+	J.names sponsor_name,
+	A.phase study_phase,
+	A.start_date study_start_date,
+	A.primary_completion_date,
+	A.study_first_posted_date,
+	A.results_first_posted_date,
+	A.last_update_posted_date
 FROM 
 	studies A
 LEFT JOIN all_conditions B
@@ -30,4 +37,6 @@ LEFT JOIN all_facilities H
 	ON A.nct_id = H.nct_id
 LEFT JOIN brief_summaries I
 	ON A.nct_id = I.nct_id
+LEFT JOIN all_sponsors J
+	ON A.nct_id = J.nct_id
 ORDER BY A.start_date
