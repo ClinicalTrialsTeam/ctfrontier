@@ -43,10 +43,10 @@ const ListViewTable = () => {
         >
           <Col key="fs-group-col" id="fs-group-col" className="gutter-row" span={4}>
             <Space>
-              <Button key="fs-button-submit" className="facet-button" size="large">
+              <Button key="fs-button-submit" className="facet-button">
                 Update
               </Button>
-              <Button key="fs-button-clear" className="facet-button" size="large">
+              <Button key="fs-button-clear" className="facet-button">
                 Clear
               </Button>
             </Space>
@@ -57,6 +57,23 @@ const ListViewTable = () => {
             />
           </Col>
           <Col key="trails_table-col" className="gutter-row" span={20}>
+            <Row>
+              <Col key="trials-stat-col" span={8}>
+                <Row id="trials-stat-row" justify="start" align="middle">
+                  Total number of trials: 512
+                </Row>
+              </Col>
+              <Col key="trials-modal-btn-col" span={16}>
+                <Row id="trials-modal-btn-row" justify="end">
+                  <Space align="end">
+                    <Button key="btn_dashboard" icon={<BarChartOutlined />} />
+                    <Button key="btn_other" icon={<TableOutlined />} />
+                    <Button key="btn_map" icon={<GlobalOutlined />} />
+                    <Button key="btn_download" icon={<DownloadOutlined />} />
+                  </Space>
+                </Row>
+              </Col>
+            </Row>
             <Table
               className="trials-table"
               key="trials-table"
@@ -66,16 +83,6 @@ const ListViewTable = () => {
               columns={columns}
               dataSource={parsedResults}
               size="small"
-              title={() => {
-                return (
-                  <Space align="end">
-                    <Button key="btn_dashboard" icon={<BarChartOutlined />} size="large" />
-                    <Button key="btn_other" icon={<TableOutlined />} size="large" />
-                    <Button key="btn_map" icon={<GlobalOutlined />} size="large" />
-                    <Button key="btn_download" icon={<DownloadOutlined />} size="large" className="float-right" />
-                  </Space>
-                );
-              }}
             />
           </Col>
         </Row>

@@ -17,5 +17,15 @@
 }
 
 #fs-group-col {
-    min-width: 160px;
+    min-width: 153px;
+}
+
+#trials-modal-btn-row {
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+
+#trials-stat-row {
+    margin-top: 16px;
+    margin-bottom: 8px;
 }

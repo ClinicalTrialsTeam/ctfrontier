@@ -1,0 +1,26 @@
+@import '~antd/dist/antd.css';
+
+.fs-group-collapse {
+    margin-bottom: 24px;
+}
+
+.fs-group-collapse .fs-group-panel {
+    overflow: hidden;
+}
+
+.fs-group-collapse > .ant-collapse-item > .ant-collapse-header {
+    padding: 12px 12px;
+    padding-left: 36px;
+    height: 39px;
+}
+
+.fs-group-collapse {
+    font-size: 12px;
+    border: 0px;
+    border-top: 1px solid #c0c0c0;
+    border-bottom: 1px solid #c0c0c0;
+}
+
+.fs-group-collapse > .ant-collapse-item > .ant-collapse-header .ant-collapse-arrow {
+    padding: 10px 5px 8px 0px;
+}

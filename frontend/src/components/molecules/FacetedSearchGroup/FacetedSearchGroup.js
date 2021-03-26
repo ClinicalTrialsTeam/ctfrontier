@@ -4,6 +4,8 @@ import {
 } from 'antd';
 import PropTypes from 'prop-types';
 
+import './FacetedSearchGroup.css';
+
 class FacetedSearchGroup extends Component {
   render() {
     const { access, recruitment, phases } = this.props;
@@ -45,8 +47,12 @@ class FacetedSearchGroup extends Component {
     return (
       <>
         <Form>
-          <Collapse>
-            <Panel key="1" header="Status">
+          <Collapse className="fs-group-collapse">
+            <Panel
+              key="1"
+              header="Status"
+              className="fs-group-panel"
+            >
               <Title level={5}>Recruitment Status</Title>
               <Space direction="vertical">
                 {recruitmentCheckboxes}
@@ -54,28 +60,60 @@ class FacetedSearchGroup extends Component {
               </Space>
               {accessCheckboxes}
             </Panel>
-            <Panel key="2" header="Phase">
+            <Panel
+              key="2"
+              header="Phase"
+              className="fs-group-panel"
+            >
               {phasesCheckboxes}
             </Panel>
-            <Panel key="3" header="Administration">
+            <Panel
+              key="3"
+              header="Administration"
+              className="fs-group-panel"
+            >
               <p>{text}</p>
             </Panel>
-            <Panel key="4" header="Target">
+            <Panel
+              key="4"
+              header="Target"
+              className="fs-group-panel"
+            >
               <p>Data</p>
             </Panel>
-            <Panel key="5" header="Modality">
+            <Panel
+              key="5"
+              header="Modality"
+              className="fs-group-panel"
+            >
               <p>Data</p>
             </Panel>
-            <Panel key="6" header="No. of patients">
+            <Panel
+              key="6"
+              header="No. of patients"
+              className="fs-group-panel"
+            >
               <p>Data</p>
             </Panel>
-            <Panel key="7" header="Sponsor">
+            <Panel
+              key="7"
+              header="Sponsor"
+              className="fs-group-panel"
+            >
               <p>Data</p>
             </Panel>
-            <Panel key="8" header="Sponsor Type">
+            <Panel
+              key="8"
+              header="Sponsor Type"
+              className="fs-group-panel"
+            >
               <p>Data</p>
             </Panel>
-            <Panel key="9" header="Dates" style={{ marginBottom: 24 }}>
+            <Panel
+              key="9"
+              header="Dates"
+              className="fs-group-panel"
+            >
               <p>Data</p>
             </Panel>
           </Collapse>
