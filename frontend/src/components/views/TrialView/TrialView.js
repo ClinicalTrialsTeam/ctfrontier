@@ -14,7 +14,7 @@ class TrialView extends Component {
           <ListViewTable />
         </TabPane>
         <TabPane tab="Map View" key="2">
-          <ListViewTable />
+          <p>Future Content</p>
         </TabPane>
       </Tabs>
     );

@@ -3,7 +3,6 @@ import { Redirect } from 'react-router-dom';
 import {
   Form, Select, Divider, Row, Col, Space,
 } from 'antd';
-import { v4 as uuidv4 } from 'uuid';
 import ctgov from '../../../apis/ctgov';
 import TextInputField from '../../atoms/TextInputField/TextInputField';
 import SelectField from '../../atoms/SelectField/SelectField';
@@ -23,7 +22,9 @@ class SearchForm extends Component {
     this.handleCountryChange = this.handleCountryChange.bind(this);
     this.handleSearch = this.handleSearch.bind(this);
     this.handleClear = this.handleClear.bind(this);
+    this.formRef = React.createRef();
     this.state = {
+      intervention: '',
       condition: '',
       target: '',
       country: '',
@@ -64,6 +65,7 @@ class SearchForm extends Component {
       otherTerms: '',
       nct_id: '',
     });
+    this.formRef.current.resetFields();
   }
 
   handleInputChange(e) {
@@ -98,9 +100,9 @@ class SearchForm extends Component {
       );
     }
 
-    Array.from(countries.entries()).forEach(([, value]) => {
+    Array.from(countries.entries()).forEach(([index, value]) => {
       countryList.push(
-        <Option key={uuidv4()} value={value}>{value}</Option>
+        <Option key={index} value={value}>{value}</Option>
       );
     });
     return (
@@ -112,44 +114,46 @@ class SearchForm extends Component {
           Find a study (all fields are optional)
         </Divider>
         <Form
+          ref={this.formRef}
           layout="vertical"
+          key="form_key"
         >
-          <Row gutter={[16, 16]}>
-            <Col key={uuidv4()} span={8}>
+          <Row key="form_row_1" gutter={[16, 16]}>
+            <Col key="12" span={8}>
               <TextInputField
-                key={uuidv4()}
+                key="1"
                 label="NCT number"
                 title="A unique identification code given to each clinical study record registered on ClinicalTrials.gov. The format is 'NCT' followed by an 8-digit number (for example, NCT00000419). Also called the ClinicalTrials.gov identifier."
                 name="nct_id"
                 handleInputChange={this.handleInputChange}
               />
               <TextInputField
-                key={uuidv4()}
+                key="2"
                 label="Condition or disease"
                 title="The disease, disorder, syndrome, illness, or injury that is being studied. On CTFrontier.com, conditions may also include other health-related issues, such as lifespan, quality of life, and health risks."
                 name="condition"
                 handleInputChange={this.handleInputChange}
               />
             </Col>
-            <Col key={uuidv4()} span={8}>
+            <Col key="13" span={8}>
               <TextInputField
-                key={uuidv4()}
+                key="3"
                 label="Intervention / treatment"
                 title="A process or action that is the focus of a clinical study. Interventions include drugs, medical devices, procedures, vaccines, and other products that are either investigational or already available. Interventions can also include noninvasive approaches, such as education or modifying diet and exercise."
                 name="intervention"
                 handleInputChange={this.handleInputChange}
               />
               <TextInputField
-                key={uuidv4()}
+                key="4"
                 label="MOA or target"
                 title="Mechanism of action (MOA) describes how a drug or substance produces an effect in the body. A drug’s MOA could be how it affects a specific target in a cell, such as an enzyme, or a cell function, such as cell growth. Biological targets are most commonly proteins, such as enzymes, ion channels, and receptors."
                 name="target"
                 handleInputChange={this.handleInputChange}
               />
             </Col>
-            <Col key={uuidv4()} span={8}>
+            <Col key="14" span={8}>
               <SelectField
-                key={uuidv4()}
+                key="5"
                 name="country"
                 label="Country"
                 tooltip="The 'Country' field is used to find clinical studies with locations in a specific country. For example, if you choose the United States, you can then narrow your search by selecting a state and identifying a city and distance."
@@ -158,7 +162,7 @@ class SearchForm extends Component {
                 handleInputChange={this.handleCountryChange}
               />
               <TextInputField
-                key={uuidv4()}
+                key="6"
                 label="Other terms"
                 title="The 'Other' terms field is used to narrow a search. For example,  you may enter the name of a drug or the NCT number of a clinical study to limit the search to study records that contain these words."
                 name="otherTerms"
@@ -166,22 +170,22 @@ class SearchForm extends Component {
               />
             </Col>
           </Row>
-          <Row key={uuidv4()} justify="center">
+          <Row key="form_row_2" justify="center">
             <Form.Item>
               <Space>
                 <Button
-                  key={uuidv4()}
-                  type="primary"
+                  key="8"
+                  inputType="primary"
                   text="Search"
                   clickHandler={this.handleSearch}
                 />
                 <Button
-                  key={uuidv4()}
+                  key="9"
                   text="Clear"
                   clickHandler={this.handleClear}
                 />
                 <Button
-                  key={uuidv4()}
+                  key="10"
                   text="Show advanced options"
                   clickHandler={this.handleClear}
                 />
