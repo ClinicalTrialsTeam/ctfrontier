@@ -42,7 +42,7 @@ const ListViewTable = () => {
           }}
         >
           <Col key="fs-group-col" id="fs-group-col" className="gutter-row" span={4}>
-            <Space>
+            <Space key="fs-buttons">
               <Button key="fs-button-submit" className="facet-button">
                 Update
               </Button>
@@ -51,13 +51,14 @@ const ListViewTable = () => {
               </Button>
             </Space>
             <FacetedSearchGroup
+              key="fs-group"
               access={access}
               recruitment={recruitment}
               phases={phases}
             />
           </Col>
           <Col key="trails_table-col" className="gutter-row" span={20}>
-            <Row>
+            <Row key="trials-table-extras">
               <Col key="trials-stat-col" span={8}>
                 <Row id="trials-stat-row" justify="start" align="middle">
                   Total number of trials: 512

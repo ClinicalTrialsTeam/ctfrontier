@@ -53,10 +53,10 @@ class FacetedSearchGroup extends Component {
               header="Status"
               className="fs-group-panel"
             >
-              <Title level={5}>Recruitment Status</Title>
-              <Space direction="vertical">
+              <Title key="recr-status-title" level={5}>Recruitment Status</Title>
+              <Space key="recr-status-checkboxes" direction="vertical">
                 {recruitmentCheckboxes}
-                <Title level={5}>Expanded Access</Title>
+                <Title key="expanded-access-title" level={5}>Expanded Access</Title>
               </Space>
               {accessCheckboxes}
             </Panel>
