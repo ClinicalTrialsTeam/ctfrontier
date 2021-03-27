@@ -4,6 +4,8 @@
 #
 #    pip-compile
 #
+-e file:///Users/mona/CS599/ctfrontier/cdk
+    # via -r requirements.in
 attrs==20.3.0
     # via
     #   cattrs
@@ -149,7 +151,9 @@ botocore==1.20.33
 cattrs==1.3.0
     # via jsii
 click==7.1.2
-    # via -r requirements.in
+    # via
+    #   -r requirements.in
+    #   ctf
 constructs==3.3.68
     # via
     #   aws-cdk.assets

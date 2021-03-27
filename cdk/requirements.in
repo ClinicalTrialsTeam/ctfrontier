@@ -1,3 +1,4 @@
+-e .
 click
 boto3
 python-dotenv

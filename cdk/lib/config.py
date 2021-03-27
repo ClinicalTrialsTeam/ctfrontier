@@ -12,7 +12,7 @@ import click
 
 
 # load dotenv
-dotenv_path = join(dirname(__file__), ".env")
+dotenv_path = join(dirname(__file__), "../.env")
 load_dotenv(dotenv_path)
 
 SSM_BASE_PATH = f"/{names.PROJECT_NAME}"
@@ -24,6 +24,7 @@ STACK_TAGS = [
         "Value": "CTF",
     }
 ]
+
 
 if AWS_PROFILE:
     boto3.Session(profile_name=AWS_PROFILE)
@@ -43,51 +44,61 @@ class ParamTypes(Enum):
     SECURE_STRING = "SecureString"
 
 
-class Config:
-    def new(self, initial_config_file):
-        """
-        Create a new configuration.
-        """
+def new(initial_config_file):
+    """
+    Create a new configuration.
+    """
 
-        # Read json key, values and create parameters for each
-        with open(initial_config_file, "r") as f:
-            data = json.load(f)
+    # Read json key, values and create parameters for each
+    with open(initial_config_file, "r") as f:
+        data = json.load(f)
 
+    try:
+        for key, val in data.items():
+            Param(key).create(val)
+    except ClientError as e:
+        raise Exception(f"Error storing ssm parameters: {e}")
+    except ParamValidationError as e:
+        raise Exception(f"The parameters you provided are incorrect: {e}")
+
+
+def edit():
+    tf = TemporaryFile()
+
+    while True:
         try:
-            for key, val in data.items():
-                Param(key).create(val)
-        except ClientError as e:
-            raise Exception(f"Error storing ssm parameters: {e}")
-        except ParamValidationError as e:
-            raise Exception(f"The parameters you provided are incorrect: {e}")
+            tf.open_editor()
+            diff = tf.diff()
+            if diff:
+                if click.confirm("Accept changes?"):
+                    break
+                if click.confirm("Continue editing?", abort=True):
+                    continue
+            else:
+                click.echo("No changes made")
+                return
+        except ConfigValidationError as e:
+            click.echo("\nMissing required config variables:")
+            for error in e.errors:
+                click.echo(error, err=True)
+            click.confirm("Continue editing?", abort=True)
 
-    def edit(self):
-        tf = TemporaryFile()
+    tf.push_updates()
+    tf.delete()
 
-        while True:
-            try:
-                tf.open_editor()
-                diff = tf.diff()
-                if diff:
-                    if click.confirm("Accept changes?"):
-                        break
-                    if click.confirm("Continue editing?", abort=True):
-                        continue
-                else:
-                    click.echo("No changes made")
-                    return
-            except ConfigValidationError as e:
-                click.echo("\nMissing required config variables:")
-                for error in e.errors:
-                    click.echo(error, err=True)
-                click.confirm("Continue editing?", abort=True)
 
-        tf.push_updates()
-        tf.delete()
+def show():
+    current_config = Param.current_parameters()
+    if not current_config:
+        click.echo("No existing config")
+    else:
+        for key, val in current_config.items():
+            click.echo(f"{key}={val}")
 
-    def delete(self):
-        for key in Param.current_parameters().keys():
-            Param(key).delete()
+
+def delete():
+    for key in Param.current_parameters().keys():
+        Param(key).delete()
 
 
 class Param:
@@ -147,7 +158,7 @@ class Param:
 
 class TemporaryFile:
     def __init__(self, base_path=SSM_BASE_PATH):
-        self.current_params = Param().current_parameters()
+        self.current_params = Param.current_parameters()
 
         # write a temporary file with the current parameters
         with tempfile.NamedTemporaryFile(mode="w", delete=False) as f:
