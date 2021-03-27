@@ -83,7 +83,7 @@ def stack_update():
 @cli.command()
 def stack_diff():
     """
-    Compares the specified stack with the deployed stack.
+    Compares the specified stack with the deployed stack
     """
     cdk_cmd("diff")
 
