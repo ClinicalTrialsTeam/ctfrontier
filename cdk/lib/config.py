@@ -5,7 +5,7 @@ import json
 import tempfile
 from subprocess import call
 from enum import Enum
-import os
+from os import getenv, environ, unlink
 from os.path import join, dirname
 from dotenv import load_dotenv
 from . import names
@@ -16,7 +16,7 @@ dotenv_path = join(dirname(__file__), "../.env")
 load_dotenv(dotenv_path)
 
 SSM_BASE_PATH = f"/{names.PROJECT_NAME}"
-AWS_PROFILE = os.getenv("AWS_PROFILE")
+AWS_PROFILE = getenv("AWS_PROFILE")
 EXAMPLE_CONFIG = "template-config.json"
 STACK_TAGS = {
     "Key": "project",
@@ -55,11 +55,13 @@ def new(initial_config_file):
         for key, val in data.items():
             Param(key).create(val)
     except ClientError as e:
-        click.echo(f"Error storing ssm parameters: {e}")
-        raise click.Abort()
+        click.secho(f"Error storing ssm parameters: {e}", fg="red")
+        raise
     except ParamValidationError as e:
-        click.echo(f"The parameters you provided are incorrect: {e}")
-        raise click.Abort()
+        click.secho(
+            f"The parameters you provided are incorrect: {e}", fg="red"
+        )
+        raise
 
 
 def edit():
@@ -176,7 +178,7 @@ class TemporaryFile:
         """
         Open in editor and track changes made
         """
-        editor = os.environ.get("EDITOR")
+        editor = environ.get("EDITOR")
         if not editor:
             editor = "vim"
 
@@ -250,4 +252,4 @@ class TemporaryFile:
         """
         Delete the temporary file
         """
-        os.unlink(self.name)
+        unlink(self.name)

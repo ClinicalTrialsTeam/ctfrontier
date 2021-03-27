@@ -26,12 +26,5 @@ class CtStack(core.Stack):
         # S3 bucket to store raw data at beginning of ETL pipeline
         CtfBucket(self, "RawDataFilesBucket", name=names.RAW_DATA_FILES_BUCKET)
 
-        # # Docker image for data download lambda
-        # repository = CtfRepository(
-        #     self,
-        #     "RawDataDownloadImage",
-        #     names.RAW_DATA_DOWNLOAD_IMAGE,
-        # )
-
         # Function to download files and save in S3
         RawDataDownloadFunction(self, "RawDataDownloadFunction", monitoring)

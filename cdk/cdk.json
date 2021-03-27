@@ -1,7 +1,7 @@
 {
   "app": "python3 -m lib.app",
   "context": {
-    "@aws-cdk/core:enableStackNameDuplicates": "true",
+    "@aws-cdk/core:newStyleStackSynthesis": "true",
     "aws-cdk:enableDiffNoFail": "true"
   }
 }

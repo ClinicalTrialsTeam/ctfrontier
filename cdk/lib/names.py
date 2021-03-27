@@ -1,5 +1,7 @@
 PROJECT_NAME = "ctfrontier"
 
+CDK_BOOTSTRAP_BUCKET = "cdk-ctf-bootstrap"
+
 RAW_DATA_FILES_BUCKET = "raw-data-files"
 
 RAW_DATA_DOWNLOAD_FUNCTION = "raw-data-download"
