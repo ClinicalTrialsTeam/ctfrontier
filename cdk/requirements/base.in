@@ -1,0 +1,11 @@
+click
+boto3
+python-dotenv
+aws-cdk.core
+aws-cdk.aws_s3
+aws-cdk.aws_lambda
+aws-cdk.aws_cloudwatch
+aws-cdk.aws_logs
+aws-cdk.aws_sns
+aws-cdk.aws_sns_subscriptions
+aws-cdk.aws_cloudwatch_actions

@@ -1,14 +1,17 @@
-from aws_cdk import core, aws_s3 as s3
+from aws_cdk import core
 from .monitoring import CtfMonitoring
 from .function import RawDataDownloadFunction
 from .bucket import CtfBucket
-from .repository import CtfRepository
 from . import names
 
 
 class CtStack(core.Stack):
     def __init__(
-        self, scope: core.Construct, id: str, notification_email, **kwargs
+        self,
+        scope: core.Construct,
+        id: str,
+        notification_email,
+        **kwargs,
     ) -> None:
 
         super().__init__(scope, id, **kwargs)
@@ -31,4 +34,4 @@ class CtStack(core.Stack):
         # )
 
         # Function to download files and save in S3
-        RawDataDownloadFunction(monitoring)
+        RawDataDownloadFunction(self, "RawDataDownloadFunction", monitoring)

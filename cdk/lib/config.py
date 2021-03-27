@@ -1,4 +1,4 @@
-from . import names
+import click
 import boto3
 from botocore.exceptions import ParamValidationError, ClientError
 import json
@@ -8,7 +8,7 @@ from enum import Enum
 import os
 from os.path import join, dirname
 from dotenv import load_dotenv
-import click
+from . import names
 
 
 # load dotenv
@@ -17,13 +17,11 @@ load_dotenv(dotenv_path)
 
 SSM_BASE_PATH = f"/{names.PROJECT_NAME}"
 AWS_PROFILE = os.getenv("AWS_PROFILE")
-EXAMPLE_CONFIG = "example-config.json"
-STACK_TAGS = [
-    {
-        "Key": "project",
-        "Value": "CTF",
-    }
-]
+EXAMPLE_CONFIG = "template-config.json"
+STACK_TAGS = {
+    "Key": "project",
+    "Value": "CTF",
+}
 
 
 if AWS_PROFILE:
@@ -57,9 +55,11 @@ def new(initial_config_file):
         for key, val in data.items():
             Param(key).create(val)
     except ClientError as e:
-        raise Exception(f"Error storing ssm parameters: {e}")
+        click.echo(f"Error storing ssm parameters: {e}")
+        raise click.Abort()
     except ParamValidationError as e:
-        raise Exception(f"The parameters you provided are incorrect: {e}")
+        click.echo(f"The parameters you provided are incorrect: {e}")
+        raise click.Abort()
 
 
 def edit():
@@ -131,7 +131,7 @@ class Param:
             Description=f"{names.PROJECT_NAME} environment variable {self.name}",
             Value=value,
             Type=self.type,
-            Tags=STACK_TAGS,
+            Tags=[STACK_TAGS],
             Tier="Standard",
         )
         print(f"Created ssm param {self.name}={value}")
@@ -143,9 +143,14 @@ class Param:
         except ssm.exceptions.ParameterNotFound:
             return False
 
-    @property
-    def value(self, decrypt=False):
-        ssm.get_parameter(Name=self.path_name, WithDecryption=decrypt)
+    def getvalue(self, decrypt=False, required=False):
+        try:
+            r = ssm.get_parameter(Name=self.path_name, WithDecryption=decrypt)
+            return r["Parameter"]["Value"]
+        except ssm.exceptions.ParameterNotFound:
+            if required:
+                raise Exception(f"Missing required config param {self.name}")
+            return None
 
     def update(self, value):
         ssm.put_parameter(Name=self.path_name, Value=value, Overwrite=True)
