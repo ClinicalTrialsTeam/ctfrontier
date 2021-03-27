@@ -4,7 +4,7 @@ from aws_cdk import core
 import boto3
 import json
 import click
-from .config import Param, STACK_TAGS
+from .config import Param
 from .stack import CtStack
 from . import names, aws
 
@@ -26,7 +26,7 @@ CtStack(
     names.PROJECT_NAME,
     **stack_props,
     env=core.Environment(account=aws.AWS_ACCOUNT_ID, region=aws.AWS_REGION),
-    tags=STACK_TAGS,
+    tags=aws.STACK_TAGS,
     synthesizer=core.DefaultStackSynthesizer(
         qualifier=names.PROJECT_NAME,
         file_assets_bucket_name=names.CDK_BOOTSTRAP_BUCKET,
