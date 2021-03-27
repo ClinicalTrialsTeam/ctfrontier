@@ -1,3 +1,34 @@
 @import '~antd/dist/antd.css';
 
-.ant-table table { font-size: 12px; }
+.trials-table .ant-table table { 
+    font-size: 12px;
+    overflow-x: auto;
+ }
+
+.trials-table .ant-table-thead > tr > th {
+    border-top: 1px solid #c0c0c0;
+    border-bottom: 1px solid #c0c0c0;
+}
+
+.trials-table .ant-table-tbody > tr > td {
+    border-bottom: 1px solid #c0c0c0;
+}
+
+.facet-button {
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+
+#fs-group-col {
+    min-width: 163px;
+}
+
+#trials-modal-btn-row {
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+
+#trials-stat-row {
+    margin-top: 16px;
+    margin-bottom: 8px;
+}
