@@ -34,6 +34,20 @@ class SearchForm extends Component {
     };
   }
 
+  async componentDidMount() {
+    try {
+      const response = await ctgov.get('countries');
+      const countries = response.data.map((item) => {
+        return item.country;
+      });
+      this.setState({
+        countries,
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
   handleClear() {
     this.setState({
       intervention: '',
@@ -60,20 +74,6 @@ class SearchForm extends Component {
     this.setState({
       country: e,
     });
-  }
-
-  async componentDidMount() {
-    try {
-      const response = await ctgov.get('countries');
-      const countries = response.data.map((item) => {
-        return item.country;
-      });
-      this.setState({
-        countries,
-      });
-    } catch (err) {
-      console.log(err);
-    }
   }
 
   async handleSearch() {
