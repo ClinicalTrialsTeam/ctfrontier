@@ -7,17 +7,9 @@ from os.path import join, dirname
 from dotenv import load_dotenv
 
 
-# load dotenv
-dotenv_path = join(dirname(__file__), ".env")
-load_dotenv(dotenv_path)
-
-AWS_PROFILE = getenv("AWS_PROFILE")
-putenv("CDK_NEW_BOOTSTRAP", "1")
-
-
 def profile_arg():
-    if AWS_PROFILE is not None:
-        return f"--profile {AWS_PROFILE}"
+    if aws.AWS_PROFILE is not None:
+        return f"--profile {aws.AWS_PROFILE}"
     return ""
 
 
@@ -35,7 +27,10 @@ def cli(ctx):
 @cli.command()
 @click.option(
     "--config-file",
-    prompt="Initial config filename",
+    prompt=(
+        "Initial config filename "
+        "(Note: editing config can only be done with 'ctf config-edit')"
+    ),
     help="Provide and initial config file",
 )
 @click.pass_context
@@ -43,6 +38,10 @@ def stack_create(ctx, config_file):
     """
     Create a new CloudFormation stack
     """
+    if not config_file.strip():
+        click.echo("Missing initial config file!")
+        raise click.Abort()
+
     click.secho(
         "Warning: creating a new stack will overwrite any existing "
         f"AWS SSM params in the path: {config.SSM_BASE_PATH}",

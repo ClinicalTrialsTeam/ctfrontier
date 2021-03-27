@@ -5,27 +5,15 @@ import json
 import tempfile
 from subprocess import call
 from enum import Enum
-from os import getenv, environ, unlink
-from os.path import join, dirname
-from dotenv import load_dotenv
-from . import names
+from os import environ, unlink
+from . import names, aws
 
-
-# load dotenv
-dotenv_path = join(dirname(__file__), "../.env")
-load_dotenv(dotenv_path)
 
 SSM_BASE_PATH = f"/{names.PROJECT_NAME}"
-AWS_PROFILE = getenv("AWS_PROFILE")
 EXAMPLE_CONFIG = "template-config.json"
-STACK_TAGS = {
-    "Key": "project",
-    "Value": "CTF",
-}
 
-
-if AWS_PROFILE:
-    boto3.Session(profile_name=AWS_PROFILE)
+if aws.AWS_PROFILE:
+    boto3.Session(profile_name=aws.AWS_PROFILE)
 
 ssm = boto3.client("ssm")
 
@@ -133,7 +121,7 @@ class Param:
             Description=f"{names.PROJECT_NAME} environment variable {self.name}",
             Value=value,
             Type=self.type,
-            Tags=[STACK_TAGS],
+            Tags=[aws.STACK_TAGS],
             Tier="Standard",
         )
         print(f"Created ssm param {self.name}={value}")

@@ -31,10 +31,20 @@ Set up Python virtual environment
 1. Install the dependencies by running `pip-sync`
 
 
+#### AWS Permissions
+
+Your default AWS user (configured with `aws configure`) or your named aws profile (configured with `aws configure --profile <profile-name>` and specified in `cdk/.env` with `AWS_PROFILE=<profile-name>` must have the following AWS managed policies or equivalent permissions attached:
+
+* IAMFullAccess
+* AmazonEC2ContainerRegistryFullAccess
+* AmazonS3FullAccess
+* CloudWatchFullAccess
+* AmazonSSMFullAccess
+* AmazonSSNFullAccess
+* AWSCloudFormationFullAccess
+* AWSLambda_FullAccess
+
 ## Running the project
 
-## Running locally??
-
-SAM???
 
 
