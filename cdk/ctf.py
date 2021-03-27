@@ -68,7 +68,7 @@ def stack_create(ctx, config_file):
         ctx.invoke(stack_update)
     except Exception:
         config.delete()
-        click.secho(f"Error creating stack", fg="red")
+        click.secho("Error creating stack", fg="red")
         raise click.Abort()
 
 
