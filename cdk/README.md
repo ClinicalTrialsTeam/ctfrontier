@@ -106,6 +106,6 @@ Run `ctf config-show` to show the current config. You can also log into AWS and 
 
 AWS CDK documentation in Python: <https://docs.aws.amazon.com/cdk/api/latest/python/index.html>
 
-AWS CLI documentation: <https://docs.aws.amazon.com/cli/latest/reference/>
+AWS CLI documentation: <https://awscli.amazonaws.com/v2/documentation/api/latest/reference/index.html>
 
 Python boto3 documentation: <https://boto3.amazonaws.com/v1/documentation/api/latest/index.html>
