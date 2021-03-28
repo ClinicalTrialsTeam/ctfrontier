@@ -1,10 +1,16 @@
 import click
 import json
-from lib import config, names, aws
+from lib import names, aws, environment
 import subprocess
-from os import getenv, putenv
-from os.path import join, dirname
-from dotenv import load_dotenv
+
+
+EXAMPLE_CONFIG = "template-config.json"
+
+
+class ConfigValidationError(Exception):
+    def __init__(self, message=None, errors=[]):
+        super(ConfigValidationError, self).__init__(message)
+        self.errors = errors
 
 
 def profile_arg():
@@ -44,17 +50,17 @@ def stack_create(ctx, config_file):
 
     click.secho(
         "Warning: creating a new stack will overwrite any existing "
-        f"AWS SSM params in the path: {config.SSM_BASE_PATH}",
+        f"AWS SSM params in the path: {environment.SSM_BASE_PATH}",
         fg="yellow",
     )
     if not click.confirm("Create a new stack?"):
         return
 
-    config.delete()
-    config.new(config_file)
+    Config.delete()
+    Config.new(config_file)
 
     tags_args = ""
-    for key, val in config.STACK_TAGS.items():
+    for key, val in aws.STACK_TAGS.items():
         tags_args += f"--tags {key}={val} "
     r = cdk_cmd(
         f"bootstrap --bootstrap-bucket-name {names.CDK_BOOTSTRAP_BUCKET} "
@@ -67,7 +73,7 @@ def stack_create(ctx, config_file):
     try:
         ctx.invoke(stack_update)
     except Exception:
-        config.delete()
+        Config.delete()
         click.secho("Error creating stack", fg="red")
         raise click.Abort()
 
@@ -180,7 +186,7 @@ def config_show():
     """
     Show the current config
     """
-    config.show()
+    Config().show()
 
 
 @cli.command()
@@ -188,7 +194,131 @@ def config_edit():
     """
     Edit the current config
     """
-    config.edit()
+    Config().edit()
+
+
+"""
+HELPERS
+"""
+
+
+class Config:
+    def __init__(self):
+        self.current_config = environment.Param.current_parameters()
+
+        # Keep track of the differences between current and new config
+        self._create = {}
+        self._update = {}
+        self._delete = []
+
+    @classmethod
+    def new(cls, config_file):
+        with open(config_file, "r") as f:
+            current_config = json.load(f)
+
+        # Read json key, values and create parameters for each
+        try:
+            for key, val in current_config.items():
+                environment.Param(key).create(val)
+                click.echo(f"Created ssm param {key}={val}")
+        except Exception as e:
+            click.secho(f"Error creating ssm parameters: {e}", fg="red")
+
+    @classmethod
+    def delete(cls):
+        for key in environment.Param.current_parameters().keys():
+            environment.Param(key).delete()
+
+    def show(self):
+        if not self.current_config:
+            click.echo("No existing config")
+        else:
+            for key, val in self.current_config.items():
+                click.echo(f"{key}={val}")
+
+    def edit(self):
+
+        while True:
+            try:
+                edited = click.edit(json.dumps(self.current_config, indent=4))
+                if edited:
+                    new_config = json.loads(edited)
+                    self._validate(new_config)
+
+                    self._create = {}
+                    self._update = {}
+                    self._delete = []
+
+                    for key, val in new_config.items():
+                        if key in self.current_config.keys():
+                            if val != self.current_config[key]:
+                                self._update[key] = val
+                        else:
+                            self._create[key] = val
+
+                    for key in self.current_config.keys():
+                        if key not in new_config.keys():
+                            self._delete.append(key)
+
+                    self._print_diff()
+                    if click.confirm("Accept changes?"):
+                        break
+                    if click.confirm("Continue editing?", abort=True):
+                        continue
+                else:
+                    click.echo("No config changes made")
+                    return
+            except ConfigValidationError as e:
+                click.echo("\nMissing required config variables:")
+                for error in e.errors:
+                    click.echo(error, err=True)
+                click.confirm("Continue editing?", abort=True)
+
+        self._push_updates()
+
+    def _validate(self, config=None):
+        if not config:
+            config = self.current_config
+
+        with open(EXAMPLE_CONFIG, "r") as f:
+            data = json.load(f)
+
+        required_params = set(data.keys())
+        current_params = set(config.keys())
+
+        errors = []
+        for missing in required_params.difference(current_params):
+            errors.append(f"{missing} required but missing from SSM")
+        if errors:
+            raise ConfigValidationError(errors=errors)
+
+    def _print_diff(self):
+        for key, val in self._create.items():
+            click.echo(f"Create {key}={val}")
+
+        for key, val in self._update.items():
+            click.echo(f"Update {key} to {val}")
+
+        for key in self._delete:
+            click.echo(f"Delete {key}")
+
+        return self._create or self._update or self._delete
+
+    def _push_updates(self):
+        """
+        Push updates to SSM
+        """
+        for key, val in self._create.items():
+            environment.Param(key).create(val)
+            click.echo(f"Added {key}={val}")
+
+        for key, val in self._update.items():
+            environment.Param(key).update(val)
+            click.echo(f"Updated {key} to {val}")
+
+        for key in self._delete:
+            environment.Param(key).delete()
+            click.echo(f"Deleted {key}")
 
 
 if __name__ == "__main__":
