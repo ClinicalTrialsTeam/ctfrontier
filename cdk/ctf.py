@@ -2,6 +2,7 @@ import click
 import json
 from lib import names, aws, environment
 import subprocess
+import base64
 
 
 EXAMPLE_CONFIG = "template-config.json"
@@ -197,9 +198,33 @@ def config_edit():
     Config().edit()
 
 
+@cli.command()
+def invoke_function():
+    """
+    Invoke lambda function
+    """
+    payload = {"test": "foo"}
+
+    function_name = f"{names.PROJECT_NAME}-{names.RAW_DATA_DOWNLOAD_FUNCTION}"
+    cmd = (
+        f"aws lambda invoke --function-name {function_name} "
+        f"--payload '{base64_encode_dict(payload)}' "
+        f"--qualifier {names.LAMBDA_RELEASE_ALIAS} "
+        f"{profile_arg()} outfile.txt"
+    )
+    click.echo(cmd)
+    r = subprocess.call(cmd.split())
+
+    return r
+
+
 """
 HELPERS
 """
+
+
+def base64_encode_dict(d):
+    return base64.b64encode(json.dumps(d).encode()).decode()
 
 
 class Config:
