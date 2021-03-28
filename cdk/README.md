@@ -100,7 +100,7 @@ Then create a file `myconfig.json`:
 
 Then run `ctf stack-create`. You will be prompted to enter your the filename of your initial config file.
 
-*Note: The initial config file is just loads the initial config values, the actual config is stored in the cloud and must be managed with teh `ctf config-*` commands.*
+*Note: The initial config file is just loads the initial config values, the actual config is stored in the cloud and must be managed with the `ctf config-*` commands.*
 
 If `ctf stack-create` fails, there is likely an error with your AWS configuration. 
 
