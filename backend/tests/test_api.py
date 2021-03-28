@@ -3,6 +3,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 from ctgov.models import BasicSearch
 from django.urls import reverse
+from mock import Mock
 
 
 factory = APIRequestFactory()
