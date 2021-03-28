@@ -78,25 +78,25 @@ be ignored.
 
 For example, if the `config-schema.json` is:
 
-```
-{
-    "notification_email": {
-        "type": "String"
-    },
-	"secret_password": {
-		"type": "SecureString"
+
+	{
+		"notification_email": {
+			"type": "String"
+		},
+		"secret_password": {
+			"type": "SecureString"
+		}
 	}
-}
-```
+
 
 Then create a file `myconfig.json`:
 
-```
-{
-    "notification_email": "youremail@example.com",
-	"secret_password": "super-secret-password"
-}
-```
+
+	{
+	    "notification_email": "youremail@example.com",
+		"secret_password": "super-secret-password"
+	}
+
 
 Then run `ctf stack-create`. You will be prompted to enter your the filename of your initial config file.
 
