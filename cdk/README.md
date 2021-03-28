@@ -102,6 +102,10 @@ Edit the config in the cloud with `ctf config-edit`. This will allow you to edit
 Run `ctf config-show` to show the current config. You can also log into AWS and look at the "Parameter Store" in "Systems Manager" which is where these are stored.
 
 
+## Useful Links
 
+AWS CDK documentation in Python: <https://docs.aws.amazon.com/cdk/api/latest/python/index.html>
 
+AWS CLI documentation: <https://docs.aws.amazon.com/cli/latest/reference/>
 
+Python boto3 documentation: <https://boto3.amazonaws.com/v1/documentation/api/latest/index.html>
