@@ -1,6 +1,20 @@
 
 # CTFrontier CDK documentation
 
+## About
+
+The AWS Cloud Development Kit (AWS CDK) is an open source software development framwork to define AWS cloud application resources using code. This project uses AWS CDK in Python to define project resources.
+
+The project also includes a command line utility for interacting with CDK. This command line utility wraps many of the standard CDK commands and some AWS CLI commands to provide additional functionality.
+
+### Useful Links
+
+AWS CDK documentation in Python: <https://docs.aws.amazon.com/cdk/api/latest/python/index.html>
+
+AWS CLI documentation: <https://awscli.amazonaws.com/v2/documentation/api/latest/reference/index.html>
+
+Python boto3 documentation: <https://boto3.amazonaws.com/v1/documentation/api/latest/index.html>
+
 ## Requirements
 
 #### Python
@@ -124,12 +138,3 @@ Edit the config in the cloud with `ctf config-edit`. This will allow you to edit
 ### Show the current config
 
 Run `ctf config-show` to show the current config. You can also log into AWS and look at the "Parameter Store" in "Systems Manager" which is where these are stored.
-
-
-## Useful Links
-
-AWS CDK documentation in Python: <https://docs.aws.amazon.com/cdk/api/latest/python/index.html>
-
-AWS CLI documentation: <https://awscli.amazonaws.com/v2/documentation/api/latest/reference/index.html>
-
-Python boto3 documentation: <https://boto3.amazonaws.com/v1/documentation/api/latest/index.html>
