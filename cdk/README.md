@@ -119,7 +119,7 @@ Run `ctf stack-delete` to delete the stack. This will delete all associated reso
 
 ### Edit the config
 
-Edit the config in the cloud with `ctf config-edit`. This will allow you to edit the config using your default command line text editor defined by the `EDITOR` environment variable. Or, if none is specified, vim.
+Edit the config in the cloud with `ctf config-edit`. This will allow you to edit the config using your default command line text editor defined by the `EDITOR` environment variable or "a sensible default". (<https://click.palletsprojects.com/en/7.x/api/#click.edit>)
 
 ### Show the current config
 
