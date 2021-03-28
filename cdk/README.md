@@ -72,7 +72,31 @@ After following the above setup instructions, you should be able to run the comm
 	  
 ### Create a new Stack
 
-To create a new stack you must first copy the file `template-config.json` into a new file and fill in all the config values.
+To create a new stack, create a json file for your initial configuration
+that contains entries for all the keys in `config-schema.json`. Types can
+be ignored.
+
+For example, if the `config-schema.json` is:
+
+```
+{
+    "notification_email": {
+        "type": "String"
+    },
+	"secret_password": {
+		"type": "SecureString"
+	}
+}
+```
+
+Then create a file `myconfig.json`:
+
+```
+{
+    "notification_email": "youremail@example.com",
+	"secret_password": "super-secret-password"
+}
+```
 
 Then run `ctf stack-create`. You will be prompted to enter your the filename of your initial config file.
 

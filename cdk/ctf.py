@@ -5,7 +5,7 @@ import subprocess
 import base64
 
 
-EXAMPLE_CONFIG = "template-config.json"
+CONFIG_SCHEMA_FILE = "config-schema.json"
 
 
 class ConfigValidationError(Exception):
@@ -213,9 +213,7 @@ def invoke_function():
         f"{profile_arg()} outfile.txt"
     )
     click.echo(cmd)
-    r = subprocess.call(cmd.split())
-
-    return r
+    subprocess.call(cmd.split())
 
 
 """
@@ -241,10 +239,16 @@ class Config:
         with open(config_file, "r") as f:
             current_config = json.load(f)
 
+        with open(CONFIG_SCHEMA_FILE, "r") as f:
+            config_schema = json.load(f)
+
         # Read json key, values and create parameters for each
         try:
             for key, val in current_config.items():
-                environment.Param(key).create(val)
+                param_type = environment.ParamTypes.SECURE_STRING.value
+                if key in config_schema:
+                    param_type = config_schema[key]["type"]
+                environment.Param(key).create(val, param_type=param_type)
                 click.echo(f"Created ssm param {key}={val}")
         except Exception as e:
             click.secho(f"Error creating ssm parameters: {e}", fg="red")
@@ -305,7 +309,7 @@ class Config:
         if not config:
             config = self.current_config
 
-        with open(EXAMPLE_CONFIG, "r") as f:
+        with open(CONFIG_SCHEMA_FILE, "r") as f:
             data = json.load(f)
 
         required_params = set(data.keys())

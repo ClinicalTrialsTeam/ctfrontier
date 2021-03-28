@@ -1,0 +1,5 @@
+{
+    "notification_email": {
+        "type": "String"
+    }
+}
