@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 
 from aws_cdk import core
-import boto3
 import json
 import click
-from .config import Param
+from .environment import Param
 from .stack import CtStack
 from . import names, aws
 
