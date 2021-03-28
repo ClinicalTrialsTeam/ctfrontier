@@ -93,7 +93,7 @@ Then create a file `myconfig.json`:
 
 
 	{
-	    "notification_email": "youremail@example.com",
+		"notification_email": "youremail@example.com",
 		"secret_password": "super-secret-password"
 	}
 
