@@ -1,0 +1,1 @@
+{"errorMessage": "'LambdaContext' object has no attribute 'get'", "errorType": "AttributeError", "stackTrace": ["  File \"/var/task/handler.py\", line 19, in handler\n    setup_logging(event, context)\n", "  File \"/var/task/handler.py\", line 13, in setup_logging\n    aws_request_id=context.get('aws_request_id'),\n"]}

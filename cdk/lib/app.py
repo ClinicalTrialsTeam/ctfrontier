@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 
 from aws_cdk import core
-import json
 import click
 from .environment import Param
 from .stack import CtStack
 from . import names, aws
+
 
 stack_props = {
     "notification_email": Param("notification_email").getvalue(decrypt=True)
