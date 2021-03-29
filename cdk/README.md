@@ -128,7 +128,8 @@ Run `ctf stack-update` to push changes to an already created stack.
 
 ### Delete the stack
 
-Run `ctf stack-delete` to delete the stack. This will delete all associated resources including the ones that AWS creates for bootstrapping.
+Run `ctf stack-delete` to delete the stack. This will delete all associated resources including the ones that AWS creates for bootstrapping for this project (marked with qualfier) and the ECR repositories created to store
+our docker images.
 
 
 ### Edit the config
