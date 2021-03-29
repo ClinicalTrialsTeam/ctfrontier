@@ -35,7 +35,7 @@ Python boto3 documentation: <https://boto3.amazonaws.com/v1/documentation/api/la
 
 1. Create an empty file `.env` in the `cdk` folder
 1. Make sure that you have set up your AWS credentials (set up using `aws configure`, check to see if they exist with `ls ~/.aws/`, you should see the files `config` and `credentials`
-1. If you want to use a named profile, configure a names profile using `aws configure --profile <profile-name>` and define `AWS_PROFILE` in `cdk/.env`.
+1. If you want to use a named profile, configure a named profile using `aws configure --profile <profile-name>` and define `AWS_PROFILE` in `cdk/.env`.
 
 Set up Python virtual environment. For example, if you were using virtualenv you might: 
 
