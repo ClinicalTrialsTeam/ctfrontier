@@ -116,7 +116,7 @@ Then run `ctf stack-create`. You will be prompted to enter your the filename of 
 
 *Note: The initial config file is just loads the initial config values, the actual config is stored in the cloud and must be managed with the `ctf config-*` commands.*
 
-If `ctf stack-create` fails, there is likely an error with your AWS configuration. 
+If `ctf stack-create` fails, there might be an error with your AWS configuration. 
 
 If `ctf stack-create` completes, then you should should have a new CloudFormation stack in your AWS account with all the resources defined in `cdk/lib/stack.py`.
 

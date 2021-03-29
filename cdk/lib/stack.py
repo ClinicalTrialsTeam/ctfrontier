@@ -27,4 +27,8 @@ class CtStack(core.Stack):
         CtfBucket(self, "RawDataFilesBucket", name=names.RAW_DATA_FILES_BUCKET)
 
         # Function to download files and save in S3
-        RawDataDownloadFunction(self, "RawDataDownloadFunction", monitoring)
+        RawDataDownloadFunction(
+            self,
+            "RawDataDownloadFunction",
+            monitoring,
+        )

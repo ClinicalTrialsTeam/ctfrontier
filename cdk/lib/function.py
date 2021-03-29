@@ -3,9 +3,9 @@ from aws_cdk import (
     aws_lambda,
     aws_cloudwatch as cloudwatch,
     aws_logs as logs,
+    aws_ecr as ecr,
 )
 from . import names
-from os.path import join, dirname
 
 
 class RawDataDownloadFunction(core.Construct):
@@ -19,12 +19,18 @@ class RawDataDownloadFunction(core.Construct):
 
         self.stack_name = core.Stack.of(self).stack_name
 
-        self.function = aws_lambda.DockerImageFunction(
+        self.function = aws_lambda.Function(
             self,
             "function",
             function_name=f"{self.stack_name}-{names.RAW_DATA_DOWNLOAD_FUNCTION}",
-            code=aws_lambda.DockerImageCode().from_image_asset(
-                directory=join(dirname(__file__), "../image")
+            handler=aws_lambda.Handler.FROM_IMAGE,
+            runtime=aws_lambda.Runtime.FROM_IMAGE,
+            code=aws_lambda.Code.from_ecr_image(
+                repository=ecr.Repository.from_repository_name(
+                    self,
+                    "LambdaRepository",
+                    repository_name=names.LAMBDA_REPOSITORY,
+                )
             ),
             environment={"TEST_ENV": "test_val"},
             log_retention=logs.RetentionDays.ONE_WEEK,
