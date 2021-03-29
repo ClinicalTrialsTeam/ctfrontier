@@ -69,20 +69,31 @@ Interact with the ctfrontier CDK project by using the `ctf` command line tool.
 After following the above setup instructions, you should be able to run the command `ctf` and see a list of the available commands. For example:
 
 	Usage: ctf [OPTIONS] COMMAND [ARGS]...
-	
+
 	Options:
-	  --help  Show this message and exit.
-	
+	--help  Show this message and exit.
+
 	Commands:
-	  config-edit   Edit the current config
-	  config-show   Show the current config
-	  stack-create  Create a new CloudFormation stack
-	  stack-delete  Delete the CloudFormation stack
-	  stack-diff    Compares the specified stack with the deployed stack
-	  stack-list    Lists the stacks in the app
-	  stack-synth   Synthesize and print CloudFormation template
-	  stack-update  Update the existing CloudFormation stack
-	  
+	config
+	docker
+	function
+	stack
+
+
+Each group of commands has subcommands. For example `ctf stack`:
+
+	Usage: ctf stack [OPTIONS] COMMAND [ARGS]...
+
+	Options:
+	--help  Show this message and exit.
+
+	Commands:
+	create  Create a new CloudFormation stack
+	delete  Delete the CloudFormation stack
+	diff    Compares the specified stack with the deployed stack
+	list    Lists the stacks in the app
+	synth   Synthesize and print CloudFormation template
+	update  Update the existing CloudFormation stack
 	  
 ### Create a new Stack
 
@@ -112,30 +123,30 @@ Then create a file `myconfig.json`:
 	}
 
 
-Then run `ctf stack-create`. You will be prompted to enter your the filename of your initial config file.
+Then run `ctf stack create`. You will be prompted to enter your the filename of your initial config file.
 
 *Note: The initial config file is just loads the initial config values, the actual config is stored in the cloud and must be managed with the `ctf config-*` commands.*
 
-If `ctf stack-create` fails, there might be an error with your AWS configuration. 
+If `ctf stack create` fails, there might be an error with your AWS configuration. 
 
-If `ctf stack-create` completes, then you should should have a new CloudFormation stack in your AWS account with all the resources defined in `cdk/lib/stack.py`.
+If `ctf stack create` completes, then you should should have a new CloudFormation stack in your AWS account with all the resources defined in `cdk/lib/stack.py`.
 
 
 ### Update the stack
 
-Run `ctf stack-update` to push changes to an already created stack.
+Run `ctf stack update` to push changes to an already created stack.
 
 
 ### Delete the stack
 
-Run `ctf stack-delete` to delete the stack. This will delete all associated resources including the ones that AWS creates for bootstrapping for this project (marked with qualfier) and the ECR repositories created to store
+Run `ctf stack delete` to delete the stack. This will delete all associated resources including the ones that AWS creates for bootstrapping for this project (marked with qualfier) and the ECR repositories created to store
 our docker images.
 
 
 ### Edit the config
 
-Edit the config in the cloud with `ctf config-edit`. This will allow you to edit the config using your default command line text editor defined by the `EDITOR` environment variable or "a sensible default". (<https://click.palletsprojects.com/en/7.x/api/#click.edit>)
+Edit the config in the cloud with `ctf config edit`. This will allow you to edit the config using your default command line text editor defined by the `EDITOR` environment variable or "a sensible default". (<https://click.palletsprojects.com/en/7.x/api/#click.edit>)
 
 ### Show the current config
 
-Run `ctf config-show` to show the current config. You can also log into AWS and look at the "Parameter Store" in "Systems Manager" which is where these are stored.
+Run `ctf config show` to show the current config. You can also log into AWS and look at the "Parameter Store" in "Systems Manager" which is where these are stored.

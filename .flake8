@@ -1,5 +1,16 @@
 [flake8]
-ignore = E203, E266, E501, W503, F403, F401, C901
-max-line-length = 79
-max-complexity = 18
+ignore = 
+    # black compatablity: allow whitespace before ':'
+    E203
+    # black compatability: allow comments with > 1 leading #
+    E266
+    # black compatability: allow line break before binary operator
+    W503
+    # black compatability: let black handle line length
+    E501
+    # allow module imports not at top of file
+    E402
 select = B,C,E,F,W,T4,B9
+# allow unused imports in __init__.py
+per-file-ignores =
+    */__init__.py: F401

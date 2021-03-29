@@ -1,5 +1,6 @@
 click
 boto3
+requests
 python-dotenv
 aws_lambda_logging
 aws-cdk.core
