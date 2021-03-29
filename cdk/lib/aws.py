@@ -10,7 +10,6 @@ load_dotenv(dotenv_path)
 
 AWS_PROFILE = getenv("AWS_PROFILE")
 AWS_REGION = "us-east-1"
-AWS_PROFILE = getenv("AWS_PROFILE")
 AWS_ACCOUNT_ID = boto3.client("sts").get_caller_identity()["Account"]
 
 STACK_TAGS = {
