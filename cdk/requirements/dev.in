@@ -1,5 +1,5 @@
 -r base.in
--e .
+-e file:.
 black
 flake8
 pre-commit
