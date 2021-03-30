@@ -22,6 +22,7 @@ class SearchForm extends Component {
     this.handleCountryChange = this.handleCountryChange.bind(this);
     this.handleSearch = this.handleSearch.bind(this);
     this.handleClear = this.handleClear.bind(this);
+    this.showAdvancedOptions = this.showAdvancedOptions.bind(this);
     this.formRef = React.createRef();
     this.state = {
       intervention: '',
@@ -31,6 +32,7 @@ class SearchForm extends Component {
       otherTerms: '',
       searchResults: '',
       countries: [],
+      showAdvancedOptions: false,
     };
   }
 
@@ -99,6 +101,13 @@ class SearchForm extends Component {
     }
   }
 
+  showAdvancedOptions() {
+    const { showAdvancedOptions } = this.state;
+    this.setState({
+      showAdvancedOptions: !showAdvancedOptions,
+    });
+  }
+
   render() {
     const { Option } = Select;
     const countryList = [];
@@ -120,6 +129,18 @@ class SearchForm extends Component {
         <Option key={index} value={value}>{value}</Option>
       );
     });
+    let advancedOptions;
+    if (this.state.showAdvancedOptions) {
+      advancedOptions = (
+        <AdvancedSearchGroup
+          access={access}
+          recruitment={recruitment}
+          handleInputChange={this.handleInputChange}
+        />
+      );
+    } else {
+      advancedOptions = '';
+    }
     return (
       <>
         <Divider
@@ -201,18 +222,13 @@ class SearchForm extends Component {
                 />
                 <Button
                   key="10"
-                  text="Show advanced options"
-                  clickHandler={this.handleClear}
+                  text={this.state.showAdvancedOptions === false ? 'Show advanced options' : 'Hide advanced options'}
+                  clickHandler={this.showAdvancedOptions}
                 />
               </Space>
             </Form.Item>
           </Row>
-          <AdvancedSearchGroup
-            access={access}
-            recruitment={recruitment}
-            handleInputChange={this.handleInputChange}
-          />
-          <div style={{ display: 'none' }}>{JSON.stringify(this.state.searchResults)}</div>
+          {advancedOptions}
         </Form>
       </>
     );
