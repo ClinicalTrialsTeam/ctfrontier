@@ -11,7 +11,6 @@ class TextInputField extends Component {
     return (
       <Form.Item
         label={label}
-        name={name}
         tooltip={{
           title,
           icon: <InfoCircleOutlined />,
@@ -20,6 +19,7 @@ class TextInputField extends Component {
       >
         <Input
           allowClear
+          name={name}
         />
       </Form.Item>
     );
