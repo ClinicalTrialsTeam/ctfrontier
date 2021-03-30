@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import {
-  Form, Select, Divider, Row, Col, Space,
+  Form, Select, Divider, Row, Col, Space, Typography, Checkbox, DatePicker,
 } from 'antd';
 import ctgov from '../../../apis/ctgov';
 import TextInputField from '../../atoms/TextInputField/TextInputField';
@@ -12,7 +12,7 @@ import AdvancedSearchGroup from '../../molecules/AdvancedSearchGroup/AdvancedSea
 import './SearchForm.css';
 
 import {
-  recruitment, access,
+  recruitment, access, phases,
 } from '../../../variables/TopLevelSearchData';
 
 class SearchForm extends Component {
@@ -100,8 +100,34 @@ class SearchForm extends Component {
   }
 
   render() {
+    const { RangePicker } = DatePicker;
     const { Option } = Select;
+    const { Text } = Typography;
     const countryList = [];
+    const roaList = [];
+
+    const recruitmentCheckboxes = [];
+    const phasesCheckboxes = [];
+
+    Array.from(recruitment.entries()).forEach(([index, value]) => {
+      recruitmentCheckboxes.push(
+        <Col key={index} span={12}>
+          <Checkbox key={index} value={value} style={{ lineHeight: '32px' }}>
+            {value}
+          </Checkbox>
+        </Col>
+      );
+    });
+
+    Array.from(phases.entries()).forEach(([index, value]) => {
+      phasesCheckboxes.push(
+        <Col key={index} span={12}>
+          <Checkbox key={index} value={value} style={{ lineHeight: '32px' }}>
+            {value}
+          </Checkbox>
+        </Col>
+      );
+    });
 
     if (this.state.searchResults !== '') {
       return (
@@ -120,6 +146,7 @@ class SearchForm extends Component {
         <Option key={index} value={value}>{value}</Option>
       );
     });
+
     return (
       <>
         <Divider
@@ -133,29 +160,66 @@ class SearchForm extends Component {
           layout="vertical"
           key="form_key"
         >
-          <Row key="form_row_1" gutter={[16, 16]}>
+          <Row key="form_row_1" gutter={[32, 16]}>
             <Col key="12" span={8}>
               <TextInputField
                 key="1"
-                label="NCT number"
-                title="A unique identification code given to each clinical study record registered on ClinicalTrials.gov. The format is 'NCT' followed by an 8-digit number (for example, NCT00000419). Also called the ClinicalTrials.gov identifier."
-                name="nct_id"
+                label="Condition or disease"
+                title="The disease, disorder, syndrome, illness, or injury that is being studied. Conditions may also include other health-related issues, such as lifespan, quality of life, and health risks."
+                name="condition"
                 handleInputChange={this.handleInputChange}
               />
               <TextInputField
                 key="2"
-                label="Condition or disease"
-                title="The disease, disorder, syndrome, illness, or injury that is being studied. On CTFrontier.com, conditions may also include other health-related issues, such as lifespan, quality of life, and health risks."
-                name="condition"
+                label="Intervention / treatment"
+                title="A process or action that is the focus of a clinical study. Interventions include drugs, medical devices, procedures, vaccines, and other products that are either investigational or already available. Interventions can also include noninvasive approaches, such as education or modifying diet and exercise."
+                name="intervention"
                 handleInputChange={this.handleInputChange}
               />
+              <Text className="sf-text" strong key="t_1">Dates</Text>
+              <Row id="dates-row" key="form_row_1_1" gutter={[16, 4]}>
+                <Col key="12_1" span={12}>
+                  <Form.Item
+                    key="range_1"
+                    label="Study start"
+                  >
+                    <RangePicker />
+                  </Form.Item>
+                  <Form.Item
+                    key="range_2"
+                    label="Primary completion"
+                  >
+                    <RangePicker />
+                  </Form.Item>
+                  <Form.Item
+                    key="range_3"
+                    label="Last update posted"
+                  >
+                    <RangePicker />
+                  </Form.Item>
+                </Col>
+                <Col key="12_1" span={12}>
+                  <Form.Item
+                    key="range_4"
+                    label="First posted"
+                  >
+                    <RangePicker />
+                  </Form.Item>
+                  <Form.Item
+                    key="range_5"
+                    label="Results first posted"
+                  >
+                    <RangePicker />
+                  </Form.Item>
+                </Col>
+              </Row>
             </Col>
             <Col key="13" span={8}>
               <TextInputField
                 key="3"
-                label="Intervention / treatment"
-                title="A process or action that is the focus of a clinical study. Interventions include drugs, medical devices, procedures, vaccines, and other products that are either investigational or already available. Interventions can also include noninvasive approaches, such as education or modifying diet and exercise."
-                name="intervention"
+                label="Modality"
+                title="A therapeutic method or agent that involves the physical treatment of a disorder. Common modalities are small molecules (organic compounds that can often be delivered orally); large molecules or biologics, which include monoclonal antibodies (mAbs), proteins, peptides; antibody-drug conjugates; oligonucleotides (e.g. antisense oligonucleotides (ASOs), mRNA, siRNAs); gene therapy; and cell therapy (e.g. CAR T or chimeric antigen receptor T cell therapy)."
+                name="modality"
                 handleInputChange={this.handleInputChange}
               />
               <TextInputField
@@ -165,10 +229,81 @@ class SearchForm extends Component {
                 name="target"
                 handleInputChange={this.handleInputChange}
               />
+              <Text strong key="t_2">Recruitment Status</Text>
+              <Form.Item
+                name="checkbox-group"
+              >
+                <Checkbox.Group>
+                  <Row>
+                    {recruitmentCheckboxes}
+                  </Row>
+                </Checkbox.Group>
+              </Form.Item>
             </Col>
             <Col key="14" span={8}>
-              <SelectField
+              <TextInputField
                 key="5"
+                label="NCT number"
+                title="A unique identification code given to each clinical study record registered on ClinicalTrials.gov. The format is 'NCT' followed by an 8-digit number (for example, NCT00000419). Also called the ClinicalTrials.gov identifier."
+                name="nct_id"
+                handleInputChange={this.handleInputChange}
+              />
+              <TextInputField
+                key="6"
+                label="Sponsor"
+                title="The organization or person who initiates the study and who has authority and control over the study."
+                name="otherTerms"
+                handleInputChange={this.handleInputChange}
+              />
+              <Text strong key="t_3">Phases</Text>
+              <Form.Item
+                name="checkbox-group"
+              >
+                <Checkbox.Group>
+                  <Row>
+                    {phasesCheckboxes}
+                  </Row>
+                </Checkbox.Group>
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row key="form_row_2" justify="center">
+            <Form.Item>
+              <Space>
+                <Button
+                  key="btn_1"
+                  inputType="primary"
+                  text="Search"
+                  clickHandler={this.handleSearch}
+                />
+                <Button
+                  key="btn_2"
+                  text="Clear"
+                  clickHandler={this.handleClear}
+                />
+                <Button
+                  key="btn_3"
+                  text="Hide advanced options"
+                  clickHandler={this.handleClear}
+                />
+              </Space>
+            </Form.Item>
+          </Row>
+          <Row key="form_row_3" gutter={[16, 16]}>
+            <Col key="form_col_3_1" span={12}>
+              <SelectField
+                key="10"
+                name="roa"
+                label="Routes of Administration"
+                tooltip="A route of administration in pharmacology is the path by which a drug is taken into the body. Common examples include oral and intravenous administration."
+                placeholder="Select the route of administration"
+                options={roaList}
+                handleInputChange={this.handleCountryChange}
+              />
+            </Col>
+            <Col key="form_col_3_2" span={12}>
+              <SelectField
+                key="11"
                 name="country"
                 label="Country"
                 tooltip="The 'Country' field is used to find clinical studies with locations in a specific country. For example, if you choose the United States, you can then narrow your search by selecting a state and identifying a city and distance."
@@ -176,36 +311,7 @@ class SearchForm extends Component {
                 options={countryList}
                 handleInputChange={this.handleCountryChange}
               />
-              <TextInputField
-                key="6"
-                label="Other terms"
-                title="The 'Other' terms field is used to narrow a search. For example,  you may enter the name of a drug or the NCT number of a clinical study to limit the search to study records that contain these words."
-                name="otherTerms"
-                handleInputChange={this.handleInputChange}
-              />
             </Col>
-          </Row>
-          <Row key="form_row_2" justify="center">
-            <Form.Item>
-              <Space>
-                <Button
-                  key="8"
-                  inputType="primary"
-                  text="Search"
-                  clickHandler={this.handleSearch}
-                />
-                <Button
-                  key="9"
-                  text="Clear"
-                  clickHandler={this.handleClear}
-                />
-                <Button
-                  key="10"
-                  text="Show advanced options"
-                  clickHandler={this.handleClear}
-                />
-              </Space>
-            </Form.Item>
           </Row>
           <AdvancedSearchGroup
             access={access}
