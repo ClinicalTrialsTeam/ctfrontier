@@ -80,8 +80,7 @@ class Config:
         if not self.current_config:
             click.echo("No existing config")
         else:
-            for key, val in self.current_config.items():
-                click.echo(f"{key}={val}")
+            click.echo(json.dumps(self.current_config, indent=4))
 
     def edit(self):
 
@@ -89,7 +88,12 @@ class Config:
             try:
                 edited = click.edit(json.dumps(self.current_config, indent=4))
                 if edited:
-                    new_config = json.loads(edited)
+                    try:
+                        new_config = json.loads(edited)
+                    except json.JSONDecodeError as e:
+                        click.secho(f"Invalid JSON. {e}", fg="red")
+                        if click.confirm("Continue editing?", abort=True):
+                            continue
                     self._validate(new_config)
 
                     self._create = {}
@@ -127,10 +131,9 @@ class Config:
         if not config:
             config = self.current_config
 
-        with open(CONFIG_SCHEMA_FILE, "r") as f:
-            data = json.load(f)
+        schema = self._schema()
 
-        required_params = set(data.keys())
+        required_params = set(schema.keys())
         current_params = set(config.keys())
 
         errors = []
@@ -138,6 +141,10 @@ class Config:
             errors.append(f"{missing} required but missing from SSM")
         if errors:
             raise ConfigValidationError(errors=errors)
+
+    def _schema(self):
+        with open(CONFIG_SCHEMA_FILE, "r") as f:
+            return json.load(f)
 
     def _print_diff(self):
         for key, val in self._create.items():
@@ -155,8 +162,17 @@ class Config:
         """
         Push updates to SSM
         """
+        schema = self._schema()
+
         for key, val in self._create.items():
-            environment.Param(key).create(val)
+            param_type_str = schema[key]["type"]
+            if param_type_str == "String":
+                param_type = environment.ParamTypes.STRING
+            elif param_type_str == "StringList":
+                param_type = environment.ParamTypes.SECURE_STRING
+            else:
+                param_type = environment.ParamTypes.STRING_LIST
+            environment.Param(key).create(val, param_type=param_type)
             click.echo(f"Added {key}={val}")
 
         for key, val in self._update.items():

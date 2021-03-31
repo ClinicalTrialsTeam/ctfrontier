@@ -1,5 +1,8 @@
 {
     "notification_email": {
         "type": "String"
+    },
+    "clinicaltrials_data_url": {
+        "type": "String"
     }
 }

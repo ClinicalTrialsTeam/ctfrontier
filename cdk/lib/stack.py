@@ -1,8 +1,11 @@
-from aws_cdk import core
+from aws_cdk import (
+    core,
+    aws_iam as iam,
+)
 from .monitoring import CtfMonitoring
 from .function import RawDataDownloadFunction
 from .bucket import CtfBucket
-from . import names
+from . import names, environment
 
 
 class CtStack(core.Stack):
@@ -27,8 +30,15 @@ class CtStack(core.Stack):
         CtfBucket(self, "RawDataFilesBucket", name=names.RAW_DATA_FILES_BUCKET)
 
         # Function to download files and save in S3
-        RawDataDownloadFunction(
+        data_download = RawDataDownloadFunction(
             self,
             "RawDataDownloadFunction",
             monitoring,
+            env={"SSM_BASE_PATH": environment.SSM_BASE_PATH},
+        )
+        data_download.function.add_to_role_policy(
+            iam.PolicyStatement(
+                actions=["ssm:GetParameter"],
+                resources=["*"],
+            )
         )

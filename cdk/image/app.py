@@ -1,7 +1,10 @@
-import json
 import logging
 import aws_lambda_logging
+import boto3
+from os import getenv as env
 
+
+SSM_BASE_PATH = env("SSM_BASE_PATH")
 
 logger = logging.getLogger()
 
@@ -17,13 +20,17 @@ def setup_logging(event, context):
 
 def handler(event, context):
     setup_logging(event, context)
-    body = {
-        "message": "Go Serverless v1.0! Your function executed successfully!",
-        "input": event,
-    }
-    logger.info(body)
+    param_name = "/ctfrontier/clinicaltrials_data_url"
+    logger.debug(f"getting ssm param {param_name}")
+
+    # get ssm param
+    ssm = boto3.client("ssm", region_name="us-east-1")
+    r = ssm.get_parameter(Name=param_name)
+    logger.info(r)
+    url = r["Parameter"]["Value"]
+
     response = {
         "statusCode": 200,
-        "body": json.dumps(body),
+        "body": url,
     }
     return response

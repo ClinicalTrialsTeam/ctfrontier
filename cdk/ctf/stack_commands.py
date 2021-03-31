@@ -14,6 +14,7 @@ from .common import (
     deploy_docker_image,
 )
 from .config_commands import Config
+from .function_commands import function_deploy
 
 
 @click.group()
@@ -55,7 +56,7 @@ def stack_create(ctx, config_file):
     deploy_docker_image()
 
     try:
-        ctx.invoke(stack_update)
+        ctx.invoke(stack_update, ctx, False)
     except Exception:
         Config.delete()
         click.secho("Error creating stack", fg="red")
@@ -63,11 +64,15 @@ def stack_create(ctx, config_file):
 
 
 @stack.command("update")
-def stack_update():
+@click.pass_context
+def stack_update(ctx, update_containers=True):
     """
     Update the existing CloudFormation stack
     """
     run_cdk_command("deploy")
+
+    if update_containers:
+        ctx.invoke(function_deploy)
 
 
 @stack.command("diff")

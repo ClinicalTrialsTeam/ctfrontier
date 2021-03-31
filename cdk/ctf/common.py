@@ -40,6 +40,25 @@ def get_image_uri():
     )
 
 
+def get_image_id(running=False):
+    # Get image id
+    if running:
+        docker_command = "ps"
+        filter_by = "ancestor"
+    else:
+        docker_command = "images"
+        filter_by = "reference"
+    cmd = (
+        f"docker {docker_command} -q --filter={filter_by}='{get_image_uri()}'"
+    )
+    click.echo(cmd)
+    p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+    if p.wait() != 0:
+        click.secho("Error getting docker image id", fg="red")
+        raise click.Abort()
+    return p.communicate()[0].decode()
+
+
 def build_docker_image(image_uri):
     # Build docker image
     cmd = f"docker build -t {image_uri} image"
@@ -51,17 +70,9 @@ def build_docker_image(image_uri):
 
 def deploy_docker_image():
     image_uri = get_image_uri()
+    image_id = get_image_id()
 
-    build_docker_image(image_uri())
-
-    # Get image id
-    cmd = f"docker images -q --filter=reference='{image_uri}'"
-    click.echo(cmd)
-    p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
-    if p.wait() != 0:
-        click.secho("Error getting docker image id", fg="red")
-        raise click.Abort()
-    image_id = p.communicate()[0].decode()
+    build_docker_image(image_uri)
 
     # Tag docker image
     cmd = f"docker tag {image_id} {image_uri}"
@@ -79,7 +90,7 @@ def deploy_docker_image():
     r = subprocess.run(cmd.split())
     if r.returncode != 0:
         click.secho(
-            "Error pushing docker image. Try `ctf docker-login` ?",
+            "Error pushing docker image. Try `ctf docker login` ?",
             fg="red",
         )
         raise click.Abort()

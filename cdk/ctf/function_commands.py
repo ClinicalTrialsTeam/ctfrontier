@@ -14,6 +14,7 @@ from .common import (
     get_image_uri,
     build_docker_image,
     deploy_docker_image,
+    get_image_id,
 )
 
 
@@ -56,7 +57,7 @@ def function_local_run():
     image_uri = get_image_uri()
     build_docker_image(image_uri)
 
-    cmd = f"docker run -p 9000:8080 {image_uri}"
+    cmd = f"docker run -d -p 9000:8080 {image_uri}"
     run_command(cmd)
 
 
@@ -80,7 +81,7 @@ def function_local_stop():
     """
     Stop the locally running lambda
     """
-    cmd = f"docker stop {get_image_uri()}"
+    cmd = f"docker stop {get_image_id(running=True)}"
     run_command(cmd)
 
 

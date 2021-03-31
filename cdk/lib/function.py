@@ -14,6 +14,7 @@ class RawDataDownloadFunction(core.Construct):
         scope: core.Construct,
         id: str,
         monitoring,
+        env,
     ):
         super().__init__(scope, id)
 
@@ -32,7 +33,7 @@ class RawDataDownloadFunction(core.Construct):
                     repository_name=names.LAMBDA_REPOSITORY,
                 )
             ),
-            environment={"TEST_ENV": "test_val"},
+            environment=env,
             log_retention=logs.RetentionDays.ONE_WEEK,
             memory_size=128,
             timeout=core.Duration.seconds(30),
