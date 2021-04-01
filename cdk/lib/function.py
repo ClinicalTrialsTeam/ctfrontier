@@ -3,18 +3,21 @@ from aws_cdk import (
     aws_lambda,
     aws_cloudwatch as cloudwatch,
     aws_logs as logs,
-    aws_ecr as ecr,
 )
 from . import names
 
 
-class RawDataDownloadFunction(core.Construct):
+class CtfFunction(core.Construct):
     def __init__(
         self,
         scope: core.Construct,
         id: str,
+        name,
+        lambda_code_bucket,
         monitoring,
-        env,
+        timeout_seconds=30,
+        memory_size=128,
+        env={},
     ):
         super().__init__(scope, id)
 
@@ -23,20 +26,17 @@ class RawDataDownloadFunction(core.Construct):
         self.function = aws_lambda.Function(
             self,
             "function",
-            function_name=f"{self.stack_name}-{names.RAW_DATA_DOWNLOAD_FUNCTION}",
-            handler=aws_lambda.Handler.FROM_IMAGE,
-            runtime=aws_lambda.Runtime.FROM_IMAGE,
-            code=aws_lambda.Code.from_ecr_image(
-                repository=ecr.Repository.from_repository_name(
-                    self,
-                    "LambdaRepository",
-                    repository_name=names.LAMBDA_REPOSITORY,
-                )
+            function_name=f"{self.stack_name}-{name}",
+            handler="app.handler",
+            runtime=aws_lambda.Runtime.PYTHON_3_8,
+            code=aws_lambda.Code.from_bucket(
+                bucket=lambda_code_bucket,
+                key=f"{self.stack_name}/{name}.zip",
             ),
             environment=env,
             log_retention=logs.RetentionDays.ONE_WEEK,
-            memory_size=128,
-            timeout=core.Duration.seconds(30),
+            memory_size=memory_size,
+            timeout=core.Duration.seconds(timeout_seconds),
             retry_attempts=0,
         )
 

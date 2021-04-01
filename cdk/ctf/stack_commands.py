@@ -52,7 +52,7 @@ def stack_create(ctx, config_file):
     Config.new(config_file)
 
     __bootstrap_cdk()
-    __bootstrap_ecr()
+    __bootstrap_custom()
     deploy_docker_image()
 
     try:
@@ -65,13 +65,13 @@ def stack_create(ctx, config_file):
 
 @stack.command("update")
 @click.pass_context
-def stack_update(ctx, update_containers=True):
+def stack_update(ctx, update_functions=False):
     """
     Update the existing CloudFormation stack
     """
     run_cdk_command("deploy")
 
-    if update_containers:
+    if update_functions:
         ctx.invoke(function_deploy)
 
 
@@ -90,7 +90,7 @@ def stack_delete():
     """
     run_cdk_command("destroy")
 
-    __delete_ecr_bootstrap()
+    __delete_bootstrap_custom()
     __delete_bootstrap_cdk()
 
 
@@ -115,9 +115,16 @@ Private functions
 """
 
 
-def __bootstrap_ecr():
+def __bootstrap_custom():
 
-    # Create ECR repository
+    # Create S3 bucket to store lambda code
+    cmd = (
+        f"aws {profile_arg()} s3api create-bucket "
+        f"--bucket {names.LAMBDA_CODE_BUCKET}"
+    )
+    run_command(cmd)
+
+    # Create ECR repository to store docker images
     tags = ""
     for key, val in aws.STACK_TAGS.items():
         tags += f"Key={key},Value={val} "
@@ -129,11 +136,16 @@ def __bootstrap_ecr():
     run_command(cmd)
 
 
-def __delete_ecr_bootstrap():
+def __delete_bootstrap_custom():
+    # Clear lambda code S3 bucket and delete the bucket
+    __empty_s3_bucket(names.LAMBDA_CODE_BUCKET)
+    cmd = f"aws {profile_arg()} delete-bucket --bucket {names.LAMBDA_CODE_BUCKET}"
+    run_command(cmd)
+
     # Find and all ECR repository images
     cmd = (
-        f"aws ecr list-images --repository-name "
-        f"{names.LAMBDA_REPOSITORY} {profile_arg()}"
+        f"aws {profile_arg()} ecr list-images --repository-name "
+        f"{names.LAMBDA_REPOSITORY}"
     )
     click.echo(cmd)
     output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
@@ -179,12 +191,7 @@ def __delete_bootstrap_cdk():
         f"{aws.AWS_ACCOUNT_ID}-{aws.AWS_REGION}"
     )
 
-    # Empty boostrap S3 bucket
-    cmd = (
-        f"aws {profile_arg()} s3 rm --recursive "
-        f"s3://{names.CDK_BOOTSTRAP_BUCKET}"
-    )
-    run_command(cmd)
+    __empty_s3_bucket(names.CDK_BOOTSTRAP_BUCKET)
 
     # Find all bootstrapped ECR repository images
     cmd = (
@@ -218,4 +225,9 @@ def __delete_bootstrap_cdk():
         f"aws s3api delete-bucket --bucket {names.CDK_BOOTSTRAP_BUCKET} "
         f"{profile_arg()}"
     )
+    run_command(cmd)
+
+
+def __empty_s3_bucket(bucket_name):
+    cmd = f"aws {profile_arg()} s3 rm --recursive " f"s3://{bucket_name}"
     run_command(cmd)

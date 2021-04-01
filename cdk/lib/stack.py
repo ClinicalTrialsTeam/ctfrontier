@@ -1,9 +1,10 @@
 from aws_cdk import (
     core,
     aws_iam as iam,
+    aws_s3 as s3,
 )
 from .monitoring import CtfMonitoring
-from .function import RawDataDownloadFunction
+from .function import CtfFunction
 from .bucket import CtfBucket
 from . import names, environment
 
@@ -27,15 +28,31 @@ class CtStack(core.Stack):
         )
 
         # S3 bucket to store raw data at beginning of ETL pipeline
-        CtfBucket(self, "RawDataFilesBucket", name=names.RAW_DATA_FILES_BUCKET)
+        raw_files_bucket = CtfBucket(
+            self,
+            "RawDataFilesBucket",
+            name=names.RAW_DATA_FILES_BUCKET,
+        )
+
+        lambda_code_bucket = s3.Bucket.from_bucket_name(
+            self, "LambdaCodeBucket", names.LAMBDA_CODE_BUCKET
+        )
 
         # Function to download files and save in S3
-        data_download = RawDataDownloadFunction(
+        data_download = CtfFunction(
             self,
-            "RawDataDownloadFunction",
+            "ETLDownloadFunction",
+            names.ETL_DOWNLOAD_FUNCTION,
+            lambda_code_bucket,
             monitoring,
-            env={"SSM_BASE_PATH": environment.SSM_BASE_PATH},
+            memory_size=500,
+            timeout_seconds=900,
+            env={
+                "SSM_BASE_PATH": environment.SSM_BASE_PATH,
+                "RAW_DATA_FILES_BUCKET": f"{self.stack_name}-{names.RAW_DATA_FILES_BUCKET}",
+            },
         )
+        raw_files_bucket.bucket.grant_write(data_download.function)
         data_download.function.add_to_role_policy(
             iam.PolicyStatement(
                 actions=["ssm:GetParameter"],
