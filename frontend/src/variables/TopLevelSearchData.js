@@ -42,9 +42,51 @@ const roa = [
   'Other',
 ];
 
+const results = [
+  'All studies',
+  'Studies with results',
+  'Studies without results',
+];
+
+const types = [
+  'All studies',
+  'Interventional Studies (Clinical Trials)',
+  'Observational Studies',
+  'Patient Registries',
+  'Expanded Access Studies',
+];
+
+const sex = [
+  'All',
+  'Studies with Female Participants',
+  'Studies with Male Participants',
+];
+
+const ageGroup = [
+  'Child (birth-17)',
+  'Adult (18-64)',
+  'Older Adult (65+)',
+];
+
+const ethnicities = [
+  'All',
+  'White / Caucasian',
+  'Hispanic or Latino',
+  'Black or African American',
+  'Asian',
+  'American Indian or Alaska Native',
+  'Native Hawaiian or Pacific Islander',
+  'Mixed',
+];
+
 module.exports = {
   recruitment,
   access,
   phases,
   roa,
+  results,
+  types,
+  sex,
+  ageGroup,
+  ethnicities,
 };
