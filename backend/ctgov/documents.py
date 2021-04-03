@@ -2,7 +2,7 @@ from django_elasticsearch_dsl import Document, fields
 from django_elasticsearch_dsl.registries import registry
 from elasticsearch_dsl import analyzer, tokenizer
 from ctgov.models import Documents
-from .models import Sponsors, ReportedEvents, Studies, BasicSearch
+from .models import ReportedEvents, BasicSearch
 
 
 @registry.register_document

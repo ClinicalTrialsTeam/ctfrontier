@@ -5,7 +5,6 @@ import {
 } from 'antd';
 import ctgov from '../../../apis/ctgov';
 import TextInputField from '../../atoms/TextInputField/TextInputField';
-import SelectField from '../../atoms/SelectField/SelectField';
 import Button from '../../atoms/buttons/Button/Button';
 import AdvancedSearchGroup from '../../molecules/AdvancedSearchGroup/AdvancedSearchGroup';
 
@@ -22,6 +21,7 @@ class SearchForm extends Component {
     this.handleCountryChange = this.handleCountryChange.bind(this);
     this.handleSearch = this.handleSearch.bind(this);
     this.handleClear = this.handleClear.bind(this);
+    this.showAdvancedOptions = this.showAdvancedOptions.bind(this);
     this.formRef = React.createRef();
     this.state = {
       intervention: '',
@@ -31,6 +31,7 @@ class SearchForm extends Component {
       otherTerms: '',
       searchResults: '',
       countries: [],
+      showAdvancedOptions: false,
     };
   }
 
@@ -99,12 +100,18 @@ class SearchForm extends Component {
     }
   }
 
+  showAdvancedOptions() {
+    const { showAdvancedOptions } = this.state;
+    this.setState({
+      showAdvancedOptions: !showAdvancedOptions,
+    });
+  }
+
   render() {
     const { RangePicker } = DatePicker;
     const { Option } = Select;
     const { Text } = Typography;
     const countryList = [];
-    const roaList = [];
 
     const recruitmentCheckboxes = [];
     const phasesCheckboxes = [];
@@ -146,7 +153,18 @@ class SearchForm extends Component {
         <Option key={index} value={value}>{value}</Option>
       );
     });
-
+    let advancedOptions;
+    if (this.state.showAdvancedOptions) {
+      advancedOptions = (
+        <AdvancedSearchGroup
+          access={access}
+          recruitment={recruitment}
+          handleInputChange={this.handleInputChange}
+        />
+      );
+    } else {
+      advancedOptions = '';
+    }
     return (
       <>
         <Divider
@@ -282,43 +300,14 @@ class SearchForm extends Component {
                   clickHandler={this.handleClear}
                 />
                 <Button
-                  key="btn_3"
-                  text="Hide advanced options"
-                  clickHandler={this.handleClear}
+                  key="10"
+                  text={this.state.showAdvancedOptions === false ? 'Show advanced options' : 'Hide advanced options'}
+                  clickHandler={this.showAdvancedOptions}
                 />
               </Space>
             </Form.Item>
           </Row>
-          <Row key="form_row_3" gutter={[16, 16]}>
-            <Col key="form_col_3_1" span={12}>
-              <SelectField
-                key="10"
-                name="roa"
-                label="Routes of Administration"
-                tooltip="A route of administration in pharmacology is the path by which a drug is taken into the body. Common examples include oral and intravenous administration."
-                placeholder="Select the route of administration"
-                options={roaList}
-                handleInputChange={this.handleCountryChange}
-              />
-            </Col>
-            <Col key="form_col_3_2" span={12}>
-              <SelectField
-                key="11"
-                name="country"
-                label="Country"
-                tooltip="The 'Country' field is used to find clinical studies with locations in a specific country. For example, if you choose the United States, you can then narrow your search by selecting a state and identifying a city and distance."
-                placeholder="Select the country"
-                options={countryList}
-                handleInputChange={this.handleCountryChange}
-              />
-            </Col>
-          </Row>
-          <AdvancedSearchGroup
-            access={access}
-            recruitment={recruitment}
-            handleInputChange={this.handleInputChange}
-          />
-          <div style={{ display: 'none' }}>{JSON.stringify(this.state.searchResults)}</div>
+          {advancedOptions}
         </Form>
       </>
     );
