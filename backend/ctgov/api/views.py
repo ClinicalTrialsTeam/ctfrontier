@@ -158,10 +158,12 @@ def convert_to_date(datestr):
 
 
 def valid_date(datestr):
-    status = True
+    if not datestr:
+        return False
+
     try:
         datetime.strptime(datestr, "%Y-%m-%d")
     except ValueError:
-        status = False
+        return False
 
-    return status
+    return True
