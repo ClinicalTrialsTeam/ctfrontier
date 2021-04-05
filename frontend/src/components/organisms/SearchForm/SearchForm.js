@@ -335,8 +335,8 @@ class SearchForm extends Component {
               />
               <TextInputField
                 key="field-subcondition"
-                label="Subcondition"
-                title="Subcondition definition will go here"
+                label="Additional Condition Parameters"
+                title="Additional condition parameters, such as severity or stage of the disease."
                 name="subcondition"
                 handleInputChange={this.handleInputChange}
               />
@@ -360,14 +360,14 @@ class SearchForm extends Component {
               <TextInputField
                 key="field-modality"
                 label="Modality"
-                title="A therapeutic method or agent that involves the physical treatment of a disorder. Common modalities are small molecules (organic compounds that can often be delivered orally); large molecules or biologics, which include monoclonal antibodies (mAbs), proteins, peptides; antibody-drug conjugates; oligonucleotides (e.g. antisense oligonucleotides (ASOs), mRNA, siRNAs); gene therapy; and cell therapy (e.g. CAR T or chimeric antigen receptor T cell therapy)."
+                title="A therapeutic approach for drugs, such as small molecules, antibodies, RNAi, CAR T cell, or peptide."
                 name="modality"
                 handleInputChange={this.handleInputChange}
               />
               <TextInputField
                 key="field-target"
                 label="MOA or Target"
-                title="Mechanism of action (MOA) describes how a drug or substance produces an effect in the body. A drug’s MOA could be how it affects a specific target in a cell, such as an enzyme, or a cell function, such as cell growth. Biological targets are most commonly proteins, such as enzymes, ion channels, and receptors."
+                title="A biochemical interaction that a drug disrupts usually involving a specific protein (target), such as an enzyme or receptor."
                 name="target"
                 handleInputChange={this.handleInputChange}
               />
@@ -537,13 +537,13 @@ class SearchForm extends Component {
                 Native Hawaiian or Other Pacific Islander: A person having origins in any of the original peoples of Hawaii, Guam, Samoa, or other Pacific Islands.
                 White: A person having origins in any of the original peoples of Europe, the Middle East, or North Africa. Hispanic or Latino: A person of Cuban, Mexican, Puerto Rican, South or Central American, or other Spanish culture or origin, regardless of race."
                 placeholder="Select the ethnicity"
-                options={phaseList}
+                options={ethnicitiesList}
                 handleInputChange={this.handlePhaseChange}
               />
               <SelectField
                 key="field-country"
                 name="country"
-                label="Study Location (Country)"
+                label="Patient's Location (Country)"
                 title="In the search feature, the Country field is used to find clinical studies with locations in a specific country. For example, if you choose the United States, you can then narrow your search by selecting a state and identifying a city and distance."
                 placeholder="Select the country"
                 options={countryList}

@@ -43,7 +43,7 @@ class AdvancedSearchGroup extends Component {
         <Row key={uuidv4()} gutter={[16, 16]} style={{ marginBottom: '18px' }}>
           <Col key={uuidv4()} span={12}>
             <Collapse>
-              <Panel header="Recruitment Status" key="1">
+              <Panel header="Outcome Measures" key="1">
                 <Form.Item
                   name="checkbox-group"
                 >
@@ -72,7 +72,8 @@ class AdvancedSearchGroup extends Component {
             </Collapse>
           </Col>
         </Row>
-        <Row key={uuidv4()} gutter={[16, 16]} style={{ marginBottom: '18px' }}>
+        {/* <Row key={uuidv4()} gutter={[16, 16]}
+         style={{ marginBottom: '18px' }}>
           <Col key={uuidv4()} span={12}>
             <Collapse>
               <Panel header="Eligibility Criteria" key="3">
@@ -87,7 +88,7 @@ class AdvancedSearchGroup extends Component {
               </Panel>
             </Collapse>
           </Col>
-        </Row>
+        </Row> */}
         <Row key={uuidv4()} gutter={[16, 16]} style={{ marginBottom: '36px' }}>
           <Col key={uuidv4()} span={12}>
             <Collapse>
