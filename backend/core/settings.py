@@ -100,8 +100,11 @@ DATABASES = {
         "NAME": "aact",
         "USER": "postgres",
         "PASSWORD": getenv("DB_PASSWORD"),
-        "HOST": "pgdb",
+        "HOST": getenv("HOST"),
         "PORT": 5432,
+        "TEST": {
+            "NAME": "mytestdatabase",
+        },
     },
 }
 

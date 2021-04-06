@@ -6,7 +6,19 @@ from .views import (
 )
 
 urlpatterns = [
-    path("brief_summaries", BriefSummariesListApiView.as_view()),
-    path("basic_search", BasicSearchApiView.as_view()),
-    path("countries", CountriesListApiView.as_view()),
+    path(
+        "brief_summaries",
+        BriefSummariesListApiView.as_view(),
+        name="brief_summaries",
+    ),
+    path(
+        "basic_search",
+        BasicSearchApiView.as_view(),
+        name="basic_search",
+    ),
+    path(
+        "countries",
+        CountriesListApiView.as_view(),
+        name="countries",
+    ),
 ]
