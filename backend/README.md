@@ -38,7 +38,7 @@ will be cached and it will not take so long.
 12. Ctrl + D to get out of psql, Ctrl + D again to get out of the postgres container.
 13. Finally, `docker-compose down` to take down the postgres container and `docker-compose up` to start running the whole application.
 
-#### Setup: Basic Search API
+## Setup: Basic Search API
 
 1. Run the pgdb container with `docker-compose up pgdb`
 1. In another terminal, connect to the postgres docker container: `docker exec -it --user postgres pgdb /bin/bash`
