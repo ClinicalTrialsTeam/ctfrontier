@@ -226,7 +226,9 @@ aws-lambda-logging==0.1.1
 black==20.8b1
     # via -r requirements/dev.in
 boto3==1.17.39
-    # via -r requirements/base.in
+    # via
+    #   -r requirements/../image/requirements.in
+    #   -r requirements/base.in
 botocore==1.20.39
     # via
     #   boto3

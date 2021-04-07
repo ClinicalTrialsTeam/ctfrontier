@@ -6,7 +6,6 @@ LAMBDA_REPOSITORY = "ctf-lambda-repository"
 LAMBDA_CODE_BUCKET = "ctf-lambda-code-bucket"
 
 ETL_DOWNLOAD_FUNCTION = "etl-download"
-ETL_CHECKSUM_FUNCTION = "etl-checksum"
 
 FUNCTIONS = [ETL_DOWNLOAD_FUNCTION]
 
