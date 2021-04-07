@@ -4,7 +4,7 @@
 Run `pytest tests` from the `backend` directory
 
 
-## Initial load of CT.gov data
+## Setup: Initial load of CT.gov data
 
 1. Download `.zip` from [https://aact.ctti-clinicaltrials.org/snapshots](https://aact.ctti-clinicaltrials.org/snapshots)
 1. Save this `.zip` file in the project root directory `ctfrontier`. (You should also be in the project root directory in your terminal.)
@@ -38,15 +38,7 @@ will be cached and it will not take so long.
 12. Ctrl + D to get out of psql, Ctrl + D again to get out of the postgres container.
 13. Finally, `docker-compose down` to take down the postgres container and `docker-compose up` to start running the whole application.
 
-### psql
-
-Here's a useful psql command cheat sheet: [https://gist.github.com/Kartones/dd3ff5ec5ea238d4c546](https://gist.github.com/Kartones/dd3ff5ec5ea238d4c546)
-
-## API Endpoints
-
-### Basic Search API
-
-#### Prerequisite
+#### Setup: Basic Search API
 
 1. Run the pgdb container with `docker-compose up pgdb`
 1. In another terminal, connect to the postgres docker container: `docker exec -it --user postgres pgdb /bin/bash`
@@ -55,7 +47,13 @@ Here's a useful psql command cheat sheet: [https://gist.github.com/Kartones/dd3f
 1. Use the command `\dv` to list the views and verify that basic_search appears in the list of views.
 1. Ctrl + D twice to exit psql and then the postgres container. Then `docker-compose up` to bring up the whole app.
 
+### psql
 
+Here's a useful psql command cheat sheet: [https://gist.github.com/Kartones/dd3ff5ec5ea238d4c546](https://gist.github.com/Kartones/dd3ff5ec5ea238d4c546)
+
+## API Endpoints
+
+### Basic Search API
 #### Parameters
 
 The end point for Basic Search API is:
