@@ -7,6 +7,10 @@ The AWS Cloud Development Kit (AWS CDK) is an open source software development f
 
 The project also includes a command line utility for interacting with CDK. This command line utility wraps many of the standard CDK commands and some AWS CLI commands to provide additional functionality.
 
+Acknowledgement to https://github.com/harvard-dce/zoom-recording-ingester for the ideas for general file structure
+for setting up the CDK project. This project's CLI tool for interacting with CDK is also inspired by
+the invoke tasks CLI tool used by zoom ingester however this project uses the Click library (<https://click.palletsprojects.com/en/7.x/>) rather than Invoke (<http://www.pyinvoke.org/>).
+
 ### Useful Links
 
 AWS CDK documentation in Python: <https://docs.aws.amazon.com/cdk/api/latest/python/index.html>
