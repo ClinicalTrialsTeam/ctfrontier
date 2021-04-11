@@ -1309,7 +1309,7 @@ class BasicSearch(models.Model):
     status = models.TextField(blank=True, null=True)
     brief_title = models.TextField(blank=True, null=True)
     official_title = models.TextField(blank=True, null=True)
-    nct_id = models.TextField(blank=True, null=True)
+    nct_id = models.TextField(primary_key=True, null=False)
     condition_name = models.TextField(blank=True, null=True)
     study_detailed_desc = models.TextField(blank=True, null=True)
     country_name = models.TextField(blank=True, null=True)
@@ -1318,13 +1318,6 @@ class BasicSearch(models.Model):
     eligibility_criteria = models.TextField(blank=True, null=True)
     location_name = models.TextField(blank=True, null=True)
     study_brief_desc = models.TextField(blank=True, null=True)
-    sponsor_name = models.TextField(blank=True, null=True)
-    study_phase = models.TextField(blank=True, null=True)
-    study_start_date = models.DateField(blank=True, null=True)
-    primary_completion_date = models.DateField(blank=True, null=True)
-    study_first_posted_date = models.DateField(blank=True, null=True)
-    results_first_posted_date = models.DateField(blank=True, null=True)
-    last_update_posted_date = models.DateField(blank=True, null=True)
 
     class Meta:
         managed = False  # Created from a view. Don't remove.
