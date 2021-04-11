@@ -83,9 +83,6 @@ class AdvancedSearchGroup extends Component {
                         </Form.Item>
                       </Col>
                     </Row>
-                    {/* <Row>
-                      {recruitmentCheckboxes}
-                    </Row> */}
                   </Checkbox.Group>
                 </Form.Item>
               </Panel>
@@ -107,23 +104,6 @@ class AdvancedSearchGroup extends Component {
             </Collapse>
           </Col>
         </Row>
-        {/* <Row key={uuidv4()} gutter={[16, 16]}
-         style={{ marginBottom: '18px' }}>
-          <Col key={uuidv4()} span={12}>
-            <Collapse>
-              <Panel header="Eligibility Criteria" key="3">
-                <p>{text}</p>
-              </Panel>
-            </Collapse>
-          </Col>
-          <Col key={uuidv4()} span={12}>
-            <Collapse>
-              <Panel header="Route of Administration" key="4">
-                <p>{text}</p>
-              </Panel>
-            </Collapse>
-          </Col>
-        </Row> */}
         <Row key={uuidv4()} gutter={[16, 16]} style={{ marginBottom: '36px' }}>
           <Col key={uuidv4()} span={12}>
             <Collapse>

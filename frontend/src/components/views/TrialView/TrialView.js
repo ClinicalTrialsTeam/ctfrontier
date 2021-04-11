@@ -9,14 +9,7 @@ import 'antd/dist/antd.css';
 class TrialView extends Component {
   render() {
     return (
-      // <Tabs defaultActiveKey="1">
-      //   <TabPane tab="List View" key="1">
       <ListViewTable />
-      //   </TabPane>
-      //   <TabPane tab="Map View" key="2">
-      //     <p>Future Content</p>
-      //   </TabPane>
-      // </Tabs>
     );
   }
 }
