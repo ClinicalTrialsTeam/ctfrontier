@@ -3,7 +3,7 @@ from os.path import dirname, join
 
 site.addsitedir(join(dirname(dirname(__file__)), "lib"))
 
-from lib import aws, names
+from lib import aws
 import click
 import subprocess
 import base64
@@ -33,14 +33,14 @@ def base64_encode_dict(d):
     return base64.b64encode(json.dumps(d).encode()).decode()
 
 
-def get_image_uri():
+def get_image_uri(repository):
     return (
         f"{aws.AWS_ACCOUNT_ID}.dkr.ecr.{aws.AWS_REGION}"
-        f".amazonaws.com/{names.LAMBDA_REPOSITORY}:latest"
+        f".amazonaws.com/{repository}:latest"
     )
 
 
-def get_image_id(running=False):
+def get_image_id(image_uri, running=False):
     # Get image id
     if running:
         docker_command = "ps"
@@ -48,9 +48,7 @@ def get_image_id(running=False):
     else:
         docker_command = "images"
         filter_by = "reference"
-    cmd = (
-        f"docker {docker_command} -q --filter={filter_by}='{get_image_uri()}'"
-    )
+    cmd = f"docker {docker_command} -q --filter={filter_by}='{image_uri}'"
     click.echo(cmd)
     p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
     if p.wait() != 0:
@@ -59,7 +57,7 @@ def get_image_id(running=False):
     return p.communicate()[0].decode()
 
 
-def build_docker_image(image_uri):
+def build_docker_image(image_uri, dockerfile_folder):
     # Build docker image
     cmd = f"docker build -t {image_uri} image"
     click.echo(cmd)
@@ -68,14 +66,13 @@ def build_docker_image(image_uri):
         raise click.Abort()
 
 
-def deploy_docker_image():
-    image_uri = get_image_uri()
-    image_id = get_image_id()
+def deploy_docker_image(repository, dockerfile_folder):
+    image_uri = get_image_uri(repository)
 
-    build_docker_image(image_uri)
+    build_docker_image(image_uri, dockerfile_folder)
 
     # Tag docker image
-    cmd = f"docker tag {image_id} {image_uri}"
+    cmd = f"docker tag {get_image_id(image_uri)} {image_uri}"
     click.echo(cmd)
     r = subprocess.run(cmd.split(), capture_output=True)
     if r.returncode != 0:

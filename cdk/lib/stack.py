@@ -2,6 +2,8 @@ from aws_cdk import (
     core,
     aws_iam as iam,
     aws_s3 as s3,
+    aws_ec2 as ec2,
+    aws_ecs as ecs,
 )
 from .monitoring import CtfMonitoring
 from .function import CtfFunction
@@ -59,3 +61,17 @@ class CtStack(core.Stack):
                 resources=["*"],
             )
         )
+
+        vpc = ec2.Vpc(self, "CtfVPC", max_azs=3)
+
+        cluster = ecs.Cluster(self, "CtfCluster", vpc=vpc)
+        cluster.add_default_cloud_map_namespace(name="service.local")
+
+        # frontend_task = ecs.FargateTaskDefinition(
+        #     self, "frontend-task", cpu=512, memory_limit_mib=2048,
+        # )
+
+        # frontend_task.add_container(
+        #     "frontend",
+        #     image=
+        # )

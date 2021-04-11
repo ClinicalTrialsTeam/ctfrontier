@@ -53,7 +53,7 @@ def stack_create(ctx, config_file):
 
     __bootstrap_cdk()
     __bootstrap_custom()
-    deploy_docker_image()
+    deploy_docker_image(names.FRONTEND_REPOSITORY, "../../frontend")
 
     try:
         ctx.invoke(stack_update, ctx, False)
@@ -124,16 +124,18 @@ def __bootstrap_custom():
     )
     run_command(cmd)
 
-    # Create ECR repository to store docker images
+    # Create ECR repositories
     tags = ""
-    for key, val in aws.STACK_TAGS.items():
-        tags += f"Key={key},Value={val} "
-    cmd = (
-        f"aws ecr create-repository --repository-name {names.LAMBDA_REPOSITORY}"
-        f" --image-scanning-configuration scanOnPush=true --tags {tags} "
-        f"{profile_arg()}"
-    )
-    run_command(cmd)
+    for tag in aws.STACK_TAGS:
+        tags += f"Key={tag['Key']},Value={tag['Value']} "
+
+    for repo in names.REPOSITORIES:
+        cmd = (
+            f"aws ecr create-repository --repository-name {repo}"
+            f" --image-scanning-configuration scanOnPush=true --tags {tags} "
+            f"{profile_arg()}"
+        )
+        run_command(cmd)
 
 
 def __delete_bootstrap_custom():
@@ -142,40 +144,40 @@ def __delete_bootstrap_custom():
     cmd = f"aws {profile_arg()} delete-bucket --bucket {names.LAMBDA_CODE_BUCKET}"
     run_command(cmd)
 
-    # Find and all ECR repository images
-    cmd = (
-        f"aws {profile_arg()} ecr list-images --repository-name "
-        f"{names.LAMBDA_REPOSITORY}"
-    )
-    click.echo(cmd)
-    output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
-    images = json.loads(output.communicate()[0])["imageIds"]
-
-    # Clear ECR repository images
-    if images:
-        click.echo(images)
-        image_digests = ""
-        for image in images:
-            image_digests += f" imageDigest={image['imageDigest']}"
+    for repo in names.REPOSITORIES:
+        # Find and all ECR repository images
         cmd = (
-            f"aws ecr batch-delete-image --repository-name"
-            f" {names.LAMBDA_REPOSITORY} --image-ids {image_digests} "
-            f"{profile_arg()}"
+            f"aws {profile_arg()} ecr list-images --repository-name " f"{repo}"
+        )
+        click.echo(cmd)
+        output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+        images = json.loads(output.communicate()[0])["imageIds"]
+
+        # Clear ECR repository images
+        if images:
+            click.echo(images)
+            image_digests = ""
+            for image in images:
+                image_digests += f" imageDigest={image['imageDigest']}"
+            cmd = (
+                f"aws ecr batch-delete-image --repository-name"
+                f" {repo} --image-ids {image_digests} "
+                f"{profile_arg()}"
+            )
+            run_command(cmd)
+
+        # Delete ECR repository
+        cmd = (
+            f"aws ecr delete-repository "
+            f"--repository-name {repo} {profile_arg()}"
         )
         run_command(cmd)
-
-    # Delete ECR repository
-    cmd = (
-        f"aws ecr delete-repository "
-        f"--repository-name {names.LAMBDA_REPOSITORY} {profile_arg()}"
-    )
-    run_command(cmd)
 
 
 def __bootstrap_cdk():
     tags_args = ""
-    for key, val in aws.STACK_TAGS.items():
-        tags_args += f"--tags {key}={val} "
+    for tag in aws.STACK_TAGS:
+        tags_args += f"--tags {tag['Key']}={tag['Value']} "
     r = run_cdk_command(
         f"bootstrap --bootstrap-bucket-name {names.CDK_BOOTSTRAP_BUCKET} "
         f"--qualifier {names.PROJECT_NAME} {tags_args}"

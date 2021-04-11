@@ -51,7 +51,7 @@ class Param:
                 ),
                 Value=value,
                 Type=self.type,
-                Tags=[aws.STACK_TAGS],
+                Tags=aws.STACK_TAGS,
                 Tier="Standard",
             )
         except ClientError as e:

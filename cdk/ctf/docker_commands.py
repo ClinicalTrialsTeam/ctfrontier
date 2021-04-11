@@ -1,6 +1,7 @@
 import click
+import subprocess
 from lib import aws
-from .common import profile_arg, run_command
+from .common import profile_arg
 
 
 @click.group()
@@ -18,4 +19,8 @@ def docker_login():
         f" | docker login --username AWS --password-stdin {aws.AWS_ACCOUNT_ID}"
         f".dkr.ecr.{aws.AWS_REGION}.amazonaws.com"
     )
-    run_command(cmd)
+    res = subprocess.Popen(
+        cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+    )
+    output = res.communicate()[0]
+    click.echo(output)
