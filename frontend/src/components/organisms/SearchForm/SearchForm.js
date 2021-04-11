@@ -172,10 +172,12 @@ class SearchForm extends Component {
       last: '',
     };
     try {
+      console.log(payload);
       const response = await ctgov.post('basic_search', payload);
       this.setState({
         searchResults: response.data,
       });
+      console.log(response.data);
     } catch (err) {
       console.log(err);
     }
@@ -336,7 +338,7 @@ class SearchForm extends Component {
               <TextInputField
                 key="field-subcondition"
                 label="Additional Condition Parameters"
-                title="Additional condition parameters, such as severity or stage of the disease."
+                title="Additional condition parameters, such as biomarkers, severity or stage of the disease."
                 name="subcondition"
                 handleInputChange={this.handleInputChange}
               />
@@ -366,7 +368,7 @@ class SearchForm extends Component {
               />
               <TextInputField
                 key="field-target"
-                label="MOA or Target"
+                label="Mechanism of Action / Target"
                 title="A biochemical interaction that a drug disrupts usually involving a specific protein (target), such as an enzyme or receptor."
                 name="target"
                 handleInputChange={this.handleInputChange}
@@ -530,7 +532,7 @@ class SearchForm extends Component {
                 mode="multiple"
                 key="field-ethnicity"
                 name="ethnicity"
-                label="Ethnicity / Race"
+                label="Race / Ethnicity"
                 title="American Indian or Alaska Native: A person having origins in any of the original peoples of North and South America (including Central America) and who maintains tribal affiliation or community attachment.
                 Asian: A person having origins in any of the original peoples of the Far East, Southeast Asia, or the Indian subcontinent including, for example, Cambodia, China, India, Japan, Korea, Malaysia, Pakistan, the Philippine Islands, Thailand, and Vietnam.
                 Black or African American: A person having origins in any of the Black racial groups of Africa.

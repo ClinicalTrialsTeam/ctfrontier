@@ -5,7 +5,7 @@ import {
 } from 'antd';
 import PropTypes from 'prop-types';
 import {
-  GlobalOutlined, TableOutlined, BarChartOutlined, DownloadOutlined,
+  GlobalOutlined, BarChartOutlined, DownloadOutlined,
 } from '@ant-design/icons';
 import ctgov from '../../../apis/ctgov';
 
@@ -90,7 +90,7 @@ class ListViewTable extends Component {
 
     return (
       <div>
-        <Card>
+        <Card id="trial-card">
           <Row
             key="list_view_items"
             gutter={{
@@ -102,8 +102,12 @@ class ListViewTable extends Component {
           >
             <Col key="fs-group-col" id="fs-group-col" className="gutter-row" span={4}>
               <Space key="fs-buttons">
-                <Button key="fs-button-submit" className="facet-button">
-                  Update
+                <Button
+                  type="primary"
+                  key="fs-button-submit"
+                  className="facet-button"
+                >
+                  Apply
                 </Button>
                 <Button key="fs-button-clear" className="facet-button">
                   Clear
@@ -128,7 +132,6 @@ class ListViewTable extends Component {
                   <Row id="trials-modal-btn-row" justify="end">
                     <Space align="end">
                       <Button key="btn_dashboard" icon={<BarChartOutlined />} />
-                      <Button key="btn_other" icon={<TableOutlined />} />
                       <Button key="btn_map" icon={<GlobalOutlined />} />
                       <Button key="btn_download" icon={<DownloadOutlined />} />
                     </Space>
