@@ -80,6 +80,7 @@ class SearchForm extends Component {
 
   async handleSearch() {
     const payload = {
+      metadata_required: true,
       status: '',
       condition: this.state.condition,
       other_terms: this.state.otherTerms,
@@ -92,7 +93,7 @@ class SearchForm extends Component {
       last: '',
     };
     try {
-      const response = await ctgov.post('basic_search', payload);
+      const response = await ctgov.post('search_studies', payload);
       this.setState({
         searchResults: response.data,
       });
