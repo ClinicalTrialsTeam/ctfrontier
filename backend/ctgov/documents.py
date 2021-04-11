@@ -1,75 +1,8 @@
 from django_elasticsearch_dsl import Document, fields, Index
-from django_elasticsearch_dsl.registries import registry
 from elasticsearch_dsl import analyzer, tokenizer
-from ctgov.models import Documents
 from .models import (
-    Sponsors,
-    ReportedEvents,
-    Studies,
     BasicSearch,
-    CentralContacts,
 )
-
-
-# @registry.register_document
-# class CentralContactsDocument(Document):
-#     class Index:
-#         name = "central_contacts"
-#         settings = {"number_of_shards": 1, "number_of_replicas": 0}
-
-#     class Django:
-#         model = CentralContacts
-
-#         fields = [
-#             "contact_type",
-#             "name",
-#             "phone",
-#             "email",
-#         ]
-
-
-# @registry.register_document
-# class ReportedEventsDocuments(Document):
-#     class Index:
-#         name = "reported_events"
-#         settings = {"number_of_shards": 1, "number_of_replicas": 0}
-
-#     class Django:
-#         model = ReportedEvents
-
-#         fields = [
-#             "ctgov_group_code",
-#             "time_frame",
-#             "event_type",
-#             "default_vocab",
-#             "default_assessment",
-#             "subjects_affected",
-#             "subjects_at_risk",
-#             "description",
-#             "event_count",
-#             "organ_system",
-#             "adverse_event_term",
-#             "frequency_threshold",
-#             "vocab",
-#             "assessment",
-#         ]
-
-
-# @registry.register_document
-# class SearchDocuments(Document):
-#     class Index:
-#         name = "study_comments"
-#         settings = {"number_of_shards": 1, "number_of_replicas": 0}
-
-#     class Django:
-#         model = Documents
-
-#         fields = [
-#             "document_id",
-#             "document_type",
-#             "url",
-#             "comment",
-#         ]
 
 CLINICALTRIALS_BASIC_SEARCH_INDEX = Index("basic_search")
 

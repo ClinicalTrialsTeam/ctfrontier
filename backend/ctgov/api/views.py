@@ -1,16 +1,13 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework import permissions
-from ctgov.models import BriefSummaries, BasicSearchM, Studies, Facilities
+from ctgov.models import BriefSummaries, BasicSearchM, Facilities
 from .serializers import (
     BriefSummariesSerializer,
     BasicSearchSerializer,
     CountriesSerializer,
 )
-from django.db.models import Q
 from datetime import datetime
-import sys
 
 
 class BriefSummariesListApiView(APIView):
@@ -161,10 +158,12 @@ def convert_to_date(datestr):
 
 
 def valid_date(datestr):
-    status = True
+    if not datestr:
+        return False
+
     try:
         datetime.strptime(datestr, "%Y-%m-%d")
     except ValueError:
-        status = False
+        return False
 
-    return status
+    return True

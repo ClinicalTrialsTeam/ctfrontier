@@ -13,5 +13,6 @@ exclude = '''
   | build
   | dist
   | cdk/venv
+  | backend/venv
 )/
 '''
