@@ -105,7 +105,7 @@ it because everything will have to rebuild.
 ### Connect to the containers
 
 #### react
-`docker exec -it react /bin/bash`
+`docker exec -it react /bin/sh`
 
 #### django
 `docker exec -it django /bin/sh`
