@@ -572,16 +572,6 @@ class SearchForm extends Component {
                 name="nct_id"
                 handleInputChange={this.handleInputChange}
               />
-              {/* <Text strong key="t_38">Phases</Text>
-              <Form.Item
-                name="checkbox-group"
-              >
-                <Checkbox.Group>
-                  <Row>
-                    {phasesCheckboxes}
-                  </Row>
-                </Checkbox.Group>
-              </Form.Item> */}
             </Col>
           </Row>
           <Row key="form_row_buttons" className="form-row-buttons" justify="center">
