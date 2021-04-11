@@ -1,6 +1,5 @@
-import json
 from rest_framework import serializers
-from ctgov.models import BriefSummaries, BasicSearchM, Studies, Facilities
+from ctgov.models import BriefSummaries, BasicSearchM, Facilities
 from django_elasticsearch_dsl_drf.serializers import DocumentSerializer
 from ctgov.documents import ClinicalTrialsBasicSearch
 
