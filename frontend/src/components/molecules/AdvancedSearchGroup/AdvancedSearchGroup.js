@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-  Checkbox, Col, Collapse, Form, Row,
+  Checkbox, Col, Collapse, Form, Row, DatePicker,
 } from 'antd';
 import PropTypes from 'prop-types';
 import { v4 as uuidv4 } from 'uuid';
@@ -12,9 +12,8 @@ class AdvancedSearchGroup extends Component {
     const { access, recruitment, handleInputChange } = this.props;
     const { Panel } = Collapse;
 
-    const text = 'More content will be added here';
-
     const recruitmentCheckboxes = [];
+    const { RangePicker } = DatePicker;
 
     Array.from(recruitment.entries()).forEach(([, value]) => {
       recruitmentCheckboxes.push(
@@ -48,9 +47,45 @@ class AdvancedSearchGroup extends Component {
                   name="checkbox-group"
                 >
                   <Checkbox.Group>
-                    <Row>
-                      {recruitmentCheckboxes}
+                    <Row id="dates-row" key="form_row_1_1" gutter={[16, 4]}>
+                      <Col key="12_x" span={12}>
+                        <Form.Item
+                          key="range_1"
+                          label="Study start"
+                        >
+                          <RangePicker />
+                        </Form.Item>
+                        <Form.Item
+                          key="range_2"
+                          label="Primary completion"
+                        >
+                          <RangePicker />
+                        </Form.Item>
+                        <Form.Item
+                          key="range_3"
+                          label="Last update posted"
+                        >
+                          <RangePicker />
+                        </Form.Item>
+                      </Col>
+                      <Col key="12_1" span={12}>
+                        <Form.Item
+                          key="range_4"
+                          label="First posted"
+                        >
+                          <RangePicker />
+                        </Form.Item>
+                        <Form.Item
+                          key="range_5"
+                          label="Results first posted"
+                        >
+                          <RangePicker />
+                        </Form.Item>
+                      </Col>
                     </Row>
+                    {/* <Row>
+                      {recruitmentCheckboxes}
+                    </Row> */}
                   </Checkbox.Group>
                 </Form.Item>
               </Panel>
@@ -127,7 +162,9 @@ class AdvancedSearchGroup extends Component {
           <Col key={uuidv4()} span={12}>
             <Collapse>
               <Panel header="Additional Criteria" key="6">
-                <p>{text}</p>
+                <Row>
+                  {recruitmentCheckboxes}
+                </Row>
               </Panel>
             </Collapse>
           </Col>

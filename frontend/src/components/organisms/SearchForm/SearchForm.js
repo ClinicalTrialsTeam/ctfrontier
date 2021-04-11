@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import {
-  Form, Select, Divider, Row, Col, Space, Typography, Checkbox, // DatePicker,
+  Form, Select, Divider, Row, Col, Space, Typography, Checkbox,
 } from 'antd';
+import { InfoCircleOutlined } from '@ant-design/icons';
 import ctgov from '../../../apis/ctgov';
 import TextInputField from '../../atoms/TextInputField/TextInputField';
 import NumberInputField from '../../atoms/NumberInputField/NumberInputField';
@@ -13,7 +14,8 @@ import AdvancedSearchGroup from '../../molecules/AdvancedSearchGroup/AdvancedSea
 import './SearchForm.css';
 
 import {
-  recruitment, access, phases, roa, results, types, sex, ageGroup, ethnicities,
+  recruitment, access, phases, roa, results,
+  types, sex, ageGroup, ethnicities, distance, states,
 } from '../../../variables/TopLevelSearchData';
 
 class SearchForm extends Component {
@@ -172,12 +174,10 @@ class SearchForm extends Component {
       last: '',
     };
     try {
-      console.log(payload);
       const response = await ctgov.post('basic_search', payload);
       this.setState({
         searchResults: response.data,
       });
-      console.log(response.data);
     } catch (err) {
       console.log(err);
     }
@@ -191,7 +191,6 @@ class SearchForm extends Component {
   }
 
   render() {
-    // const { RangePicker } = DatePicker;
     const { Option } = Select;
     const { Text } = Typography;
     const countryList = [];
@@ -203,6 +202,8 @@ class SearchForm extends Component {
     const sexList = [];
     const ageGroupList = [];
     const ethnicitiesList = [];
+    const distanceList = [];
+    const statesList = [];
 
     const recruitmentCheckboxes = [];
     const phasesCheckboxes = [];
@@ -271,6 +272,18 @@ class SearchForm extends Component {
 
     Array.from(ethnicities.entries()).forEach(([index, value]) => {
       ethnicitiesList.push(
+        <Option key={index} value={value}>{value}</Option>
+      );
+    });
+
+    Array.from(distance.entries()).forEach(([index, value]) => {
+      distanceList.push(
+        <Option key={index} value={value}>{value}</Option>
+      );
+    });
+
+    Array.from(states.entries()).forEach(([index, value]) => {
+      statesList.push(
         <Option key={index} value={value}>{value}</Option>
       );
     });
@@ -373,43 +386,6 @@ class SearchForm extends Component {
                 name="target"
                 handleInputChange={this.handleInputChange}
               />
-              {/* <Text className="sf-text" strong key="t_1">Dates</Text>
-              <Row id="dates-row" key="form_row_1_1" gutter={[16, 4]}>
-                <Col key="12_1" span={12}>
-                  <Form.Item
-                    key="range_1"
-                    label="Study start"
-                  >
-                    <RangePicker />
-                  </Form.Item>
-                  <Form.Item
-                    key="range_2"
-                    label="Primary completion"
-                  >
-                    <RangePicker />
-                  </Form.Item>
-                  <Form.Item
-                    key="range_3"
-                    label="Last update posted"
-                  >
-                    <RangePicker />
-                  </Form.Item>
-                </Col>
-                <Col key="12_1" span={12}>
-                  <Form.Item
-                    key="range_4"
-                    label="First posted"
-                  >
-                    <RangePicker />
-                  </Form.Item>
-                  <Form.Item
-                    key="range_5"
-                    label="Results first posted"
-                  >
-                    <RangePicker />
-                  </Form.Item>
-                </Col>
-              </Row> */}
             </Col>
             <Col key="13" span={8}>
               <Text className="section-text" strong key="t_2">Trial Details</Text>
@@ -472,31 +448,36 @@ class SearchForm extends Component {
                 options={typeList}
                 handleInputChange={this.handleTypeChange}
               />
-              {/* <Text strong key="t_22">Recruitment Status</Text>
-              <Form.Item
-                name="checkbox-group"
-              >
-                <Checkbox.Group>
-                  <Row>
-                    {recruitmentCheckboxes}
-                  </Row>
-                </Checkbox.Group>
-              </Form.Item> */}
             </Col>
             <Col key="14" span={8}>
               <Text className="section-text" strong key="t_3">Patient Details</Text>
-              <SelectField
-                key="field-sex"
-                name="sex"
-                label="Sex"
-                title="A type of eligibility criteria that indicates the sex of people who may participate in a clinical study (all, female, male). Sex is a person's classification as female or male based on biological distinctions. Sex is distinct from gender-based eligibility."
-                placeholder="Select the participant's sex"
-                options={sexList}
-                handleInputChange={this.handleSexChange}
-              />
+              <Row key="form_row_sex_health" gutter={[16, 8]}>
+                <Col key="checkbox-healthy" span={8}>
+                  <Form.Item
+                    key="form-item-healthy"
+                    label="Healthy accepted"
+                    tooltip={{
+                      title: 'A type of eligibility criteria that indicates whether people who do not have the condition/disease being studied can participate in that clinical study.',
+                      icon: <InfoCircleOutlined />,
+                    }}
+                  >
+                    <Checkbox>Is healthy?</Checkbox>
+                  </Form.Item>
+                </Col>
+                <Col key="col-field-sex" span={16}>
+                  <SelectField
+                    key="field-sex"
+                    name="sex"
+                    label="Sex"
+                    title="A type of eligibility criteria that indicates the sex of people who may participate in a clinical study (all, female, male). Sex is a person's classification as female or male based on biological distinctions. Sex is distinct from gender-based eligibility."
+                    placeholder="Select the participant's sex"
+                    options={sexList}
+                    handleInputChange={this.handleSexChange}
+                  />
+                </Col>
+              </Row>
               <Row key="form_row_age" gutter={[16, 8]}>
-                <Col key="141" span={8}>
-                  {/* <Space> */}
+                <Col key="141" span={6}>
                   <NumberInputField
                     className="age-num"
                     min={1}
@@ -510,7 +491,9 @@ class SearchForm extends Component {
                     name="age"
                     handleInputChange={this.handleInputChange}
                   />
-                  {/* </Space> */}
+                </Col>
+                <Col key="143" span={2}>
+                  <p id="or-p">OR</p>
                 </Col>
                 <Col key="142" span={16}>
                   <SelectField
@@ -551,18 +534,16 @@ class SearchForm extends Component {
                 options={countryList}
                 handleInputChange={this.handleCountryChange}
               />
+              <SelectField
+                key="field-state"
+                name="state"
+                label="State"
+                title="In the search feature, the State field is used to find clinical studies with locations in a specific state within the United States. If you choose United States in the Country field, you can search for studies with locations in a specific state."
+                placeholder="Select the state"
+                options={statesList}
+                handleInputChange={this.handleSexChange}
+              />
               <Row key="form_row_location" gutter={[16, 8]}>
-                <Col key="151" span={12}>
-                  <SelectField
-                    key="field-state"
-                    name="state"
-                    label="State"
-                    title="In the search feature, the State field is used to find clinical studies with locations in a specific state within the United States. If you choose United States in the Country field, you can search for studies with locations in a specific state."
-                    placeholder="Select the state"
-                    options={sexList}
-                    handleInputChange={this.handleSexChange}
-                  />
-                </Col>
                 <Col key="152" span={12}>
                   <TextInputField
                     key="field-city"
@@ -570,6 +551,17 @@ class SearchForm extends Component {
                     title="In the search feature, the City field is used to find clinical studies with locations in a specific city. The Distance field is used to find studies with locations within the specified distance from a city in number of miles. For example, if you choose Illinois as the state, identifying 'Chicago' as the city and '100 miles' as the distance will find all studies listing a location within 100 miles of Chicago."
                     name="city"
                     handleInputChange={this.handleInputChange}
+                  />
+                </Col>
+                <Col key="153" span={12}>
+                  <SelectField
+                    key="field-distance"
+                    name="distance"
+                    label="Distance"
+                    title="In the search feature, the State field is used to find clinical studies with locations in a specific state within the United States. If you choose United States in the Country field, you can search for studies with locations in a specific state."
+                    placeholder="Select the distance"
+                    options={distanceList}
+                    handleInputChange={this.handleSexChange}
                   />
                 </Col>
               </Row>

@@ -58,8 +58,8 @@ const types = [
 
 const sex = [
   'All',
-  'Studies with Female Participants',
-  'Studies with Male Participants',
+  'Only Female Participants',
+  'Only Male Participants',
 ];
 
 const ageGroup = [
@@ -79,6 +79,75 @@ const ethnicities = [
   'Mixed',
 ];
 
+const distance = [
+  '50 miles',
+  '100 miles',
+  '200 miles',
+  '300 miles',
+];
+
+const states = [
+  'Alabama',
+  'Alaska',
+  'American Samoa',
+  'Arizona',
+  'Arkansas',
+  'California',
+  'Colorado',
+  'Connecticut',
+  'Delaware',
+  'District of Columbia',
+  'Federated States of Micronesia',
+  'Florida',
+  'Georgia',
+  'Guam',
+  'Hawaii',
+  'Idaho',
+  'Illinois',
+  'Indiana',
+  'Iowa',
+  'Kansas',
+  'Kentucky',
+  'Louisiana',
+  'Maine',
+  'Marshall Islands',
+  'Maryland',
+  'Massachusetts',
+  'Michigan',
+  'Minnesota',
+  'Mississippi',
+  'Missouri',
+  'Montana',
+  'Nebraska',
+  'Nevada',
+  'New Hampshire',
+  'New Jersey',
+  'New Mexico',
+  'New York',
+  'North Carolina',
+  'North Dakota',
+  'Northern Mariana Islands',
+  'Ohio',
+  'Oklahoma',
+  'Oregon',
+  'Palau',
+  'Pennsylvania',
+  'Puerto Rico',
+  'Rhode Island',
+  'South Carolina',
+  'South Dakota',
+  'Tennessee',
+  'Texas',
+  'Utah',
+  'Vermont',
+  'Virgin Island',
+  'Virginia',
+  'Washington',
+  'West Virginia',
+  'Wisconsin',
+  'Wyoming',
+];
+
 module.exports = {
   recruitment,
   access,
@@ -89,4 +158,6 @@ module.exports = {
   sex,
   ageGroup,
   ethnicities,
+  distance,
+  states,
 };
