@@ -193,6 +193,7 @@ class SearchForm extends Component {
   render() {
     const { Option } = Select;
     const { Text } = Typography;
+
     const countryList = [];
     const roaList = [];
     const recruitmentList = [];
@@ -207,6 +208,27 @@ class SearchForm extends Component {
 
     const recruitmentCheckboxes = [];
     const phasesCheckboxes = [];
+
+    const selectArrays = [
+      [roa, roaList],
+      [recruitment, recruitmentList],
+      [phases, phaseList],
+      [results, resultsList],
+      [types, typeList],
+      [sex, sexList],
+      [ageGroup, ageGroupList],
+      [ethnicities, ethnicitiesList],
+      [distance, distanceList],
+      [states, statesList],
+    ];
+
+    selectArrays.forEach((element) => {
+      Array.from(element[0].entries()).forEach(([index, value]) => {
+        element[1].push(
+          <Option key={index} value={value}>{value}</Option>
+        );
+      });
+    });
 
     Array.from(recruitment.entries()).forEach(([index, value]) => {
       recruitmentCheckboxes.push(
@@ -225,66 +247,6 @@ class SearchForm extends Component {
             {value}
           </Checkbox>
         </Col>
-      );
-    });
-
-    Array.from(roa.entries()).forEach(([index, value]) => {
-      roaList.push(
-        <Option key={index} value={value}>{value}</Option>
-      );
-    });
-
-    Array.from(recruitment.entries()).forEach(([index, value]) => {
-      recruitmentList.push(
-        <Option key={index} value={value}>{value}</Option>
-      );
-    });
-
-    Array.from(phases.entries()).forEach(([index, value]) => {
-      phaseList.push(
-        <Option key={index} value={value}>{value}</Option>
-      );
-    });
-
-    Array.from(results.entries()).forEach(([index, value]) => {
-      resultsList.push(
-        <Option key={index} value={value}>{value}</Option>
-      );
-    });
-
-    Array.from(types.entries()).forEach(([index, value]) => {
-      typeList.push(
-        <Option key={index} value={value}>{value}</Option>
-      );
-    });
-
-    Array.from(sex.entries()).forEach(([index, value]) => {
-      sexList.push(
-        <Option key={index} value={value}>{value}</Option>
-      );
-    });
-
-    Array.from(ageGroup.entries()).forEach(([index, value]) => {
-      ageGroupList.push(
-        <Option key={index} value={value}>{value}</Option>
-      );
-    });
-
-    Array.from(ethnicities.entries()).forEach(([index, value]) => {
-      ethnicitiesList.push(
-        <Option key={index} value={value}>{value}</Option>
-      );
-    });
-
-    Array.from(distance.entries()).forEach(([index, value]) => {
-      distanceList.push(
-        <Option key={index} value={value}>{value}</Option>
-      );
-    });
-
-    Array.from(states.entries()).forEach(([index, value]) => {
-      statesList.push(
-        <Option key={index} value={value}>{value}</Option>
       );
     });
 
@@ -451,31 +413,6 @@ class SearchForm extends Component {
             </Col>
             <Col key="14" span={8}>
               <Text className="section-text" strong key="t_3">Patient Details</Text>
-              <Row key="form_row_sex_health" gutter={[16, 8]}>
-                <Col key="checkbox-healthy" span={8}>
-                  <Form.Item
-                    key="form-item-healthy"
-                    label="Healthy accepted"
-                    tooltip={{
-                      title: 'A type of eligibility criteria that indicates whether people who do not have the condition/disease being studied can participate in that clinical study.',
-                      icon: <InfoCircleOutlined />,
-                    }}
-                  >
-                    <Checkbox>Is healthy?</Checkbox>
-                  </Form.Item>
-                </Col>
-                <Col key="col-field-sex" span={16}>
-                  <SelectField
-                    key="field-sex"
-                    name="sex"
-                    label="Sex"
-                    title="A type of eligibility criteria that indicates the sex of people who may participate in a clinical study (all, female, male). Sex is a person's classification as female or male based on biological distinctions. Sex is distinct from gender-based eligibility."
-                    placeholder="Select the participant's sex"
-                    options={sexList}
-                    handleInputChange={this.handleSexChange}
-                  />
-                </Col>
-              </Row>
               <Row key="form_row_age" gutter={[16, 8]}>
                 <Col key="141" span={6}>
                   <NumberInputField
@@ -508,6 +445,31 @@ class SearchForm extends Component {
                     placeholder="Select the age group"
                     options={ageGroupList}
                     handleInputChange={this.handleAgeGroupChange}
+                  />
+                </Col>
+              </Row>
+              <Row key="form_row_sex_health" gutter={[16, 8]}>
+                <Col key="checkbox-healthy" span={8}>
+                  <Form.Item
+                    key="form-item-healthy"
+                    label="Healthy accepted"
+                    tooltip={{
+                      title: 'A type of eligibility criteria that indicates whether people who do not have the condition/disease being studied can participate in that clinical study.',
+                      icon: <InfoCircleOutlined />,
+                    }}
+                  >
+                    <Checkbox>Is healthy?</Checkbox>
+                  </Form.Item>
+                </Col>
+                <Col key="col-field-sex" span={16}>
+                  <SelectField
+                    key="field-sex"
+                    name="sex"
+                    label="Sex"
+                    title="A type of eligibility criteria that indicates the sex of people who may participate in a clinical study (all, female, male). Sex is a person's classification as female or male based on biological distinctions. Sex is distinct from gender-based eligibility."
+                    placeholder="Select the participant's sex"
+                    options={sexList}
+                    handleInputChange={this.handleSexChange}
                   />
                 </Col>
               </Row>
