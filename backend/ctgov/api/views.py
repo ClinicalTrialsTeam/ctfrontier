@@ -244,8 +244,6 @@ class SearchStudiesApiView(APIView):
                     eligibility_max_age
                 )
             )
-        else:
-            pass
 
         if not first:
             first = 0
@@ -301,7 +299,6 @@ class SearchStudiesApiView(APIView):
             },
             status=status.HTTP_200_OK,
         )
-        # return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 # Convert passed date parameter to match with db format
@@ -318,7 +315,7 @@ def valid_date(datestr):
             datetime.strptime(str(datestr), "%Y-%m-%d")
         else:
             status = False
-    except (ValueError, NameError):
+    except (ValueError):
         status = False
 
     return status
@@ -332,7 +329,7 @@ def valid_number(agestr):
             status = isinstance(float(agestr), float)
         else:
             status = False
-    except (ValueError, NameError):
+    except (ValueError):
         status = False
 
     return status

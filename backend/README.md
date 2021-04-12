@@ -44,7 +44,7 @@ will be cached and it will not take so long.
 
 1. Run the pgdb container with `docker-compose up pgdb`
 1. In another terminal, connect to the postgres docker container: `docker exec -it --user postgres pgdb /bin/bash`
-1. Run the basic_search.sql script with the command: `psql -d aact -f database/scripts/basic_search.sql`
+1. Run the basic_search.sql script with the command: `psql -d aact -f database/scripts/search_studies.sql`
 1. Connect to the aact database `psql -d aact`
 1. Use the command `\dv` to list the views and verify that basic_search appears in the list of views.
 1. Ctrl + D twice to exit psql and then the postgres container. Then `docker-compose up` to bring up the whole app.
@@ -58,17 +58,17 @@ Here's a useful psql command cheat sheet: [https://gist.github.com/Kartones/dd3f
 ### Clinical Studies Search API
 #### Parameters
 
-<span style="color:red">Please note api endpoint name is changed to "search_studies" to be more generic.</span>
+#### Please note api endpoint name is changed to "search_studies" to be more generic.
 
 The end point for Clinical Studies Search API is:
 <http://127.0.0.1:8000/ctgov/api/search_studies>
 
-<span style="color:red">Please note the change in api parameters. If metadata is required, pass "metadata_required"="True"; if metadata is not required (for example, during pagination) pass empty string as "metadata_required="".</span>
+#### Please note the change in api parameters. If metadata is required, pass "metadata_required"="True"; if metadata is not required (for example, during pagination) pass empty string as "metadata_required="".
 
-Example query located in `database/examples/basic_search_query.json`:
+Example query located in `database/examples/search_studies_query.json`:
 
 	{
-	    "status":"Recruiting",
+		"status":"Recruiting",
 		"condition":"",
 		"other_terms":"POETYK",
 		"country":"",
@@ -119,11 +119,11 @@ Example query located in `database/examples/basic_search_query.json`:
 
 Example curl command with a timer using the example json:
 
-`time curl -X POST http://127.0.0.1:8000/ctgov/api/search_studies -d database/examples/basic_search_query.json`
+`time curl -X POST http://127.0.0.1:8000/ctgov/api/search_studies -d database/examples/search_studies_query.json`
 
 #### Output
 
-<span style="color:red">Please note search results now contains "metadata" information. This means ReactJS parsing needs to be modified accordingly.</span>
+#### Please note search results now contains "metadata" information. This means ReactJS parsing needs to be modified accordingly.
 
 Sample result below. Note that 'intervention_name' and 'location_name' are pipe delimited values. You have to parse them to display as a list in html.
 
