@@ -14,6 +14,25 @@ class AdvancedSearchGroup extends Component {
 
     const recruitmentCheckboxes = [];
     const { RangePicker } = DatePicker;
+    const rangePickerData = [
+      ['range_1', 'Study start'],
+      ['range_2', 'Primary completion'],
+      ['range_3', 'Last update posted'],
+      ['range_4', 'First posted'],
+      ['range_5', 'Results first posted'],
+    ];
+    const rangePickers = [];
+
+    rangePickerData.forEach((element) => {
+      rangePickers.push(
+        <Form.Item
+          key={element[0]}
+          label={element[1]}
+        >
+          <RangePicker />
+        </Form.Item>
+      );
+    });
 
     Array.from(recruitment.entries()).forEach(([, value]) => {
       recruitmentCheckboxes.push(
@@ -42,46 +61,13 @@ class AdvancedSearchGroup extends Component {
         <Row key={uuidv4()} gutter={[16, 16]} style={{ marginBottom: '18px' }}>
           <Col key={uuidv4()} span={12}>
             <Collapse>
-              <Panel header="Outcome Measures" key="1">
+              <Panel header="Dates" key="1">
                 <Form.Item
                   name="checkbox-group"
                 >
                   <Checkbox.Group>
-                    <Row id="dates-row" key="form_row_1_1" gutter={[16, 4]}>
-                      <Col key="12_x" span={12}>
-                        <Form.Item
-                          key="range_1"
-                          label="Study start"
-                        >
-                          <RangePicker />
-                        </Form.Item>
-                        <Form.Item
-                          key="range_2"
-                          label="Primary completion"
-                        >
-                          <RangePicker />
-                        </Form.Item>
-                        <Form.Item
-                          key="range_3"
-                          label="Last update posted"
-                        >
-                          <RangePicker />
-                        </Form.Item>
-                      </Col>
-                      <Col key="12_1" span={12}>
-                        <Form.Item
-                          key="range_4"
-                          label="First posted"
-                        >
-                          <RangePicker />
-                        </Form.Item>
-                        <Form.Item
-                          key="range_5"
-                          label="Results first posted"
-                        >
-                          <RangePicker />
-                        </Form.Item>
-                      </Col>
+                    <Row justify="space-between">
+                      {rangePickers}
                     </Row>
                   </Checkbox.Group>
                 </Form.Item>

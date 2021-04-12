@@ -417,7 +417,7 @@ class SearchForm extends Component {
                 <Col key="141" span={6}>
                   <NumberInputField
                     className="age-num"
-                    min={1}
+                    min={0}
                     max={100}
                     key="field-age"
                     label="Age"
