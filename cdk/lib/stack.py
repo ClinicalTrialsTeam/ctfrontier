@@ -67,9 +67,12 @@ class CtStack(core.Stack):
         cluster = ecs.Cluster(self, "CtfCluster", vpc=vpc)
         cluster.add_default_cloud_map_namespace(name="service.local")
 
-        # frontend_task = ecs.FargateTaskDefinition(
-        #     self, "frontend-task", cpu=512, memory_limit_mib=2048,
-        # )
+        ecs.FargateTaskDefinition(
+            self,
+            "frontend-task",
+            cpu=512,
+            memory_limit_mib=2048,
+        )
 
         # frontend_task.add_container(
         #     "frontend",
