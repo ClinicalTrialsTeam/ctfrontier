@@ -9,11 +9,10 @@ from django_elasticsearch_dsl_drf.viewsets import BaseDocumentViewSet
 from django_elasticsearch_dsl_drf.pagination import PageNumberPagination
 
 from .documents import ClinicalTrialsBasicSearch
-from api.serializers import BasicSearchSerializer
+from .api.serializers import BasicSearchSerializer
 
 
 class ClinicalTrialsBasicSearchView(BaseDocumentViewSet):
-    """The BookDocument view."""
 
     document = ClinicalTrialsBasicSearch
     serializer_class = BasicSearchSerializer
