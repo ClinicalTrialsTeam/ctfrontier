@@ -1,4 +1,3 @@
-/* eslint-disable react/require-default-props */
 import React, { Component } from 'react';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { Form, InputNumber } from 'antd';
@@ -42,6 +41,11 @@ NumberInputField.propTypes = {
   title: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   handleInputChange: PropTypes.func.isRequired,
+};
+
+NumberInputField.defaultProps = {
+  max: 1000000,
+  min: 0,
 };
 
 export default NumberInputField;
