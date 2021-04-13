@@ -453,7 +453,7 @@ class SearchForm extends Component {
                 <Col key="checkbox-healthy" span={8}>
                   <Form.Item
                     key="form-item-healthy"
-                    label="Healthy accepted"
+                    label="Healthy"
                     tooltip={{
                       title: 'A type of eligibility criteria that indicates whether people who do not have the condition/disease being studied can participate in that clinical study.',
                       icon: <InfoCircleOutlined />,
@@ -553,7 +553,7 @@ class SearchForm extends Component {
                 />
                 <Button
                   key="10"
-                  text={this.state.showAdvancedOptions === false ? 'Show advanced options' : 'Hide advanced options'}
+                  text={this.state.showAdvancedOptions === false ? 'Show expanded options' : 'Hide expanded options'}
                   clickHandler={this.showAdvancedOptions}
                 />
               </Space>
