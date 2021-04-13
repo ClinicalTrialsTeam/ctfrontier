@@ -66,7 +66,7 @@ class ListViewTable extends Component {
       last: '',
     };
     try {
-      const response = await ctgov.post('basic_search', payload);
+      const response = await ctgov.post('search_studies', payload);
       console.log(response.data);
     } catch (err) {
       console.log(err);
@@ -75,7 +75,7 @@ class ListViewTable extends Component {
 
   render() {
     const { data } = this.props.history.location.state;
-    const parsedResults = data.map((result) => {
+    const parsedResults = data.search_results.map((result) => {
       return {
         key: result.nct_id,
         nct_id: result.nct_id,
