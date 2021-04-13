@@ -25,6 +25,11 @@ Copy this into a new `.env` file and fill it in (this .env file be in the "backe
 1. Install ESLint and Python linting packages to your IDE. (Suggestions for VSCode users: [Python package](https://marketplace.visualstudio.com/items?itemName=ms-python.python), [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint))
 1. Optionally, install the pre-commit check which will make sure your code passes the github checks before you commit: `pre-commit install` (see Linting - Django/Python).
 
+## Load the data
+
+1. Follow the instructions in backend/README.md to load the initial CT.gov data
+1. Follow the instructions in backend/README.md to set up the Search Studies API
+
 ## Running the project
 
 1. Run the project with `docker-compose up`

@@ -1,4 +1,4 @@
-django>=3.1.7
+django>=3.1.8
 django-elasticsearch-dsl==7.1.4
 django_elasticsearch_dsl_drf==0.21
 psycopg2-binary>=2.8

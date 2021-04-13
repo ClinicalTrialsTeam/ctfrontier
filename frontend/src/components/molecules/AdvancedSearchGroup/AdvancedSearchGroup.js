@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-  Checkbox, Col, Collapse, Form, Row,
+  Checkbox, Col, Collapse, Form, Row, DatePicker,
 } from 'antd';
 import PropTypes from 'prop-types';
 import { v4 as uuidv4 } from 'uuid';
@@ -12,9 +12,27 @@ class AdvancedSearchGroup extends Component {
     const { access, recruitment, handleInputChange } = this.props;
     const { Panel } = Collapse;
 
-    const text = 'More content will be added here';
-
     const recruitmentCheckboxes = [];
+    const { RangePicker } = DatePicker;
+    const rangePickerData = [
+      ['range_1', 'Study start'],
+      ['range_2', 'Primary completion'],
+      ['range_3', 'Last update posted'],
+      ['range_4', 'First posted'],
+      ['range_5', 'Results first posted'],
+    ];
+    const rangePickers = [];
+
+    rangePickerData.forEach((element) => {
+      rangePickers.push(
+        <Form.Item
+          key={element[0]}
+          label={element[1]}
+        >
+          <RangePicker />
+        </Form.Item>
+      );
+    });
 
     Array.from(recruitment.entries()).forEach(([, value]) => {
       recruitmentCheckboxes.push(
@@ -43,13 +61,13 @@ class AdvancedSearchGroup extends Component {
         <Row key={uuidv4()} gutter={[16, 16]} style={{ marginBottom: '18px' }}>
           <Col key={uuidv4()} span={12}>
             <Collapse>
-              <Panel header="Recruitment Status" key="1">
+              <Panel header="Dates" key="1">
                 <Form.Item
                   name="checkbox-group"
                 >
                   <Checkbox.Group>
-                    <Row>
-                      {recruitmentCheckboxes}
+                    <Row justify="space-between">
+                      {rangePickers}
                     </Row>
                   </Checkbox.Group>
                 </Form.Item>
@@ -68,22 +86,6 @@ class AdvancedSearchGroup extends Component {
                     </Row>
                   </Checkbox.Group>
                 </Form.Item>
-              </Panel>
-            </Collapse>
-          </Col>
-        </Row>
-        <Row key={uuidv4()} gutter={[16, 16]} style={{ marginBottom: '18px' }}>
-          <Col key={uuidv4()} span={12}>
-            <Collapse>
-              <Panel header="Eligibility Criteria" key="3">
-                <p>{text}</p>
-              </Panel>
-            </Collapse>
-          </Col>
-          <Col key={uuidv4()} span={12}>
-            <Collapse>
-              <Panel header="Route of Administration" key="4">
-                <p>{text}</p>
               </Panel>
             </Collapse>
           </Col>
@@ -126,7 +128,9 @@ class AdvancedSearchGroup extends Component {
           <Col key={uuidv4()} span={12}>
             <Collapse>
               <Panel header="Additional Criteria" key="6">
-                <p>{text}</p>
+                <Row>
+                  {recruitmentCheckboxes}
+                </Row>
               </Panel>
             </Collapse>
           </Col>

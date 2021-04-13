@@ -1,0 +1,10 @@
+venv
+config.json
+
+*.egg-info
+*.swp
+
+# CDK asset staging directory
+.cdk.staging
+cdk.out
+cdk.context.json

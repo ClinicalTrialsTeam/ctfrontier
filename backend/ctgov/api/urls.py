@@ -1,13 +1,12 @@
-from django.conf.urls import url
-from django.urls import path, include
+from django.urls import path
 from .views import (
     BriefSummariesListApiView,
-    BasicSearchApiView,
+    SearchStudiesApiView,
     CountriesListApiView,
 )
 
 urlpatterns = [
     path("brief_summaries", BriefSummariesListApiView.as_view()),
-    path("basic_search", BasicSearchApiView.as_view()),
+    path("search_studies", SearchStudiesApiView.as_view()),
     path("countries", CountriesListApiView.as_view()),
 ]

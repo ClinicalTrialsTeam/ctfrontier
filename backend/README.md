@@ -4,7 +4,7 @@
 Run `pytest tests` from the `backend` directory
 
 
-## Initial load of CT.gov data
+## Setup: Initial load of CT.gov data
 
 1. Download `.zip` from [https://aact.ctti-clinicaltrials.org/snapshots](https://aact.ctti-clinicaltrials.org/snapshots)
 1. Save this `.zip` file in the project root directory `ctfrontier`. (You should also be in the project root directory in your terminal.)
@@ -38,45 +38,49 @@ will be cached and it will not take so long.
 12. Ctrl + D to get out of psql, Ctrl + D again to get out of the postgres container.
 13. Finally, `docker-compose down` to take down the postgres container and `docker-compose up` to start running the whole application.
 
+#### Please note there are significant changes to Search API. Rerun Step 3 to make sure new views are created in your local database. The materialized view creation will take few minutes to complete.
+
+## Setup: Clinical Studies Search API
+
+1. Run the pgdb container with `docker-compose up pgdb`
+1. In another terminal, connect to the postgres docker container: `docker exec -it --user postgres pgdb /bin/bash`
+1. Run the basic_search.sql script with the command: `psql -d aact -f database/scripts/search_studies.sql`
+1. Connect to the aact database `psql -d aact`
+1. Use the command `\dv` to list the views and verify that basic_search appears in the list of views.
+1. Ctrl + D twice to exit psql and then the postgres container. Then `docker-compose up` to bring up the whole app.
+
 ### psql
 
 Here's a useful psql command cheat sheet: [https://gist.github.com/Kartones/dd3ff5ec5ea238d4c546](https://gist.github.com/Kartones/dd3ff5ec5ea238d4c546)
 
 ## API Endpoints
 
-### Basic Search API
-
-#### Prerequisite
-
-1. Run the pgdb container with `docker-compose up pgdb`
-1. In another terminal, connect to the postgres docker container: `docker exec -it --user postgres pgdb /bin/bash`
-1. Run the basic_search.sql script with the command: `psql -d aact -f database/scripts/basic_search.sql`
-1. Connect to the aact database `psql -d aact`
-1. Use the command `\dv` to list the views and verify that basic_search appears in the list of views.
-1. Ctrl + D twice to exit psql and then the postgres container. Then `docker-compose up` to bring up the whole app.
-
-
+### Clinical Studies Search API
 #### Parameters
 
-The end point for Basic Search API is:
-<http://127.0.0.1:8000/ctgov/api/basic_search>
+#### Please note api endpoint name is changed to "search_studies" to be more generic.
 
-Example query located in`database/examples/basic_search_query.json`:
+The end point for Clinical Studies Search API is:
+<http://127.0.0.1:8000/ctgov/api/search_studies>
+
+#### Please note the change in api parameters. If metadata is required, pass "metadata_required"="True"; if metadata is not required (for example, during pagination) pass empty string as "metadata_required="".
+
+Example query located in `database/examples/search_studies_query.json`:
 
 	{
-	    "status":"Recruiting",
-	    "condition":"",
-	    "other_terms":"POETYK",
-	    "country":"",
-	    "intervention":"",
-	    "target":"",
-	    "nct_id":"",
-	    "eligibility_criteria":"",
+		"status":"Recruiting",
+		"condition":"",
+		"other_terms":"POETYK",
+		"country":"",
+		"intervention":"",
+		"target":"",
+		"nct_id":"",
+		"eligibility_criteria":"",
 		"modality":"exercise",
 		"sponsor":"",
-		"phase":"",
-		"start_date_from":"",
-		"start_date_to":"",
+		"phase":"Phase 1",
+		"start_date_from":"2019-01-01",
+		"start_date_to":"2020-01-01",
 		"primary_completion_date_from":"",
 		"primary_completion_date_to":"",
 		"first_posted_date_from":"",
@@ -85,34 +89,70 @@ Example query located in`database/examples/basic_search_query.json`:
 		"results_first_posted_date_to":"",
 		"last_update_posted_date_from":"",
 		"last_update_posted_date_to":"",
-	    "first":"",
-	    "last":""
+		"study_results":"",
+		"study_type":"",
+		"eligibility_age":"",
+		"eligibility_min_age":"25",
+		"eligibility_max_age":"75",
+		"eligibility_gender":"Female",
+		"eligibility_ethnicity":"",
+		"eligibility_condition":"",
+		"eligibility_healthy_volunteer":"",
+		"study_title_acronym":"",
+		"study_outcome_measure":"",
+		"study_collaborator":"",
+		"study_ids":"",
+		"study_location_terms":"",
+		"study_funder_type":"Industry",
+		"study_document_type":"Study Protocol",
+		"study_results_submitted":"",
+		"study_roa":"",
+		"first":"",
+		"last":"",
+		"metadata_required":"True"
 	}
+
+
+1. Pass all of the above 'post' parameters with exact name. You can choose to pass only those parameters that have value entered/selected by user. You don't need to pass all parameters. If none of the parameters are passed, the API will get first 100 records from database.
+
+1. 'first' and 'last' parameters are for pagination. If these parameters are blank or not passed, Django API will assume first = 0 and last = 100.
 
 Example curl command with a timer using the example json:
 
-`time curl -X POST http://127.0.0.1:8000/ctgov/api/basic_search -d database/examples/basic_search_query.json`
+`time curl -X POST http://127.0.0.1:8000/ctgov/api/search_studies -d database/examples/search_studies_query.json`
 
 #### Output
 
+#### Please note search results now contains "metadata" information. This means ReactJS parsing needs to be modified accordingly.
 
 Sample result below. Note that 'intervention_name' and 'location_name' are pipe delimited values. You have to parse them to display as a list in html.
 
 
 	{
-	    "status": "Recruiting",
-	    "brief_title": "An Investigational Study to Evaluate Experimental Medication BMS-986165 Compared to Placebo in Participants With Plaque Psoriasis (POETYK-PSO-3) in Mainland China, Taiwan, and South Korea",
-	    "nct_id": "NCT04167462",
-	    "condition_name": "Psoriasis",
-	    "intervention_name": "BMS-986165|Placebo",
-	    "location_name": "Local Institution|Local Institution|Local Institution"
+		"metadata": [
+			{
+				"results_count": "148"
+			}
+		],
+		"search_results": [
+			{
+				"status": "Completed",
+				"brief_title": "Immunogenicity and Safety of Booster Dose of BoostrixTM Polio Vaccine in Previously Boosted Adults",
+				"nct_id": "NCT01323959",
+				"condition_name": "Acellular Pertussis|Diphtheria|Poliomyelitis|Tetanus",
+				"intervention_name": "BoostrixTM Polio",
+				"location_name": "GSK Investigational Site|GSK Investigational Site|GSK Investigational Site|GSK Investigational Site|GSK Investigational Site|GSK Investigational Site|GSK Investigational Site|GSK Investigational Site|GSK Investigational Site|GSK Investigational Site|GSK Investigational Site|GSK Investigational Site|GSK Investigational Site|GSK Investigational Site|GSK Investigational Site"
+			},
+			{
+				"status": "Completed",
+				"brief_title": "A Study to Determine the Excretion Balance and Pharmacokinetics of 14C-GSK573719",
+				"nct_id": "NCT01362257",
+				"condition_name": "Pulmonary Disease, Chronic Obstructive",
+				"intervention_name": "Treatment Period 1 - IV dose of GSK573719|Treatment Period 2 - Oral dose of GSK573719",
+				"location_name": "GSK Investigational Site"
+			}
+		]
 	}
-
-
-1. Pass all of the above 'post' parameters with exact name even though one of the parameter may be blank. If it is blank, pass an empty double quoted string.
-
-1. 'first' and 'last' is for pagination. If it is blank, Django backend will assume first = 0 and last = 100. I think you can accomplish pagination using hidden fields in your html and keep incrementing with offset for every 'previous' or 'next' action.
-
 
 ### Countries API
 
