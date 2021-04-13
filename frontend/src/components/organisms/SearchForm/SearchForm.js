@@ -52,6 +52,8 @@ class SearchForm extends Component {
       ageGroup: [],
       ethnicity: [],
       showAdvancedOptions: false,
+      disableState: true,
+      disableCityDistance: true,
     };
   }
 
@@ -99,6 +101,24 @@ class SearchForm extends Component {
   }
 
   handleCountryChange(e) {
+    if (e === 'United States') {
+      this.setState({
+        disableState: false,
+        disableCityDistance: false,
+      });
+    }
+    if (e !== 'United States' && e !== '') {
+      this.setState({
+        disableState: true,
+        disableCityDistance: false,
+      });
+    }
+    if (e === '') {
+      this.setState({
+        disableState: true,
+        disableCityDistance: true,
+      });
+    }
     this.setState({
       country: e,
     });
@@ -498,6 +518,7 @@ class SearchForm extends Component {
                 handleInputChange={this.handleCountryChange}
               />
               <SelectField
+                isDisabled={this.state.disableState}
                 key="field-state"
                 name="state"
                 label="State"
@@ -509,6 +530,7 @@ class SearchForm extends Component {
               <Row key="form_row_location" gutter={[16, 8]}>
                 <Col key="152" span={12}>
                   <TextInputField
+                    isDisabled={this.state.disableCityDistance}
                     key="field-city"
                     label="City"
                     title="In the search feature, the City field is used to find clinical studies with locations in a specific city. The Distance field is used to find studies with locations within the specified distance from a city in number of miles. For example, if you choose Illinois as the state, identifying 'Chicago' as the city and '100 miles' as the distance will find all studies listing a location within 100 miles of Chicago."
@@ -518,10 +540,11 @@ class SearchForm extends Component {
                 </Col>
                 <Col key="153" span={12}>
                   <SelectField
+                    isDisabled={this.state.disableCityDistance}
                     key="field-distance"
                     name="distance"
                     label="Distance"
-                    title="In the search feature, the State field is used to find clinical studies with locations in a specific state within the United States. If you choose United States in the Country field, you can search for studies with locations in a specific state."
+                    title="In the search feature, the City field is used to find clinical studies with locations in a specific city. The Distance field is used to find studies with locations within the specified distance from a city in number of miles. For example, if you choose Illinois as the state, identifying 'Chicago' as the city and '100 miles' as the distance will find all studies listing a location within 100 miles of Chicago."
                     placeholder="Select the distance"
                     options={distanceList}
                     handleInputChange={this.handleSexChange}

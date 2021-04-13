@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 class TextInputField extends Component {
   render() {
     const {
-      label, title, name, handleInputChange,
+      isDisabled, label, title, name, handleInputChange,
     } = this.props;
     return (
       <Form.Item
@@ -19,6 +19,7 @@ class TextInputField extends Component {
         onChange={handleInputChange}
       >
         <Input
+          disabled={isDisabled}
           allowClear
         />
       </Form.Item>
@@ -27,10 +28,15 @@ class TextInputField extends Component {
 }
 
 TextInputField.propTypes = {
+  isDisabled: PropTypes.bool,
   label: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   handleInputChange: PropTypes.func.isRequired,
+};
+
+TextInputField.defaultProps = {
+  isDisabled: false,
 };
 
 export default TextInputField;
