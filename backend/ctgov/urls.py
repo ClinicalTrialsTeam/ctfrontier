@@ -1,4 +1,5 @@
 from django.urls import path, include
+from django.conf.urls import url
 from rest_framework.routers import DefaultRouter
 
 from .viewsets import ClinicalTrialsBasicSearchView
@@ -12,4 +13,5 @@ basic = router.register(
 
 urlpatterns = [
     path("api/", include("ctgov.api.urls")),
+    url(r"^", include(router.urls)),
 ]

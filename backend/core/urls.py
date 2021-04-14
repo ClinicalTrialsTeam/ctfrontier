@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.urls import path, include
 from django.contrib.auth.models import User
+from django.conf.urls import re_path
 from rest_framework import routers, serializers, viewsets
 
 
@@ -43,4 +44,5 @@ urlpatterns = [
         "api-auth/", include("rest_framework.urls", namespace="rest_framework")
     ),
     path("ctgov/", include("ctgov.urls")),
+    re_path(r"^search/", include(router.urls)),
 ]
