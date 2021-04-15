@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import {
-  Select, Checkbox, Col, Form, Row, DatePicker, Typography,
+  Select, Col, Form, Row, Typography,
 } from 'antd';
 import PropTypes from 'prop-types';
-import { v4 as uuidv4 } from 'uuid';
 
 import TextInputField from '../../atoms/TextInputField/TextInputField';
 import SelectField from '../../atoms/SelectField/SelectField';
+import RangePickerField from '../../atoms/RangePickerField/RangePickerField';
 
 import {
   funder, documents, submission,
@@ -14,12 +14,9 @@ import {
 
 class AdvancedSearchGroup extends Component {
   render() {
-    const { access, recruitment, handleInputChange } = this.props;
+    const { handleInputChange } = this.props;
     const { Text } = Typography;
     const { Option } = Select;
-
-    const recruitmentCheckboxes = [];
-    const { RangePicker } = DatePicker;
 
     const funderList = [];
     const documentsList = [];
@@ -39,55 +36,40 @@ class AdvancedSearchGroup extends Component {
       });
     });
 
+    const studyStartTitle = "The actual date on which the first participant was enrolled in a clinical study. The 'estimated' study start date is the date that the researchers think will be the study start date.";
+    const primaryCompletionTitle = "The date on which the last participant in a clinical study was examined or received an intervention to collect final data for the primary outcome measure. Whether the clinical study ended according to the protocol or was terminated does not affect this date. For clinical studies with more than one primary outcome measure with different completion dates, this term refers to the date on which data collection is completed for all the primary outcome measures. The 'estimated' primary completion date is the date that the researchers think will be the primary completion date for the study.";
+    const firstPostedTitle = 'The date on which the study record was first available on ClinicalTrials.gov. There is typically a delay of a few days between the date the study sponsor or investigator submitted the study record and the first posted date.';
+    const resultsFirstPostedTitle = 'The date on which summary results information was first available on ClinicalTrials.gov. There is typically a delay between the date the study sponsor or investigator first submits summary results information (the results first submitted date) and the results first posted date.';
+    const lastUpdatePostedTitle = "The most recent date on which changes to a study record were made available on ClinicalTrials.gov. There may be a delay between when the changes were submitted to ClinicalTrials.gov by the study's sponsor or investigator (the last update submitted date) and the last update posted date.";
+
     const rangePickerData = [
-      ['range_1', 'Study start'],
-      ['range_2', 'Primary completion'],
-      ['range_3', 'Last update posted'],
-      ['range_4', 'First posted'],
-      ['range_5', 'Results first posted'],
+      ['range-study-start', 'Study start', studyStartTitle],
+      ['range-primary-completion', 'Primary completion', primaryCompletionTitle],
+      ['range-first-posted', 'Last update posted', firstPostedTitle],
+      ['range-results-first-posted', 'First posted', resultsFirstPostedTitle],
+      ['rang-last-update-posted', 'Results first posted', lastUpdatePostedTitle],
     ];
     const rangePickers = [];
 
-    rangePickerData.forEach((element) => {
+    Array.from(rangePickerData.entries()).forEach(([, element]) => {
       rangePickers.push(
-        <Form.Item
+        <RangePickerField
           key={element[0]}
           label={element[1]}
-        >
-          <RangePicker />
-        </Form.Item>
+          title={element[2]}
+          name={element[0]}
+          handleInputChange={handleInputChange}
+        />
       );
     });
 
     const rangePickersLeft = Array.from(rangePickers).slice(0, 3);
     const rangePickersRight = Array.from(rangePickers).slice(3, 5);
 
-    Array.from(recruitment.entries()).forEach(([, value]) => {
-      recruitmentCheckboxes.push(
-        <Col key={uuidv4()} span={12}>
-          <Checkbox key={uuidv4()} value={value} style={{ lineHeight: '32px' }}>
-            {value}
-          </Checkbox>
-        </Col>
-      );
-    });
-
-    const accessCheckboxes = [];
-
-    Array.from(access.entries()).forEach(([, value]) => {
-      accessCheckboxes.push(
-        <Col key={uuidv4()} span={12}>
-          <Checkbox key={uuidv4()} value={value} style={{ lineHeight: '32px' }}>
-            {value}
-          </Checkbox>
-        </Col>
-      );
-    });
-
     return (
       <>
-        <Row key={uuidv4()} gutter={[32, 16]} style={{ marginBottom: '18px' }}>
-          <Col key={uuidv4()} span={8}>
+        <Row key="row-expanded-options" gutter={[32, 16]} style={{ marginBottom: '18px' }}>
+          <Col key="col-study-dates" span={8}>
             <Text className="section-text" strong key="t_1">Study Dates</Text>
             <Form.Item
               name="ranges"
@@ -102,7 +84,7 @@ class AdvancedSearchGroup extends Component {
               </Row>
             </Form.Item>
           </Col>
-          <Col key={uuidv4()} span={8}>
+          <Col key="col-targeted-search" span={8}>
             <Text className="section-text" strong key="t_2">Targeted Search</Text>
             <TextInputField
               key="field-collaborator"
@@ -126,7 +108,7 @@ class AdvancedSearchGroup extends Component {
               handleInputChange={handleInputChange}
             />
           </Col>
-          <Col key={uuidv4()} span={8}>
+          <Col key="col-additional-criteria" span={8}>
             <Text className="section-text" strong key="t_3">Additional Criteria</Text>
             <SelectField
               key="field-funder"
@@ -163,8 +145,6 @@ class AdvancedSearchGroup extends Component {
 }
 
 AdvancedSearchGroup.propTypes = {
-  access: PropTypes.array.isRequired,
-  recruitment: PropTypes.array.isRequired,
   handleInputChange: PropTypes.func.isRequired,
 };
 
