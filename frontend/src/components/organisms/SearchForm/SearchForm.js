@@ -36,21 +36,33 @@ class SearchForm extends Component {
     this.showAdvancedOptions = this.showAdvancedOptions.bind(this);
     this.formRef = React.createRef();
     this.state = {
-      intervention: '',
       condition: '',
-      target: '',
-      country: '',
-      otherTerms: '',
-      searchResults: '',
-      countries: [],
+      other_terms: '',
+      subcondition: '',
+      intervention: '',
       roa: [],
-      recruitment: [],
+      modality: '',
+      target: '',
+      nct_id: '',
+      title: '',
+      status: '',
       phase: [],
+      sponsor:'',
       results: '',
       type: '',
+      age: '',
+      age_group: [],
       sex: '',
-      ageGroup: [],
       ethnicity: [],
+      country: '',
+      state: '',
+      city: '',
+      distance: '',
+      healthy: false,
+      location_terms: '',
+      recruitment: [],
+      countries: [],
+      searchResults: '',
       showAdvancedOptions: false,
     };
   }
@@ -90,7 +102,7 @@ class SearchForm extends Component {
 
   handleInputChange(e) {
     const { target } = e;
-    const value = target.inputType === 'checkbox' ? target.checked : target.value;
+    const value = target.type === 'checkbox' ? target.checked : target.value;
     const { name } = target;
 
     this.setState({
@@ -154,25 +166,48 @@ class SearchForm extends Component {
 
   async handleSearch() {
     const payload = {
-      metadata_required: true,
-      status: '',
+      status: this.state.status,
       condition: this.state.condition,
-      other_terms: this.state.otherTerms,
+      other_terms: this.state.other_terms,
       country: this.state.country,
       intervention: this.state.intervention,
       target: this.state.target,
       nct_id: this.state.nct_id,
-      roa: this.state.roa,
-      recruitment: this.state.recruitment,
-      phase: this.state.phase,
-      results: this.state.results,
       eligibility_criteria: '',
-      type: this.state.type,
-      sex: this.state.sex,
-      ageGroup: this.state.ageGroup,
-      ethnicity: this.state.ethnicity,
-      first: '',
-      last: '',
+      modality: this.state.modality,
+      sponsor: this.state.sponsor,
+      phase: this.state.phase,
+      start_date_from: '',
+      start_date_to: '',
+      primary_completion_date_from: '',
+      primary_completion_date_to: '',
+      first_posted_date_from: '',
+      first_posted_date_to: '',
+      results_first_posted_date_from: '',
+      results_first_posted_date_to: '',
+      last_update_posted_date_from: '',
+      last_update_posted_date_to: '',
+      study_results: this.state.results,
+      study_type: this.state.type,
+      eligibility_age: this.state.age,
+      eligibility_min_age: this.state.age_group,
+      eligibility_max_age: this.state.this.state.age_group,
+      eligibility_gender: this.state.sex,
+      eligibility_ethnicity: this.state.ethnicity,
+      eligibility_condition: '',
+      eligibility_healthy_volunteer: this.state.healthy,
+      study_title_acronym: this.state.title,
+      study_outcome_measure: '',
+      study_collaborator: '',
+      study_ids: '',
+      study_location_terms: this.state.location_terms,
+      study_funder_type: '',
+      study_document_type: '',
+      study_results_submitted: '',
+      study_roa: this.state.roa,
+      first: 0,
+      last: 100,
+      metadata_required: true,
     };
     try {
       const response = await ctgov.post('search_studies', payload);
@@ -390,7 +425,7 @@ class SearchForm extends Component {
                 key="field-sponsor"
                 label="Sponsor / Collaborators"
                 title="Sponsor is the organization or person who initiates the study and who has authority and control over the study. Collaborator is an organization other than the sponsor that provides support for a clinical study. This support may include activities related to funding, design, implementation, data analysis, or reporting."
-                name="target"
+                name="sponsor"
                 handleInputChange={this.handleInputChange}
               />
               <SelectField
@@ -453,13 +488,14 @@ class SearchForm extends Component {
                 <Col key="checkbox-healthy" span={8}>
                   <Form.Item
                     key="form-item-healthy"
-                    label="Healthy accepted"
+                    label="Healthy accepted"ƒ
+                    onChange={this.handleInputChange}
                     tooltip={{
                       title: 'A type of eligibility criteria that indicates whether people who do not have the condition/disease being studied can participate in that clinical study.',
                       icon: <InfoCircleOutlined />,
                     }}
                   >
-                    <Checkbox>Is healthy?</Checkbox>
+                    <Checkbox name="healthy">Is healthy?</Checkbox>
                   </Form.Item>
                 </Col>
                 <Col key="col-field-sex" span={16}>
@@ -532,7 +568,7 @@ class SearchForm extends Component {
                 key="field-location-terms"
                 label="Location Terms"
                 title="In the search feature, the Location terms field is used to narrow a search by location-related terms other than Country, State, and City or distance. For example, you may enter a specific facility name (such as National Institutes of Health Clinical Center) or a part of a facility name (such as Veteran for studies listing Veterans Hospital or Veteran Affairs in the facility name). Note: Not all study records include this level of detail about locations."
-                name="nct_id"
+                name="location_terms"
                 handleInputChange={this.handleInputChange}
               />
             </Col>

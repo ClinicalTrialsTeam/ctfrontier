@@ -20,6 +20,7 @@ class TextInputField extends Component {
       >
         <Input
           allowClear
+          name={name}
         />
       </Form.Item>
     );
