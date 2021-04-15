@@ -66,6 +66,8 @@ Your default AWS user (configured with `aws configure`) or your named aws profil
 * AmazonSSNFullAccess
 * AWSCloudFormationFullAccess
 * AWSLambda_FullAccess
+* AmazonEC2ContainerRegistryFullAccess
+* AmazonECS_FullAccess
 
 ## Running the project
 

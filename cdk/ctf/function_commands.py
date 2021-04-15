@@ -51,7 +51,7 @@ def function_deploy(ctx):
     """
     func = names.ETL_DOWNLOAD_FUNCTION
 
-    __build_lambda_package(ctx, func)
+    build_lambda_package(ctx, func)
     __update_function_code(func)
 
 
@@ -91,7 +91,7 @@ def function_local_stop():
     run_command(cmd)
 
 
-def __build_lambda_package(ctx, func):
+def build_lambda_package(ctx, func):
     zip_path = join(dirname(dirname(__file__)), f"dist/{func}.zip")
     build_path = join(dirname(dirname(__file__)), f"dist/{func}")
     if exists(build_path):

@@ -14,7 +14,7 @@ from .common import (
     deploy_docker_image,
 )
 from .config_commands import Config
-from .function_commands import function_deploy
+from .function_commands import build_lambda_package, function_deploy
 
 
 @click.group()
@@ -53,13 +53,15 @@ def stack_create(ctx, config_file):
 
     __bootstrap_cdk()
     __bootstrap_custom()
-    deploy_docker_image(names.FRONTEND_REPOSITORY, "../../frontend")
+    # TODO: get absolute path here?
+    deploy_docker_image(names.FRONTEND_REPOSITORY, "../frontend")
 
     try:
-        ctx.invoke(stack_update, ctx, False)
-    except Exception:
-        Config.delete()
-        click.secho("Error creating stack", fg="red")
+        # Must put lambas in S3 before deploying
+        build_lambda_package(ctx, func=names.ETL_DOWNLOAD_FUNCTION)
+        ctx.invoke(stack_update)
+    except Exception as e:
+        click.secho(f"Error creating stack: {e}", fg="red")
         raise click.Abort()
 
 
@@ -137,11 +139,23 @@ def __bootstrap_custom():
         )
         run_command(cmd)
 
+        # Add lifecycle policy
+        policy_path = join(dirname(dirname(__file__)), f"lib/ecr-policy.json")
+        cmd = (
+            f"aws ecr put-lifecycle-policy --repository-name {repo}"
+            f' --lifecycle-policy-text "file://{policy_path}" '
+            f"{profile_arg()}"
+        )
+        run_command(cmd)
+
 
 def __delete_bootstrap_custom():
     # Clear lambda code S3 bucket and delete the bucket
     __empty_s3_bucket(names.LAMBDA_CODE_BUCKET)
-    cmd = f"aws {profile_arg()} delete-bucket --bucket {names.LAMBDA_CODE_BUCKET}"
+    cmd = (
+        f"aws {profile_arg()} s3api delete-bucket "
+        f"--bucket {names.LAMBDA_CODE_BUCKET}"
+    )
     run_command(cmd)
 
     for repo in names.REPOSITORIES:
@@ -182,8 +196,11 @@ def __bootstrap_cdk():
         f"bootstrap --bootstrap-bucket-name {names.CDK_BOOTSTRAP_BUCKET} "
         f"--qualifier {names.PROJECT_NAME} {tags_args}"
     )
-    if r != 0:
-        click.secho("Error boostrapping environment", fg="red")
+    if r.returncode != 0:
+        click.secho(
+            f"Error boostrapping environment. Returned {r.returncode}",
+            fg="red",
+        )
         raise click.Abort()
 
 

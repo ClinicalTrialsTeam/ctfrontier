@@ -59,7 +59,10 @@ def get_image_id(image_uri, running=False):
 
 def build_docker_image(image_uri, dockerfile_folder):
     # Build docker image
-    cmd = f"docker build -t {image_uri} image"
+    cmd = (
+        f"docker build -f {dockerfile_folder}/Dockerfile.prod "
+        f"-t {image_uri} {dockerfile_folder}"
+    )
     click.echo(cmd)
     r = subprocess.run(cmd.split())
     if r.returncode != 0:

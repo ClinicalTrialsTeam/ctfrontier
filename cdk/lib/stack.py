@@ -4,13 +4,13 @@ from aws_cdk import (
     aws_s3 as s3,
     aws_ec2 as ec2,
     aws_ecs as ecs,
-    aws_ecr as ecr,
-    aws_logs as logs,
-    aws_ecs_patterns as ecs_patterns,
 )
 from .monitoring import CtfMonitoring
 from .function import CtfFunction
 from .bucket import CtfBucket
+from .task import CtfFrontendTaskDefinition
+from .service import CtfFrontendService
+from .database import CtfDatabase
 from . import names, environment
 
 
@@ -67,48 +67,16 @@ class CtStack(core.Stack):
 
         vpc = ec2.Vpc(self, "CtfVPC", max_azs=3)
 
-        cluster = ecs.Cluster(self, "CtfCluster", vpc=vpc)
+        cluster = ecs.Cluster(
+            self,
+            "CtfCluster",
+            cluster_name=names.CLUSTER,
+            vpc=vpc,
+        )
         cluster.add_default_cloud_map_namespace(name="service.local")
 
-        frontend_task = ecs.FargateTaskDefinition(
-            self,
-            "frontend-task",
-            cpu=512,
-            memory_limit_mib=2048,
-        )
+        frontend_task = CtfFrontendTaskDefinition(self)
 
-        frontend_task.add_container(
-            "frontend",
-            image=ecs.ContainerImage.from_ecr_respository(
-                repository=ecr.Repository.from_repository_name(
-                    self,
-                    "LambdaRepository",
-                    repository_name=names.LAMBDA_REPOSITORY,
-                )
-            ),
-            essential=True,
-            environment={"LOCALDOMAIN": "service.local"},
-            logging=ecs.LogDrivers.aws_logs(
-                stream_prefix="FrontendContainer",
-                log_retention=logs.RetentionDays.ONE_WEEK,
-            ),
-            port_mappings=ecs.PortMapping(container_port=3000, host_port=3000),
-        )
+        CtfFrontendService(self, cluster, frontend_task, vpc)
 
-        frontend_service = ecs_patterns.NetworkLoadBalancedFargateService(
-            self,
-            id="frontend-service",
-            service_name="frontend",
-            cluster=cluster,  # Required
-            cloud_map_options=ecs.CloudMapOptions(name="frontend"),
-            cpu=512,  # Default is 256
-            desired_count=2,  # Default is 1
-            task_definition=frontend_task,
-            memory_limit_mib=2048,  # Default is 512
-            listener_port=80,
-            public_load_balancer=True,
-        )
-
-        frontend_service.service.connections.allow_from_any_ipv4(
-            ec2.Port.tcp(3000), "react inbound"
-        )
+        CtfDatabase(self, vpc)
