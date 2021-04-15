@@ -1,4 +1,5 @@
 PROJECT_NAME = "ctfrontier"
+DOMAIN = "ctfrontier.com"
 
 CDK_BOOTSTRAP_BUCKET = "ctf-bootstrap-bucket"
 LAMBDA_CODE_BUCKET = "ctf-lambda-code-bucket"

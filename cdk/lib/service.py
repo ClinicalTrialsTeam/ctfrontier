@@ -19,9 +19,9 @@ class CtfFrontendService(core.Construct):
     ):
         super().__init__(scope, id)
 
-        acm.Certificate(self, "CtfCertificate", "ctfrontier.com")
+        certificate = acm.Certificate(self, "CtfCertificate", names.DOMAIN)
 
-        lb = elb.NetworkLoadBalancer(
+        lb = elb.ApplicationLoadBalancer(
             self,
             "CtfNetworkLoadBalancer",
             vpc=vpc,
@@ -29,33 +29,44 @@ class CtfFrontendService(core.Construct):
             load_balancer_name="ctf-load-balancer",
         )
 
+        lb.apply_removal_policy(core.RemovalPolicy.DELETE)
+
         lb.add_listener(
-            "CtfLoadBalancerListener",
-            443,
-            certificates=[],
-            protocol=elb.Protocol.TLS,
+            "CtfHttpRedirect",
+            port=80,
+            certificates=[certificate.certificate_arn],
+            protocol=elb.Protocol.HTTP,
+            default_action=elb.ListenerAction().redirect(
+                permanent=True,
+                port=443,
+                protocol=elb.Protocol.HTTPS,
+            ),
         )
 
-        # http redirect listener?
+        lb.add_listner(
+            "CtfHttpsListener",
+            port=443,
+            certificates=[certificate.certificate_arn],
+            protocol=elb.Protocol.HTTPS,
+        )
 
-        frontend_service = ecs_patterns.NetworkLoadBalancedFargateService(
+        frontend_service = ecs_patterns.ApplicationLoadBalancedFargateService(
             self,
             id="CtfFrontendService",
+            domain_name=names.DOMAIN,
             service_name=names.FRONTEND_SERVICE,
             cluster=cluster,  # Required
             load_balancer=lb,
             cloud_map_options=ecs.CloudMapOptions(name="frontend"),
-            cpu=256,  # Default is 256
             desired_count=1,  # Default is 1
             task_definition=task_definition,
-            memory_limit_mib=256,  # Default is 512
-            listener_port=80,
-            public_load_balancer=True,
             circuit_breaker=ecs.DeploymentCircuitBreaker(rollback=True),
         )
 
-        # TODO: add 443, SSL, and redirect 80 to 443
-
         frontend_service.service.connections.allow_from_any_ipv4(
             ec2.Port.tcp(80), "react inbound"
+        )
+
+        frontend_service.service.connections.allow_from_any_ipv4(
+            ec2.Port.tcp(443), "react inbound tls"
         )
