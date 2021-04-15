@@ -2,7 +2,7 @@ from django_elasticsearch_dsl import Document, fields
 from django_elasticsearch_dsl.registries import registry
 from elasticsearch_dsl import analyzer, tokenizer
 from ctgov.models import Documents
-from .models import ReportedEvents, BasicSearch
+from .models import ReportedEvents, SearchStudies
 
 
 @registry.register_document
@@ -52,7 +52,7 @@ class SearchDocuments(Document):
 @registry.register_document
 class ClinicalTrialsBasicSearch(Document):
     class Index:
-        name = "basic_search"
+        name = "search_studies"
 
         text_analyzer = analyzer(
             "text_analyzer",
@@ -116,7 +116,7 @@ class ClinicalTrialsBasicSearch(Document):
         )
 
     class Django:
-        model = BasicSearch
+        model = SearchStudies
 
         fields = [
             "status",
