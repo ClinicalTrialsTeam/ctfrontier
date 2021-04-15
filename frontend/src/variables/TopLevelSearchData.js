@@ -34,11 +34,11 @@ const roa = [
   'Intramuscular',
   'Sublingual',
   'Topical',
-  'Rectal',
+  'Nasal',
   'Ocular',
   'Otic',
   'Vaginal',
-  'Nasal',
+  'Rectal',
   'Other',
 ];
 
@@ -89,7 +89,6 @@ const distance = [
 const states = [
   'Alabama',
   'Alaska',
-  'American Samoa',
   'Arizona',
   'Arkansas',
   'California',
@@ -97,10 +96,8 @@ const states = [
   'Connecticut',
   'Delaware',
   'District of Columbia',
-  'Federated States of Micronesia',
   'Florida',
   'Georgia',
-  'Guam',
   'Hawaii',
   'Idaho',
   'Illinois',
@@ -110,7 +107,6 @@ const states = [
   'Kentucky',
   'Louisiana',
   'Maine',
-  'Marshall Islands',
   'Maryland',
   'Massachusetts',
   'Michigan',
@@ -130,9 +126,7 @@ const states = [
   'Ohio',
   'Oklahoma',
   'Oregon',
-  'Palau',
   'Pennsylvania',
-  'Puerto Rico',
   'Rhode Island',
   'South Carolina',
   'South Dakota',
@@ -140,12 +134,30 @@ const states = [
   'Texas',
   'Utah',
   'Vermont',
-  'Virgin Island',
   'Virginia',
   'Washington',
   'West Virginia',
   'Wisconsin',
   'Wyoming',
+];
+
+const funder = [
+  'NIH',
+  'Industry',
+  'Other U.S. Federal agency',
+  'All others (individuals, universities, organizations)',
+];
+
+const documents = [
+  'Study Protocols',
+  'Statistical Analysis Plans (SAPs)',
+  'Informed Consent Forms (ICFs)',
+];
+
+const submission = [
+  'No Results Submitted',
+  'Submitted, QC review not concluded',
+  'Submitted with QC comments available',
 ];
 
 module.exports = {
@@ -160,4 +172,7 @@ module.exports = {
   ethnicities,
   distance,
   states,
+  funder,
+  documents,
+  submission,
 };

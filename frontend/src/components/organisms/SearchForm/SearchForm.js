@@ -31,9 +31,14 @@ class SearchForm extends Component {
     this.handleSexChange = this.handleSexChange.bind(this);
     this.handleAgeGroupChange = this.handleAgeGroupChange.bind(this);
     this.handleEthnicityChange = this.handleEthnicityChange.bind(this);
+    this.handleStateChange = this.handleStateChange.bind(this);
+    this.handleCityChange = this.handleCityChange.bind(this);
+    this.handleDistanceChange = this.handleDistanceChange.bind(this);
     this.handleSearch = this.handleSearch.bind(this);
     this.handleClear = this.handleClear.bind(this);
     this.showAdvancedOptions = this.showAdvancedOptions.bind(this);
+    this.showState = this.showState.bind(this);
+    this.showCityDistance = this.showCityDistance.bind(this);
     this.formRef = React.createRef();
     this.state = {
       condition: '',
@@ -64,6 +69,8 @@ class SearchForm extends Component {
       countries: [],
       searchResults: '',
       showAdvancedOptions: false,
+      showState: false,
+      showCityDistance: false,
     };
   }
 
@@ -111,6 +118,29 @@ class SearchForm extends Component {
   }
 
   handleCountryChange(e) {
+    if (e === 'United States') {
+      this.state.showState = true;
+      this.setState({
+        showState: true,
+        showCityDistance: true,
+      });
+    }
+    if (e !== 'United States' && e !== '') {
+      this.setState({
+        state: '',
+        showState: false,
+        showCityDistance: true,
+      });
+    }
+    if (e === '') {
+      this.setState({
+        state: '',
+        city: '',
+        distance: '',
+        showState: false,
+        showCityDistance: false,
+      });
+    }
     this.setState({
       country: e,
     });
@@ -161,6 +191,24 @@ class SearchForm extends Component {
   handleEthnicityChange(e) {
     this.setState({
       ethnicity: e,
+    });
+  }
+
+  handleStateChange(e) {
+    this.setState({
+      state: e,
+    });
+  }
+
+  handleCityChange(e) {
+    this.setState({
+      city: e,
+    });
+  }
+
+  handleDistanceChange(e) {
+    this.setState({
+      distance: e,
     });
   }
 
@@ -223,6 +271,18 @@ class SearchForm extends Component {
     const { showAdvancedOptions } = this.state;
     this.setState({
       showAdvancedOptions: !showAdvancedOptions,
+    });
+  }
+
+  showState(shouldShow) {
+    this.setState({
+      showState: shouldShow,
+    });
+  }
+
+  showCityDistance(shouldShow) {
+    this.setState({
+      showCityDistance: shouldShow,
     });
   }
 
@@ -303,6 +363,7 @@ class SearchForm extends Component {
         <Option key={index} value={value}>{value}</Option>
       );
     });
+
     let advancedOptions;
     if (this.state.showAdvancedOptions) {
       advancedOptions = (
@@ -315,6 +376,54 @@ class SearchForm extends Component {
     } else {
       advancedOptions = '';
     }
+
+    let state;
+    if (this.state.showState) {
+      state = (
+        <SelectField
+          key="field-state"
+          name="state"
+          label="State"
+          title="In the search feature, the State field is used to find clinical studies with locations in a specific state within the United States. If you choose United States in the Country field, you can search for studies with locations in a specific state."
+          placeholder="Select the state"
+          options={statesList}
+          handleInputChange={this.handleStateChange}
+        />
+      );
+    } else {
+      state = null;
+    }
+
+    let cityDistance;
+    if (this.state.showCityDistance) {
+      cityDistance = (
+        <Row key="form_row_location" gutter={[16, 8]}>
+          <Col key="152" span={12}>
+            <TextInputField
+              key="field-city"
+              label="City"
+              title="In the search feature, the City field is used to find clinical studies with locations in a specific city. The Distance field is used to find studies with locations within the specified distance from a city in number of miles. For example, if you choose Illinois as the state, identifying 'Chicago' as the city and '100 miles' as the distance will find all studies listing a location within 100 miles of Chicago."
+              name="city"
+              handleInputChange={this.handleCityChange}
+            />
+          </Col>
+          <Col key="153" span={12}>
+            <SelectField
+              key="field-distance"
+              name="distance"
+              label="Distance"
+              title="In the search feature, the City field is used to find clinical studies with locations in a specific city. The Distance field is used to find studies with locations within the specified distance from a city in number of miles. For example, if you choose Illinois as the state, identifying 'Chicago' as the city and '100 miles' as the distance will find all studies listing a location within 100 miles of Chicago."
+              placeholder="Select the distance"
+              options={distanceList}
+              handleInputChange={this.handleDistanceChange}
+            />
+          </Col>
+        </Row>
+      );
+    } else {
+      cityDistance = null;
+    }
+
     return (
       <>
         <Divider
@@ -488,8 +597,8 @@ class SearchForm extends Component {
                 <Col key="checkbox-healthy" span={8}>
                   <Form.Item
                     key="form-item-healthy"
-                    label="Healthy accepted"ƒ
                     onChange={this.handleInputChange}
+                    label="Healthy"
                     tooltip={{
                       title: 'A type of eligibility criteria that indicates whether people who do not have the condition/disease being studied can participate in that clinical study.',
                       icon: <InfoCircleOutlined />,
@@ -533,37 +642,8 @@ class SearchForm extends Component {
                 options={countryList}
                 handleInputChange={this.handleCountryChange}
               />
-              <SelectField
-                key="field-state"
-                name="state"
-                label="State"
-                title="In the search feature, the State field is used to find clinical studies with locations in a specific state within the United States. If you choose United States in the Country field, you can search for studies with locations in a specific state."
-                placeholder="Select the state"
-                options={statesList}
-                handleInputChange={this.handleSexChange}
-              />
-              <Row key="form_row_location" gutter={[16, 8]}>
-                <Col key="152" span={12}>
-                  <TextInputField
-                    key="field-city"
-                    label="City"
-                    title="In the search feature, the City field is used to find clinical studies with locations in a specific city. The Distance field is used to find studies with locations within the specified distance from a city in number of miles. For example, if you choose Illinois as the state, identifying 'Chicago' as the city and '100 miles' as the distance will find all studies listing a location within 100 miles of Chicago."
-                    name="city"
-                    handleInputChange={this.handleInputChange}
-                  />
-                </Col>
-                <Col key="153" span={12}>
-                  <SelectField
-                    key="field-distance"
-                    name="distance"
-                    label="Distance"
-                    title="In the search feature, the State field is used to find clinical studies with locations in a specific state within the United States. If you choose United States in the Country field, you can search for studies with locations in a specific state."
-                    placeholder="Select the distance"
-                    options={distanceList}
-                    handleInputChange={this.handleSexChange}
-                  />
-                </Col>
-              </Row>
+              {state}
+              {cityDistance}
               <TextInputField
                 key="field-location-terms"
                 label="Location Terms"
@@ -577,19 +657,19 @@ class SearchForm extends Component {
             <Form.Item>
               <Space>
                 <Button
-                  key="btn_1"
+                  key="btn_search"
                   inputType="primary"
                   text="Search"
                   clickHandler={this.handleSearch}
                 />
                 <Button
-                  key="btn_2"
+                  key="btn_clear"
                   text="Clear"
                   clickHandler={this.handleClear}
                 />
                 <Button
-                  key="10"
-                  text={this.state.showAdvancedOptions === false ? 'Show advanced options' : 'Hide advanced options'}
+                  key="btn_show"
+                  text={this.state.showAdvancedOptions === false ? 'Show expanded options' : 'Hide expanded options'}
                   clickHandler={this.showAdvancedOptions}
                 />
               </Space>
