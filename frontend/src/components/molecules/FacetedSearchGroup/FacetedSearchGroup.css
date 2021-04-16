@@ -11,7 +11,7 @@
 .fs-group-collapse > .ant-collapse-item > .ant-collapse-header {
     padding: 12px 12px;
     padding-left: 36px;
-    height: 39px;
+    height: 38px;
 }
 
 .fs-group-collapse label {
@@ -34,9 +34,39 @@
 }
 
 .fs-group-collapse .ant-picker-input > input {
-    font-size: 10px;
+    font-size: 12px;
 }
 
 #rangepicker-panel .ant-collapse-content > .ant-collapse-content-box {
     padding: 12px 3px;
+}
+
+.fs-group-collapse .ant-input-number {
+    width: 100%;
+}
+
+.fs-group-collapse .ant-select {
+    font-size: 12px;
+}
+
+.fs-group-collapse .ant-input {
+    font-size: 12px;
+}
+
+.ant-select-item {
+    font-size: 12px;
+    line-height: 18px;
+}
+
+.fs-group-collapse .ant-form-item {
+    margin-bottom: 8px;
+    width: 100%;
+}
+
+.fs-group-collapse .ant-form-item-label {
+    padding-bottom: 4px;
+}
+
+.fs-group-collapse .ant-collapse-content > .ant-collapse-content-box {
+    padding: 10px;
 }

@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
 import {
-  Checkbox, Collapse, Form, Typography, Space, DatePicker, Input,
+  Checkbox, Collapse, Form, Typography,
+  Space, DatePicker, Input, Row, Col, Select,
 } from 'antd';
 import PropTypes from 'prop-types';
+import NumberInputField from '../../atoms/NumberInputField/NumberInputField';
+import SelectField from '../../atoms/SelectField/SelectField';
 
 import './FacetedSearchGroup.css';
 
@@ -11,10 +14,12 @@ const { RangePicker } = DatePicker;
 class FacetedSearchGroup extends Component {
   render() {
     const {
-      recruitment, phases, roa,
+      recruitment, phases, roa, ageGroup,
+      // results, types, sex, ethnicities, distance, states,
     } = this.props;
     const { Panel } = Collapse;
     const { Text } = Typography;
+    const { Option } = Select;
 
     const recruitmentCheckboxes = [];
 
@@ -46,9 +51,25 @@ class FacetedSearchGroup extends Component {
       );
     });
 
+    const ageGroupList = [];
+
+    const selectArrays = [
+      [ageGroup, ageGroupList],
+    ];
+
+    selectArrays.forEach((element) => {
+      Array.from(element[0].entries()).forEach(([index, value]) => {
+        element[1].push(
+          <Option key={index} value={value}>{value}</Option>
+        );
+      });
+    });
+
     return (
       <>
-        <Form>
+        <Form
+          layout="vertical"
+        >
           <Collapse className="fs-group-collapse">
             <Panel
               key="1"
@@ -65,7 +86,45 @@ class FacetedSearchGroup extends Component {
               header="Eligibility criteria"
               className="fs-group-panel"
             >
-              <p>Data</p>
+              <Row key="form_row_age" gutter={[8, 8]}>
+                <Col key="col-age-num" span={16}>
+                  <NumberInputField
+                    className="age-num"
+                    min={0}
+                    max={100}
+                    size="small"
+                    key="field-age"
+                    label="Age"
+                    title="A type of eligibility criteria that indicates the age a person must be to participate in a clinical study. This may be indicated by a specific age or the following age groups:
+                    Child (birth-17);
+                    Adult (18-64);
+                    Older Adult (65+)."
+                    name="age"
+                    handleInputChange={this.handleInputChange}
+                  />
+                </Col>
+                <Col key="col-or" span={8}>
+                  <p id="or-p">OR</p>
+                </Col>
+              </Row>
+              <Row key="form-row-age-group" gutter={[16, 8]}>
+                <Col key="col-age-group" span={24}>
+                  <SelectField
+                    mode="multiple"
+                    size="small"
+                    key="field-age-group"
+                    name="age_group"
+                    label="Age Group"
+                    title="A type of eligibility criteria that indicates the age a person must be to participate in a clinical study. This may be indicated by a specific age or the following age groups:
+                      Child (birth-17);
+                      Adult (18-64);
+                      Older Adult (65+)."
+                    placeholder="Select the age group"
+                    options={ageGroupList}
+                    handleInputChange={this.handleAgeGroupChange}
+                  />
+                </Col>
+              </Row>
             </Panel>
             <Panel
               key="2"
@@ -126,7 +185,7 @@ class FacetedSearchGroup extends Component {
               header="Dates"
               className="fs-group-panel"
             >
-              <RangePicker picker="month" size="small" />
+              <RangePicker size="small" />
             </Panel>
             <Panel
               key="facet-type"
@@ -160,6 +219,7 @@ FacetedSearchGroup.propTypes = {
   recruitment: PropTypes.array.isRequired,
   phases: PropTypes.array.isRequired,
   roa: PropTypes.array.isRequired,
+  ageGroup: PropTypes.array.isRequired,
 };
 
 export default FacetedSearchGroup;
