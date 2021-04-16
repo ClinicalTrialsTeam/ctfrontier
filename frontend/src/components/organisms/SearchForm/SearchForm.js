@@ -94,7 +94,7 @@ class SearchForm extends Component {
       condition: '',
       target: '',
       country: '',
-      other_terms: '',
+      otherTerms: '',
       nct_id: '',
       phase: [],
       roa: [],
