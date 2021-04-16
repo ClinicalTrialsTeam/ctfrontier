@@ -658,6 +658,8 @@ class SearchForm extends Component {
                 options={countryList}
                 handleInputChange={this.handleCountryChange}
               />
+              {state}
+              {cityDistance}
               <SelectField
                 key="field-state"
                 name="state"
