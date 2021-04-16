@@ -90,19 +90,30 @@ class SearchForm extends Component {
 
   handleClear() {
     this.setState({
-      intervention: '',
       condition: '',
-      target: '',
-      country: '',
       otherTerms: '',
-      nct_id: '',
-      phase: [],
+      subcondition: '',
+      intervention: '',
       roa: [],
-      countries: [],
+      modality: '',
+      target: '',
+      nct_id: '',
+      title: '',
+      status: '',
+      phase: [],
+      sponsor: '',
+      results: '',
       type: '',
-      sex: '',
+      age: '',
       ageGroup: [],
+      sex: '',
       ethnicity: [],
+      country: '',
+      state: '',
+      city: '',
+      distance: '',
+      healthy: false,
+      location_terms: '',
     });
     this.formRef.current.resetFields();
   }
