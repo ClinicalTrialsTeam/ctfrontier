@@ -42,7 +42,7 @@ class SearchForm extends Component {
     this.formRef = React.createRef();
     this.state = {
       condition: '',
-      other_terms: '',
+      otherTerms: '',
       subcondition: '',
       intervention: '',
       roa: [],
@@ -216,7 +216,7 @@ class SearchForm extends Component {
     const payload = {
       status: this.state.status,
       condition: this.state.condition,
-      other_terms: this.state.other_terms,
+      other_terms: this.state.otherTerms,
       country: this.state.country,
       intervention: this.state.intervention,
       target: this.state.target,
@@ -457,7 +457,7 @@ class SearchForm extends Component {
                 key="field-other"
                 label="Additional Terms"
                 title="In the search feature, the Other (Additional) Terms field is used to narrow a search. For example, you may enter the name of a drug or the NCT number of a clinical study to limit the search to study records that contain these words."
-                name="other_terms"
+                name="otherTerms"
                 handleInputChange={this.handleInputChange}
               />
               <TextInputField
