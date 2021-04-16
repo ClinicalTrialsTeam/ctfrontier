@@ -52,11 +52,11 @@ class SearchForm extends Component {
       title: '',
       status: '',
       phase: [],
-      sponsor:'',
+      sponsor: '',
       results: '',
       type: '',
       age: '',
-      age_group: [],
+      ageGroup: [],
       sex: '',
       ethnicity: [],
       country: '',
@@ -65,12 +65,12 @@ class SearchForm extends Component {
       distance: '',
       healthy: false,
       location_terms: '',
-      recruitment: [],
       countries: [],
       searchResults: '',
       showAdvancedOptions: false,
       showState: false,
       showCityDistance: false,
+      recruitment: [],
     };
   }
 
@@ -94,7 +94,7 @@ class SearchForm extends Component {
       condition: '',
       target: '',
       country: '',
-      otherTerms: '',
+      other_terms: '',
       nct_id: '',
       phase: [],
       roa: [],
@@ -109,7 +109,7 @@ class SearchForm extends Component {
 
   handleInputChange(e) {
     const { target } = e;
-    const value = target.type === 'checkbox' ? target.checked : target.value;
+    const value = target.inputType === 'checkbox' ? target.checked : target.value;
     const { name } = target;
 
     this.setState({
@@ -238,8 +238,8 @@ class SearchForm extends Component {
       study_results: this.state.results,
       study_type: this.state.type,
       eligibility_age: this.state.age,
-      eligibility_min_age: this.state.age_group,
-      eligibility_max_age: this.state.this.state.age_group,
+      eligibility_min_age: this.state.ageGroup,
+      eligibility_max_age: this.state.this.state.ageGroup,
       eligibility_gender: this.state.sex,
       eligibility_ethnicity: this.state.ethnicity,
       eligibility_condition: '',
@@ -253,6 +253,11 @@ class SearchForm extends Component {
       study_document_type: '',
       study_results_submitted: '',
       study_roa: this.state.roa,
+      state: this.state.state,
+      city: this.state.city,
+      distance: this.state.distance,
+      subcondition: this.state.subcondition,
+      recruitment: this.state.recruitment,
       first: 0,
       last: 100,
       metadata_required: true,
@@ -581,7 +586,7 @@ class SearchForm extends Component {
                   <SelectField
                     mode="multiple"
                     key="field-age-group"
-                    name="age_group"
+                    name="ageGroup"
                     label="Age Group"
                     title="A type of eligibility criteria that indicates the age a person must be to participate in a clinical study. This may be indicated by a specific age or the following age groups:
                     Child (birth-17);
@@ -642,13 +647,42 @@ class SearchForm extends Component {
                 options={countryList}
                 handleInputChange={this.handleCountryChange}
               />
-              {state}
-              {cityDistance}
+              <SelectField
+                key="field-state"
+                name="state"
+                label="State"
+                title="In the search feature, the State field is used to find clinical studies with locations in a specific state within the United States. If you choose United States in the Country field, you can search for studies with locations in a specific state."
+                placeholder="Select the state"
+                options={statesList}
+                handleInputChange={this.handleSexChange}
+              />
+              <Row key="form_row_location" gutter={[16, 8]}>
+                <Col key="152" span={12}>
+                  <TextInputField
+                    key="field-city"
+                    label="City"
+                    title="In the search feature, the City field is used to find clinical studies with locations in a specific city. The Distance field is used to find studies with locations within the specified distance from a city in number of miles. For example, if you choose Illinois as the state, identifying 'Chicago' as the city and '100 miles' as the distance will find all studies listing a location within 100 miles of Chicago."
+                    name="city"
+                    handleInputChange={this.handleInputChange}
+                  />
+                </Col>
+                <Col key="153" span={12}>
+                  <SelectField
+                    key="field-distance"
+                    name="distance"
+                    label="Distance"
+                    title="In the search feature, the State field is used to find clinical studies with locations in a specific state within the United States. If you choose United States in the Country field, you can search for studies with locations in a specific state."
+                    placeholder="Select the distance"
+                    options={distanceList}
+                    handleInputChange={this.handleSexChange}
+                  />
+                </Col>
+              </Row>
               <TextInputField
                 key="field-location-terms"
                 label="Location Terms"
                 title="In the search feature, the Location terms field is used to narrow a search by location-related terms other than Country, State, and City or distance. For example, you may enter a specific facility name (such as National Institutes of Health Clinical Center) or a part of a facility name (such as Veteran for studies listing Veterans Hospital or Veteran Affairs in the facility name). Note: Not all study records include this level of detail about locations."
-                name="location_terms"
+                name="nct_id"
                 handleInputChange={this.handleInputChange}
               />
             </Col>
@@ -657,19 +691,19 @@ class SearchForm extends Component {
             <Form.Item>
               <Space>
                 <Button
-                  key="btn_search"
+                  key="btn_1"
                   inputType="primary"
                   text="Search"
                   clickHandler={this.handleSearch}
                 />
                 <Button
-                  key="btn_clear"
+                  key="btn_2"
                   text="Clear"
                   clickHandler={this.handleClear}
                 />
                 <Button
-                  key="btn_show"
-                  text={this.state.showAdvancedOptions === false ? 'Show expanded options' : 'Hide expanded options'}
+                  key="10"
+                  text={this.state.showAdvancedOptions === false ? 'Show advanced options' : 'Hide advanced options'}
                   clickHandler={this.showAdvancedOptions}
                 />
               </Space>
