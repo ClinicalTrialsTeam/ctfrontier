@@ -1,8 +1,6 @@
 from django_elasticsearch_dsl import Document, fields, Index
 from elasticsearch_dsl import analyzer, tokenizer
-from .models import (
-    BasicSearch,
-)
+from .models import SearchStudies
 
 CLINICALTRIALS_BASIC_SEARCH_INDEX = Index("basic_search")
 
@@ -14,7 +12,7 @@ CLINICALTRIALS_BASIC_SEARCH_INDEX.settings(
 @CLINICALTRIALS_BASIC_SEARCH_INDEX.document
 class ClinicalTrialsBasicSearch(Document):
     class Index:
-        name = "basic_search"
+        name = "search_studies"
 
         text_analyzer = analyzer(
             "text_analyzer",
@@ -73,7 +71,7 @@ class ClinicalTrialsBasicSearch(Document):
         )
 
     class Django:
-        model = BasicSearch
+        model = SearchStudies
 
         fields = [
             "status",
