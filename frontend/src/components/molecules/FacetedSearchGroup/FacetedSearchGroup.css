@@ -53,6 +53,10 @@
     font-size: 12px;
 }
 
+.fs-group-collapse .ant-input-number {
+    font-size: 12px;
+}
+
 .ant-select-item {
     font-size: 12px;
     line-height: 18px;
@@ -69,4 +73,15 @@
 
 .fs-group-collapse .ant-collapse-content > .ant-collapse-content-box {
     padding: 10px;
+}
+
+.fs-group-collapse .ant-form-item-control-input {
+    min-height: 0px;
+}
+
+.fs-group-collapse .ant-slider {
+    margin-top: 5px;
+    margin-right: 6px;
+    margin-bottom: 5px;
+    margin-left: 6px;
 }

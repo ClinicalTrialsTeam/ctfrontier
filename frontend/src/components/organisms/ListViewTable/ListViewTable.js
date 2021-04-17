@@ -14,6 +14,7 @@ import FacetedSearchGroup from '../../molecules/FacetedSearchGroup/FacetedSearch
 import {
   recruitment, access, phases, roa, results,
   types, sex, ageGroup, ethnicities, distance, states,
+  funder, documents, submission,
 } from '../../../variables/TopLevelSearchData';
 
 import { columns } from './ListViewTableConfig';
@@ -127,6 +128,9 @@ class ListViewTable extends Component {
                 ethnicities={ethnicities}
                 states={states}
                 distance={distance}
+                funder={funder}
+                documents={documents}
+                submission={submission}
               />
             </Col>
             <Col key="trails_table-col" className="gutter-row" span={20}>
