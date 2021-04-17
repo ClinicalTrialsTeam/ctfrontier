@@ -1279,7 +1279,7 @@ class Covid19Studies(models.Model):
         db_table = "covid_19_studies"
 
 
-class BasicSearchM(models.Model):
+class SearchStudies(models.Model):
     status = models.TextField(blank=True, null=True)
     brief_title = models.TextField(blank=True, null=True)
     official_title = models.TextField(blank=True, null=True)
@@ -1290,42 +1290,36 @@ class BasicSearchM(models.Model):
     intervention_name = models.TextField(blank=True, null=True)
     keywords = models.TextField(blank=True, null=True)
     eligibility_criteria = models.TextField(blank=True, null=True)
+    eligibility_gender = models.TextField(blank=True, null=True)
+    eligibility_min_age = models.TextField(blank=True, null=True)
+    eligibility_min_age_numeric = models.DecimalField(
+        max_digits=65535, decimal_places=65535, blank=True, null=True
+    )
+    eligibility_max_age = models.TextField(blank=True, null=True)
+    eligibility_max_age_numeric = models.DecimalField(
+        max_digits=65535, decimal_places=65535, blank=True, null=True
+    )
+    healthy_volunteers = models.TextField(blank=True, null=True)
     location_name = models.TextField(blank=True, null=True)
     study_brief_desc = models.TextField(blank=True, null=True)
     sponsor_name = models.TextField(blank=True, null=True)
+    funder_type = models.TextField(blank=True, null=True)
     study_phase = models.TextField(blank=True, null=True)
     study_start_date = models.DateField(blank=True, null=True)
     primary_completion_date = models.DateField(blank=True, null=True)
     study_first_posted_date = models.DateField(blank=True, null=True)
     results_first_posted_date = models.DateField(blank=True, null=True)
     last_update_posted_date = models.DateField(blank=True, null=True)
+    study_type = models.TextField(blank=True, null=True)
+    primary_outcome_measures = models.TextField(blank=True, null=True)
+    secondary_outcome_measures = models.TextField(blank=True, null=True)
+    study_ids = models.TextField(blank=True, null=True)
+    document_types = models.TextField(blank=True, null=True)
+    is_unapproved_device = models.BooleanField(blank=True, null=True)
+    results_submitted_qc_not_done = models.DateField(blank=True, null=True)
+    results_submitted_qc_done = models.DateField(blank=True, null=True)
+    acronym = models.TextField(blank=True, null=True)
 
     class Meta:
         managed = False  # Created from a view. Don't remove.
-        db_table = "basic_search_m"
-
-
-class BasicSearch(models.Model):
-    status = models.TextField(blank=True, null=True)
-    brief_title = models.TextField(blank=True, null=True)
-    official_title = models.TextField(blank=True, null=True)
-    nct_id = models.TextField(blank=True, null=True)
-    condition_name = models.TextField(blank=True, null=True)
-    study_detailed_desc = models.TextField(blank=True, null=True)
-    country_name = models.TextField(blank=True, null=True)
-    intervention_name = models.TextField(blank=True, null=True)
-    keywords = models.TextField(blank=True, null=True)
-    eligibility_criteria = models.TextField(blank=True, null=True)
-    location_name = models.TextField(blank=True, null=True)
-    study_brief_desc = models.TextField(blank=True, null=True)
-    sponsor_name = models.TextField(blank=True, null=True)
-    study_phase = models.TextField(blank=True, null=True)
-    study_start_date = models.DateField(blank=True, null=True)
-    primary_completion_date = models.DateField(blank=True, null=True)
-    study_first_posted_date = models.DateField(blank=True, null=True)
-    results_first_posted_date = models.DateField(blank=True, null=True)
-    last_update_posted_date = models.DateField(blank=True, null=True)
-
-    class Meta:
-        managed = False  # Created from a view. Don't remove.
-        db_table = "basic_search"
+        db_table = "search_studies"
