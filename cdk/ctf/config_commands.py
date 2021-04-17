@@ -22,6 +22,38 @@ def config():
     pass
 
 
+@config.command("create")
+@click.option(
+    "--config-file",
+    prompt=(
+        "Initial config filename "
+        "(Note: editing config can only be done with 'ctf config-edit')"
+    ),
+    help="Provide and initial config file",
+)
+def config_create(config_file):
+    """
+    Create a new config.
+    """
+    if not config_file.strip():
+        click.echo("Missing config file!")
+        raise click.Abort()
+
+    if not click.confirm(
+        "Creating a new config will overwrite the old config"
+        " if any exists. Create a new config?"
+    ):
+        return
+
+    Config.delete()
+    Config.new(config_file)
+
+
+@config.command("delete")
+def config_delete():
+    Config.delete()
+
+
 @config.command("show")
 def config_show():
     """

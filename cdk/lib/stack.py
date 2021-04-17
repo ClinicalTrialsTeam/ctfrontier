@@ -10,7 +10,9 @@ from .function import CtfFunction
 from .bucket import CtfBucket
 from .task import CtfFrontendTaskDefinition
 from .service import CtfFrontendService
-from .database import CtfDatabase
+from .load_balancer import CtfLoadBalancer
+
+# from .database import CtfDatabase
 from . import names, environment
 
 
@@ -65,7 +67,13 @@ class CtStack(core.Stack):
             )
         )
 
-        vpc = ec2.Vpc(self, "CtfVPC", max_azs=3)
+        vpc = ec2.Vpc(self, "CtfVPC", max_azs=2)
+        sg = ec2.SecurityGroup(
+            self,
+            "CtfSecurityGroup",
+            allow_all_outbound=True,
+            vpc=vpc,
+        )
 
         cluster = ecs.Cluster(
             self,
@@ -75,8 +83,22 @@ class CtStack(core.Stack):
         )
         cluster.add_default_cloud_map_namespace(name="service.local")
 
-        frontend_task = CtfFrontendTaskDefinition(self)
+        frontend_task = CtfFrontendTaskDefinition(self, "FrontendTask")
 
-        CtfFrontendService(self, cluster, frontend_task, vpc)
+        frontend_service = CtfFrontendService(
+            self,
+            "CtfFrontendService",
+            cluster,
+            frontend_task.task,
+            sg,
+        )
 
-        CtfDatabase(self, vpc)
+        CtfLoadBalancer(
+            self,
+            "CtfLoadBalancer",
+            vpc,
+            sg,
+            load_balancer_target=frontend_service.service,
+        )
+
+        # CtfDatabase(self, vpc)

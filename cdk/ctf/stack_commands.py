@@ -3,7 +3,7 @@ from os.path import dirname, join
 
 site.addsitedir(join(dirname(dirname(__file__)), "lib"))
 
-from lib import environment, names, aws
+from lib import names, aws
 import click
 import json
 import subprocess
@@ -13,7 +13,6 @@ from .common import (
     profile_arg,
     deploy_docker_image,
 )
-from .config_commands import Config
 from .function_commands import build_lambda_package, function_deploy
 
 
@@ -22,39 +21,26 @@ def stack():
     pass
 
 
+@stack.command("bootstrap")
+def boostrap_create():
+    __bootstrap_cdk()
+    __bootstrap_custom()
+
+
+@stack.command("bootstrap.destroy")
+def bootstrap_delete():
+    __delete_bootstrap_custom()
+    __delete_bootstrap_cdk()
+
+
 @stack.command("create")
-@click.option(
-    "--config-file",
-    prompt=(
-        "Initial config filename "
-        "(Note: editing config can only be done with 'ctf config-edit')"
-    ),
-    help="Provide and initial config file",
-)
 @click.pass_context
-def stack_create(ctx, config_file):
+def stack_create(ctx):
     """
     Create a new CloudFormation stack
     """
-    if not config_file.strip():
-        click.echo("Missing initial config file!")
-        raise click.Abort()
-
-    click.secho(
-        "Warning: creating a new stack will overwrite any existing "
-        f"AWS SSM params in the path: {environment.SSM_BASE_PATH}",
-        fg="yellow",
-    )
-    if not click.confirm("Create a new stack?"):
-        return
-
-    Config.delete()
-    Config.new(config_file)
-
-    __bootstrap_cdk()
-    __bootstrap_custom()
-    # TODO: get absolute path here?
-    deploy_docker_image(names.FRONTEND_REPOSITORY, "../frontend")
+    frontend_path = join(dirname(dirname(dirname(__file__))), "frontend")
+    deploy_docker_image(names.FRONTEND_REPOSITORY, frontend_path)
 
     try:
         # Must put lambas in S3 before deploying
@@ -91,9 +77,6 @@ def stack_delete():
     Delete the CloudFormation stack
     """
     run_cdk_command("destroy")
-
-    __delete_bootstrap_custom()
-    __delete_bootstrap_cdk()
 
 
 @stack.command("synth")
@@ -146,7 +129,7 @@ def __bootstrap_custom():
             f' --lifecycle-policy-text "file://{policy_path}" '
             f"{profile_arg()}"
         )
-        run_command(cmd)
+        subprocess.Popen(cmd, shell=True)
 
 
 def __delete_bootstrap_custom():

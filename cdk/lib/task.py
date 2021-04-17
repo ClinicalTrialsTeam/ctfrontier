@@ -11,13 +11,14 @@ class CtfFrontendTaskDefinition(core.Construct):
     def __init__(
         self,
         scope: core.Construct,
+        id: str,
     ):
 
         super().__init__(scope, id)
 
         self.task = ecs.FargateTaskDefinition(
             self,
-            "FrontendTask",
+            id,
             family=names.FRONTEND_TASK_FAMILY,
             cpu=256,
             memory_limit_mib=1024,
