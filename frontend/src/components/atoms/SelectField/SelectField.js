@@ -6,6 +6,8 @@ import PropTypes from 'prop-types';
 class SelectField extends Component {
   render() {
     const {
+      searchValue,
+      isDisabled,
       mode,
       name,
       label,
@@ -24,6 +26,8 @@ class SelectField extends Component {
         }}
       >
         <Select
+          searchValue={searchValue}
+          disabled={isDisabled}
           mode={mode}
           placeholder={placeholder}
           allowClear
@@ -39,12 +43,19 @@ class SelectField extends Component {
 SelectField.propTypes = {
   // eslint-disable-next-line react/require-default-props
   mode: PropTypes.string,
+  searchValue: PropTypes.string,
+  isDisabled: PropTypes.bool,
   name: PropTypes.string.isRequired,
   label: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   placeholder: PropTypes.string.isRequired,
   options: PropTypes.array.isRequired,
   handleInputChange: PropTypes.func.isRequired,
+};
+
+SelectField.defaultProps = {
+  isDisabled: false,
+  searchValue: '',
 };
 
 export default SelectField;
