@@ -28,7 +28,7 @@ Copy this into a new `.env` file and fill it in (this .env file be in the "backe
 ## Load the data
 
 1. Follow the instructions in backend/README.md to load the initial CT.gov data
-1. Follow the instructions in backend/README.md to set up the Basic Search API
+1. Follow the instructions in backend/README.md to set up the Search Studies API
 
 ## Running the project
 

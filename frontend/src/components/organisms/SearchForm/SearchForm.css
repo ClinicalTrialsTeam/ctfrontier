@@ -1,1 +1,27 @@
 @import '~antd/dist/antd.css';
+
+#dates-row .ant-form-item {
+    margin-bottom: 8px;
+}
+
+#search-form .ant-form-item {
+    margin-bottom: 14px;
+}
+
+#search-form .section-text {
+    display: inline-block;
+    margin-bottom: 14px;
+}
+
+.form-row-buttons {
+    margin-top: 16px;
+    margin-bottom: 24px;
+}
+
+.age-num .ant-input-number {
+    width: 100%;
+}
+
+#or-p {
+    padding-top: 35px;
+}

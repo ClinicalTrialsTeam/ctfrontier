@@ -1,12 +1,19 @@
 import React, { Component } from 'react';
 import { InfoCircleOutlined } from '@ant-design/icons';
-import { Form, Input } from 'antd';
+import { Form, InputNumber } from 'antd';
 import PropTypes from 'prop-types';
 
-class TextInputField extends Component {
+import './NumberInputField.css';
+
+class NumberInputField extends Component {
   render() {
     const {
-      isDisabled, label, title, name, handleInputChange,
+      max,
+      min,
+      label,
+      title,
+      name,
+      handleInputChange,
     } = this.props;
     return (
       <Form.Item
@@ -18,25 +25,27 @@ class TextInputField extends Component {
         }}
         onChange={handleInputChange}
       >
-        <Input
-          disabled={isDisabled}
-          allowClear
+        <InputNumber
+          max={max}
+          min={min}
         />
       </Form.Item>
     );
   }
 }
 
-TextInputField.propTypes = {
-  isDisabled: PropTypes.bool,
+NumberInputField.propTypes = {
+  max: PropTypes.number,
+  min: PropTypes.number,
   label: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   handleInputChange: PropTypes.func.isRequired,
 };
 
-TextInputField.defaultProps = {
-  isDisabled: false,
+NumberInputField.defaultProps = {
+  max: 1000000,
+  min: 0,
 };
 
-export default TextInputField;
+export default NumberInputField;

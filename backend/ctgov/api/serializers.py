@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from ctgov.models import BriefSummaries, BasicSearchM, Facilities
+from ctgov.models import BriefSummaries, SearchStudies, Facilities
 from django_elasticsearch_dsl_drf.serializers import DocumentSerializer
 from ctgov.documents import ClinicalTrialsBasicSearch
 
@@ -10,9 +10,9 @@ class BriefSummariesSerializer(serializers.ModelSerializer):
         fields = ["nct", "description"]
 
 
-class BasicSearchSerializer(serializers.ModelSerializer):
+class SearchStudiesSerializer(serializers.ModelSerializer):
     class Meta:
-        model = BasicSearchM
+        model = SearchStudies
         fields = [
             "status",
             "brief_title",

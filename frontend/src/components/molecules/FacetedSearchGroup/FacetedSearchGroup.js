@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-  Checkbox, Collapse, Form, Typography, Space, DatePicker,
+  Checkbox, Collapse, Form, Typography, Space, DatePicker, Input,
 } from 'antd';
 import PropTypes from 'prop-types';
 
@@ -11,7 +11,7 @@ const { RangePicker } = DatePicker;
 class FacetedSearchGroup extends Component {
   render() {
     const {
-      access, recruitment, phases, roa,
+      recruitment, phases, roa,
     } = this.props;
     const { Panel } = Collapse;
     const { Text } = Typography;
@@ -20,16 +20,6 @@ class FacetedSearchGroup extends Component {
 
     Array.from(recruitment.entries()).forEach(([index, value]) => {
       recruitmentCheckboxes.push(
-        <Checkbox key={index} value={value} style={{ lineHeight: '24px' }}>
-          {value}
-        </Checkbox>
-      );
-    });
-
-    const accessCheckboxes = [];
-
-    Array.from(access.entries()).forEach(([index, value]) => {
-      accessCheckboxes.push(
         <Checkbox key={index} value={value} style={{ lineHeight: '24px' }}>
           {value}
         </Checkbox>
@@ -68,9 +58,14 @@ class FacetedSearchGroup extends Component {
               <Space key="recr-status-checkboxes" direction="vertical">
                 <Text key="txt-1" strong>Recruitment Status</Text>
                 {recruitmentCheckboxes}
-                <Text key="txt-2" strong>Expanded Access</Text>
-                {accessCheckboxes}
               </Space>
+            </Panel>
+            <Panel
+              key="facet-eligibility"
+              header="Eligibility criteria"
+              className="fs-group-panel"
+            >
+              <p>Data</p>
             </Panel>
             <Panel
               key="2"
@@ -95,14 +90,14 @@ class FacetedSearchGroup extends Component {
               header="Target"
               className="fs-group-panel"
             >
-              <p>Data</p>
+              <Input size="small" placeholder="Enter MOA or target" />
             </Panel>
             <Panel
               key="5"
               header="Modality"
               className="fs-group-panel"
             >
-              <p>Data</p>
+              <Input size="small" placeholder="Enter modality" />
             </Panel>
             <Panel
               key="6"
@@ -127,11 +122,32 @@ class FacetedSearchGroup extends Component {
             </Panel>
             <Panel
               key="9"
-              id="rangepicker-panel"
+              id="facet-dates"
               header="Dates"
               className="fs-group-panel"
             >
               <RangePicker picker="month" size="small" />
+            </Panel>
+            <Panel
+              key="facet-type"
+              header="Study Type"
+              className="fs-group-panel"
+            >
+              <p>Data</p>
+            </Panel>
+            <Panel
+              key="facet-results"
+              header="Study Results"
+              className="fs-group-panel"
+            >
+              <p>Data</p>
+            </Panel>
+            <Panel
+              key="facet-documents"
+              header="Study Documents"
+              className="fs-group-panel"
+            >
+              <p>Data</p>
             </Panel>
           </Collapse>
         </Form>
@@ -141,7 +157,6 @@ class FacetedSearchGroup extends Component {
 }
 
 FacetedSearchGroup.propTypes = {
-  access: PropTypes.array.isRequired,
   recruitment: PropTypes.array.isRequired,
   phases: PropTypes.array.isRequired,
   roa: PropTypes.array.isRequired,
