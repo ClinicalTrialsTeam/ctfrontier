@@ -10,6 +10,7 @@ import {
 import ctgov from '../../../apis/ctgov';
 
 import FacetedSearchGroup from '../../molecules/FacetedSearchGroup/FacetedSearchGroup';
+import DashboardModal from '../../molecules/modals/DashboardModal/DashboardModal';
 
 import {
   recruitment, access, phases, roa, results,
@@ -24,6 +25,7 @@ class ListViewTable extends Component {
   constructor(props) {
     super(props);
     this.handleInputChange = this.handleInputChange.bind(this);
+    this.setDashboardModalVisible = this.setDashboardModalVisible.bind(this);
     this.handleSearch = this.handleSearch.bind(this);
     this.handleClear = this.handleClear.bind(this);
     this.formRef = React.createRef();
@@ -32,6 +34,8 @@ class ListViewTable extends Component {
       condition: '',
       target: '',
       otherTerms: '',
+      isDashboardModalVisible: false,
+      // isTimelineModalVisible: false,
     };
   }
 
@@ -75,7 +79,16 @@ class ListViewTable extends Component {
     }
   }
 
+  setDashboardModalVisible(isDashboardModalVisible) {
+    this.setState({ isDashboardModalVisible });
+  }
+
+  // setTimelineModalVisible(isTimelineModalVisible) {
+  //   this.setState({ isTimelineModalVisible });
+  // }
+
   render() {
+    const dashboardModalData = [];
     const { data } = this.props.history.location.state;
     const parsedResults = data.search_results.map((result) => {
       return {
@@ -143,9 +156,25 @@ class ListViewTable extends Component {
                 <Col key="trials-modal-btn-col" span={16}>
                   <Row id="trials-modal-btn-row" justify="end">
                     <Space align="end">
-                      <Button key="btn_dashboard" icon={<BarChartOutlined />} />
+                      <Button
+                        key="btn_dashboard"
+                        onClick={() => {
+                          return this.setDashboardModalVisible(true);
+                        }}
+                        icon={<BarChartOutlined />}
+                      />
                       <Button key="btn_map" icon={<GlobalOutlined />} />
                       <Button key="btn_download" icon={<DownloadOutlined />} />
+                      <DashboardModal
+                        isModalVisible={this.state.isDashboardModalVisible}
+                        data={dashboardModalData}
+                        handleOk={() => {
+                          return this.setDashboardModalVisible(false);
+                        }}
+                        handleCancel={() => {
+                          return this.setDashboardModalVisible(false);
+                        }}
+                      />
                     </Space>
                   </Row>
                 </Col>
