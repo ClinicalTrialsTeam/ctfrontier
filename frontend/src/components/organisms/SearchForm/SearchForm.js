@@ -16,7 +16,7 @@ import './SearchForm.css';
 import {
   recruitment, access, phases, roa, results,
   types, sex, ageGroup, ethnicities, distance, states,
-} from '../../../variables/TopLevelSearchData';
+} from '../../../variables/SelectOptionsData';
 
 class SearchForm extends Component {
   constructor(props) {
@@ -229,6 +229,7 @@ class SearchForm extends Component {
       last: '',
     };
     try {
+      console.log(payload);
       const response = await ctgov.post('search_studies', payload);
       this.setState({
         searchResults: response.data,

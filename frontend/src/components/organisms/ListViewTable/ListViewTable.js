@@ -16,7 +16,7 @@ import {
   recruitment, access, phases, roa, results,
   types, sex, ageGroup, ethnicities, distance, states,
   funder, documents, submission,
-} from '../../../variables/TopLevelSearchData';
+} from '../../../variables/SelectOptionsData';
 
 import { columns } from './ListViewTableConfig';
 import './ListViewTable.css';

@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Modal } from 'antd';
 import PropTypes from 'prop-types';
+import SampleChart from '../charts/SampleChart/SampleChart';
+// import TimelineChart from '../charts/TimelineChart/TimelineChart';
 
 class TrialVizModal extends Component {
   render() {
@@ -20,7 +22,10 @@ class TrialVizModal extends Component {
         onCancel={handleCancel}
       >
         <p>{data}</p>
-        {/* <p>Bla bla</p> */}
+        {/* <TimelineChart
+          data={data}
+        /> */}
+        <SampleChart />
       </Modal>
     );
   }
