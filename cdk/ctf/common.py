@@ -23,7 +23,9 @@ def run_cdk_command(cmd):
 
 def run_command(cmd, capture_output=False, text=False):
     click.echo(cmd)
-    r = subprocess.run(cmd.split(), capture_output=capture_output, text=text)
+    r = subprocess.run(
+        cmd, shell=True, capture_output=capture_output, text=text
+    )
     if r.returncode != 0:
         raise click.Abort()
     return r

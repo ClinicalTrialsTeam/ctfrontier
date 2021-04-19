@@ -8,7 +8,7 @@ from . import names, aws
 
 
 stack_props = {
-    "notification_email": Param("notification_email").getvalue(decrypt=True)
+    "notification_email": Param("notification_email").get_value(decrypt=True)
 }
 
 app = core.App()

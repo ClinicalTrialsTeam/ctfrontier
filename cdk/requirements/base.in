@@ -8,6 +8,7 @@ aws-cdk.aws_s3
 aws-cdk.aws_lambda
 aws-cdk.aws_cloudwatch
 aws-cdk.aws_logs
+aws-cdk.aws_rds
 aws-cdk.aws_ecr
 aws-cdk.aws_ecs
 aws-cdk.aws_ecs_patterns

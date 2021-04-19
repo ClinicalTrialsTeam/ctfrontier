@@ -12,6 +12,7 @@ class CtfFrontendTaskDefinition(core.Construct):
         self,
         scope: core.Construct,
         id: str,
+        port,
     ):
 
         super().__init__(scope, id)
@@ -39,5 +40,42 @@ class CtfFrontendTaskDefinition(core.Construct):
                 stream_prefix="FrontendContainer",
                 log_retention=logs.RetentionDays.ONE_WEEK,
             ),
-            port_mappings=[ecs.PortMapping(container_port=80)],
+            port_mappings=[ecs.PortMapping(container_port=port)],
+        )
+
+
+class CtfBackendTaskDefinition(core.Construct):
+    def __init__(
+        self,
+        scope: core.Construct,
+        id: str,
+        port,
+    ):
+
+        super().__init__(scope, id)
+
+        self.task = ecs.Ec2TaskDefinition(
+            self,
+            id,
+            network_mode=ecs.NetworkMode.AWS_VPC,
+            family=names.BACKEND_TASK_FAMILY,
+        )
+
+        container_id = "BackendContainer"
+        self.task.add_container(
+            container_id,
+            image=ecs.ContainerImage.from_ecr_repository(
+                repository=ecr.Repository.from_repository_name(
+                    self,
+                    "BackendRepository",
+                    repository_name=names.BACKEND_REPOSITORY,
+                )
+            ),
+            essential=True,
+            environment={"LOCALDOMAIN": "service.local"},
+            logging=ecs.LogDrivers.aws_logs(
+                stream_prefix=container_id,
+                log_retention=logs.RetentionDays.ONE_WEEK,
+            ),
+            port_mappings=[ecs.PortMapping(container_port=port)],
         )

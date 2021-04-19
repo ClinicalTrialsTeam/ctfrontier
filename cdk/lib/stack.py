@@ -3,17 +3,16 @@ from aws_cdk import (
     aws_iam as iam,
     aws_s3 as s3,
     aws_ec2 as ec2,
-    aws_ecs as ecs,
 )
 from .monitoring import CtfMonitoring
 from .function import CtfFunction
 from .bucket import CtfBucket
-from .task import CtfFrontendTaskDefinition
-from .service import CtfFrontendService
+from .task import CtfFrontendTaskDefinition, CtfBackendTaskDefinition
+from .service import CtfBackendService, CtfFrontendService
 from .load_balancer import CtfLoadBalancer
-
-# from .database import CtfDatabase
-from . import names, environment
+from .cluster import CtfCluster
+from .database import CtfDatabase
+from . import names, environment, aws
 
 
 class CtStack(core.Stack):
@@ -74,23 +73,30 @@ class CtStack(core.Stack):
             allow_all_outbound=True,
             vpc=vpc,
         )
+        preferred_az = f"{aws.AWS_REGION}a"
 
-        cluster = ecs.Cluster(
+        ecs_cluster = CtfCluster(
             self,
             "CtfCluster",
-            cluster_name=names.CLUSTER,
-            vpc=vpc,
+            names.CLUSTER,
+            vpc,
+            preferred_az,
         )
-        cluster.add_default_cloud_map_namespace(name="service.local")
 
-        frontend_task = CtfFrontendTaskDefinition(self, "FrontendTask")
-
+        frontend_port = 80
+        frontend_task = CtfFrontendTaskDefinition(
+            self,
+            "FrontendTask",
+            frontend_port,
+        )
         frontend_service = CtfFrontendService(
             self,
             "CtfFrontendService",
-            cluster,
+            ecs_cluster.cluster,
             frontend_task.task,
             sg,
+            preferred_az,
+            port=frontend_port,
         )
 
         CtfLoadBalancer(
@@ -101,4 +107,21 @@ class CtStack(core.Stack):
             load_balancer_target=frontend_service.service,
         )
 
-        # CtfDatabase(self, vpc)
+        backend_port = 8000
+        backend_task = CtfBackendTaskDefinition(
+            self,
+            "BackendTask",
+            backend_port,
+        )
+        CtfBackendService(
+            self,
+            "CtfBackendService",
+            ecs_cluster.cluster,
+            backend_task.task,
+            sg,
+            preferred_az,
+            frontend_service,
+            backend_port,
+        )
+
+        CtfDatabase(self, "PostgresDatabase", vpc, sg, preferred_az)

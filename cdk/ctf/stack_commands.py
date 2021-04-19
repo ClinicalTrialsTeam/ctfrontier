@@ -1,11 +1,13 @@
 import site
-from os.path import dirname, join
+from os.path import join, dirname
 
 site.addsitedir(join(dirname(dirname(__file__)), "lib"))
 
 from lib import names, aws
 import click
 import json
+import boto3
+from botocore.exceptions import ClientError
 import subprocess
 from .common import (
     run_cdk_command,
@@ -39,6 +41,15 @@ def stack_create(ctx):
     """
     Create a new CloudFormation stack
     """
+    # Create key pair for EC2 instance
+    cmd = (
+        f"aws ec2 create-key-pair --key-name {names.BACKEND_KEY_PAIR} "
+        f"--query 'KeyMaterial' --output text > {names.BACKEND_KEY_PAIR}.pem "
+        f"{profile_arg()}"
+    )
+    run_command(cmd)
+    run_command(f"chmod 400 {names.BACKEND_KEY_PAIR}.pem")
+
     frontend_path = join(dirname(dirname(dirname(__file__))), "frontend")
     deploy_docker_image(names.FRONTEND_REPOSITORY, frontend_path)
 
@@ -78,6 +89,12 @@ def stack_delete():
     """
     run_cdk_command("destroy")
 
+    # Clean up the key pair
+    run_command(
+        f"aws ec2 delete-key-pair --key-name {names.BACKEND_KEY_PAIR} "
+        f"{profile_arg()}"
+    )
+
 
 @stack.command("synth")
 def stack_synth():
@@ -114,22 +131,31 @@ def __bootstrap_custom():
     for tag in aws.STACK_TAGS:
         tags += f"Key={tag['Key']},Value={tag['Value']} "
 
-    for repo in names.REPOSITORIES:
-        cmd = (
-            f"aws ecr create-repository --repository-name {repo}"
-            f" --image-scanning-configuration scanOnPush=true --tags {tags} "
-            f"{profile_arg()}"
-        )
-        run_command(cmd)
+    policy_path = join(dirname(dirname(__file__)), "lib/ecr-policy.json")
+    with open(policy_path, "r") as f:
+        lifecycle_policy = json.loads(f.read())
 
-        # Add lifecycle policy
-        policy_path = join(dirname(dirname(__file__)), f"lib/ecr-policy.json")
-        cmd = (
-            f"aws ecr put-lifecycle-policy --repository-name {repo}"
-            f' --lifecycle-policy-text "file://{policy_path}" '
-            f"{profile_arg()}"
+    ecr = boto3.client("ecr")
+    for repo in names.REPOSITORIES:
+        try:
+            ecr.create_repository(
+                repositoryName=repo,
+                tags=aws.STACK_TAGS,
+                imageScanningConfiguration={"scanOnPush": True},
+            )
+
+        except ClientError as e:
+            error = e.response["Error"]
+            if error["Code"] == "RepositoryAlreadyExistsException":
+                click.echo(
+                    f"ECR repository {repo} already exists. Skipping create."
+                )
+
+        ecr.put_lifecycle_policy(
+            repositoryName=repo,
+            lifecyclePolicyText=json.dumps(lifecycle_policy),
         )
-        subprocess.Popen(cmd, shell=True)
+        click.echo(f"Updated ECR lifecycle policy for {repo}.")
 
 
 def __delete_bootstrap_custom():
