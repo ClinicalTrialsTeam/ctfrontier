@@ -90,12 +90,19 @@ class Config:
         # Read json key, values and create parameters for each
         try:
             for key, val in current_config.items():
-                param_type = environment.ParamTypes.SECURE_STRING.value
                 if key in config_schema:
-                    if config_schema[key]["type"] == "String":
+                    if (
+                        config_schema[key]["type"]
+                        == environment.ParamTypes.STRING.value
+                    ):
                         param_type = environment.ParamTypes.STRING
-                    elif config_schema[key]["type"] == "StringList":
+                    elif (
+                        config_schema[key]["type"]
+                        == environment.ParamTypes.STRING_LIST.value
+                    ):
                         param_type = environment.ParamTypes.STRING_LIST
+                    else:
+                        param_type = environment.ParamTypes.SECURE_STRING
                 print(f"create param {key}, {val}, {param_type}")
                 environment.Param(key).create(val, param_type=param_type)
                 click.echo(f"Created ssm param {key}={val}")
@@ -179,8 +186,10 @@ class Config:
             return json.load(f)
 
     def _print_diff(self):
+        schema = self._schema()
+
         for key, val in self._create.items():
-            click.echo(f"Create {key}={val}")
+            click.echo(f"Create {key}={val}, type={schema[key]['type']}")
 
         for key, val in self._update.items():
             click.echo(f"Update {key} to {val}")
@@ -198,12 +207,12 @@ class Config:
 
         for key, val in self._create.items():
             param_type_str = schema[key]["type"]
-            if param_type_str == "String":
+            if param_type_str == environment.ParamTypes.STRING.value:
                 param_type = environment.ParamTypes.STRING
-            elif param_type_str == "StringList":
-                param_type = environment.ParamTypes.SECURE_STRING
-            else:
+            elif param_type_str == environment.ParamTypes.STRING_LIST.value:
                 param_type = environment.ParamTypes.STRING_LIST
+            else:
+                param_type = environment.ParamTypes.SECURE_STRING
             environment.Param(key).create(val, param_type=param_type)
             click.echo(f"Added {key}={val}")
 
