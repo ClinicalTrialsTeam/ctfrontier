@@ -4,5 +4,8 @@
     },
     "clinicaltrials_data_url": {
         "type": "String"
+    },
+    "django_secret_key": {
+        "type": "SecureString"
     }
 }
