@@ -131,8 +131,8 @@ class SearchForm extends Component {
       results: '',
       type: '',
       age: '',
-      minAge: '',
-      maxAge: '',
+      minAge: 0,
+      maxAge: 100,
       sex: '',
       ethnicity: [],
       country: '',
@@ -147,22 +147,28 @@ class SearchForm extends Component {
       studyFunderType: '',
       studyDocumentType: '',
       studyResultsSubmitted: '',
+      startDateFrom: '',
+      startDateTo: '',
+      primaryCompletionDateFrom: '',
+      primaryCompletionDateTo: '',
+      firstPostedDateFrom: '',
+      firstPostedDateTo: '',
+      resultsFirstPostedDateFrom: '',
+      resultsFirstPostedDateTo: '',
+      lastUpdatePostedDateFrom: '',
+      lastUpdatePostedDateTo: '',
     });
     this.formRef.current.resetFields();
   }
 
   handleInputChange(e) {
-    if (Array.isArray(e) && e[0].constructor.name === 'Moment' && e.length === 2) {
-      console.log(e);
-    } else {
-      const { target } = e;
-      const value = target.type === 'checkbox' ? target.checked : target.value;
-      const { name } = target;
+    const { target } = e;
+    const value = target.type === 'checkbox' ? target.checked : target.value;
+    const { name } = target;
 
-      this.setState({
-        [name]: value,
-      });
-    }
+    this.setState({
+      [name]: value,
+    });
   }
 
   handleCountryChange(e) {

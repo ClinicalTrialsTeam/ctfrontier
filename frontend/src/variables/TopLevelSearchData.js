@@ -23,7 +23,7 @@ const phases = [
   'Phase 2',
   'Phase 3',
   'Phase 4',
-  'N/A',
+  'Not Applicable',
 ];
 
 const roa = [
