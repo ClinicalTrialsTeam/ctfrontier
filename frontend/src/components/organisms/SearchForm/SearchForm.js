@@ -224,7 +224,7 @@ class SearchForm extends Component {
   }
 
   handleTypeChange(e) {
-    let type = 'All';
+    let type = '';
     if (e === 'Interventional Studies (Clinical Trials)') {
       type = 'Interventional';
     }
@@ -256,7 +256,6 @@ class SearchForm extends Component {
   }
 
   handleAgeGroupChange(e) {
-    console.log(e);
     let minAge = 0;
     let maxAge = 100;
     const lastItem = e.slice(-1)[0];
