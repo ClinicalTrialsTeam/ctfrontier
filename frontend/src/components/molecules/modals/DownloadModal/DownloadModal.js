@@ -1,13 +1,10 @@
 import React, { Component } from 'react';
 import { Modal } from 'antd';
 import PropTypes from 'prop-types';
-import SampleChart from '../charts/SampleChart/SampleChart';
-// import TimelineChart from '../charts/TimelineChart/TimelineChart';
 
-class TrialVizModal extends Component {
+class DownloadModal extends Component {
   render() {
     const {
-      type,
       isModalVisible,
       handleOk,
       handleCancel,
@@ -16,27 +13,23 @@ class TrialVizModal extends Component {
 
     return (
       <Modal
-        title={type}
+        title="Downloads"
         visible={isModalVisible}
         onOk={handleOk}
         onCancel={handleCancel}
+        width={700}
       >
         <p>{data}</p>
-        {/* <TimelineChart
-          data={data}
-        /> */}
-        <SampleChart />
       </Modal>
     );
   }
 }
 
-TrialVizModal.propTypes = {
+DownloadModal.propTypes = {
   isModalVisible: PropTypes.bool.isRequired,
   handleOk: PropTypes.func.isRequired,
   handleCancel: PropTypes.func.isRequired,
   data: PropTypes.array.isRequired,
-  type: PropTypes.string.isRequired,
 };
 
-export default TrialVizModal;
+export default DownloadModal;

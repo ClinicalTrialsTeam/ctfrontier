@@ -27,6 +27,7 @@ class TextInputField extends Component {
           size={size}
           disabled={isDisabled}
           allowClear
+          name={name}
         />
       </Form.Item>
     );
