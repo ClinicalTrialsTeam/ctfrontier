@@ -13,19 +13,27 @@ services:
     networks:
       - ctf
   django:
-    build: ./backend
+    env_file:
+      - ./backend/.env
+    environment:
+      - MODE=dev
+      - DB_HOST=pgdb
+      - DB_PORT=5432
+    build: 
+      context: ./backend
+      target: base
     container_name: django
     working_dir: /usr/src/app
     volumes:
       - ./backend:/usr/src/app
-    command: /bin/sh -c "pip-compile --quiet && pip install -r requirements.txt -q && python manage.py migrate && pip list && python manage.py runserver 0.0.0.0:8000"
+    command: /bin/sh -c "pip-compile --quiet requirements/base.in && pip install -r requirements/base.txt -q && python manage.py migrate && pip list && python manage.py runserver 0.0.0.0:8000"
     ports:
       - 8000:8000
     networks:
       - ctf
   pgdb:
     env_file:
-      - ./backend/core/.env
+      - ./backend/.env
     image: postgres
     container_name: pgdb
     shm_size: 1g
