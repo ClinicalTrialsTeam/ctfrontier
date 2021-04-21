@@ -16,7 +16,7 @@ import './SearchForm.css';
 import {
   recruitment, access, phases, roa, results,
   types, sex, ageGroup, ethnicities, distance, states,
-} from '../../../variables/TopLevelSearchData';
+} from '../../../variables/SelectOptionsData';
 
 class SearchForm extends Component {
   constructor(props) {
