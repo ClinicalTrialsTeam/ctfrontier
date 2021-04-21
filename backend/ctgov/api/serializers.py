@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from ctgov.models import BriefSummaries, SearchStudies, Facilities
 from django_elasticsearch_dsl_drf.serializers import DocumentSerializer
-from ctgov.documents import ClinicalTrialsBasicSearch
+from ctgov.documents import ClinicalTrialsSearchStudies
 
 
 class BriefSummariesSerializer(serializers.ModelSerializer):
@@ -29,9 +29,9 @@ class CountriesSerializer(serializers.ModelSerializer):
         fields = ["country"]
 
 
-class BasicSearchDocumentSerializer(DocumentSerializer):
+class SearchStudiesDocumentSerializer(DocumentSerializer):
     class Meta:
-        document = ClinicalTrialsBasicSearch
+        document = ClinicalTrialsSearchStudies
 
         fields = [
             "status",
