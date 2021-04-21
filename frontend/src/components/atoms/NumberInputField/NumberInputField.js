@@ -8,6 +8,7 @@ import './NumberInputField.css';
 class NumberInputField extends Component {
   render() {
     const {
+      size,
       max,
       min,
       label,
@@ -26,6 +27,7 @@ class NumberInputField extends Component {
         onChange={handleInputChange}
       >
         <InputNumber
+          size={size}
           max={max}
           min={min}
         />
@@ -37,6 +39,7 @@ class NumberInputField extends Component {
 NumberInputField.propTypes = {
   max: PropTypes.number,
   min: PropTypes.number,
+  size: PropTypes.string,
   label: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
@@ -46,6 +49,7 @@ NumberInputField.propTypes = {
 NumberInputField.defaultProps = {
   max: 1000000,
   min: 0,
+  size: 'middle',
 };
 
 export default NumberInputField;

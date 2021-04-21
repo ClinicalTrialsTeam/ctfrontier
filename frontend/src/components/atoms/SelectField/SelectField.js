@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 class SelectField extends Component {
   render() {
     const {
+      size,
       searchValue,
       isDisabled,
       mode,
@@ -26,6 +27,7 @@ class SelectField extends Component {
         }}
       >
         <Select
+          size={size}
           searchValue={searchValue}
           disabled={isDisabled}
           mode={mode}
@@ -44,6 +46,7 @@ SelectField.propTypes = {
   // eslint-disable-next-line react/require-default-props
   mode: PropTypes.string,
   searchValue: PropTypes.string,
+  size: PropTypes.string,
   isDisabled: PropTypes.bool,
   name: PropTypes.string.isRequired,
   label: PropTypes.string.isRequired,
@@ -56,6 +59,7 @@ SelectField.propTypes = {
 SelectField.defaultProps = {
   isDisabled: false,
   searchValue: '',
+  size: 'middle',
 };
 
 export default SelectField;
