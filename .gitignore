@@ -3,6 +3,8 @@ node_modules/
 **.coverage
 clinical_trials.zip
 database/data
+**.pem
+**.key
 
 __pycache__
 

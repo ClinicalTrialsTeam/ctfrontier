@@ -21,6 +21,10 @@ class CtStack(core.Stack):
         scope: core.Construct,
         id: str,
         notification_email,
+        ctfrontier_api_url,
+        django_secret,
+        db_host,
+        db_password,
         **kwargs,
     ) -> None:
 
@@ -58,6 +62,7 @@ class CtStack(core.Stack):
                 "RAW_DATA_FILES_BUCKET": f"{self.stack_name}-{names.RAW_DATA_FILES_BUCKET}",
             },
         )
+
         raw_files_bucket.bucket.grant_write(data_download.function)
         data_download.function.add_to_role_policy(
             iam.PolicyStatement(
@@ -88,6 +93,9 @@ class CtStack(core.Stack):
             self,
             "FrontendTask",
             frontend_port,
+            {
+                "REACT_APP_API_BASE_URL": ctfrontier_api_url,
+            },
         )
         frontend_service = CtfFrontendService(
             self,
@@ -112,6 +120,13 @@ class CtStack(core.Stack):
             self,
             "BackendTask",
             backend_port,
+            {
+                "MODE": "prod",
+                "DJANGO_SECRET": django_secret,
+                "DB_HOST": db_host,
+                "DB_PORT": "5432",
+                "DB_PASSWORD": db_password,
+            },
         )
         CtfBackendService(
             self,

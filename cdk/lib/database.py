@@ -17,7 +17,7 @@ class CtfDatabase(core.Construct):
     ):
         super().__init__(scope, id)
 
-        # credentials - let secrets manager generate a password?
+        # TODO: credentials - let secrets manager generate a password?
         # s3 import buckets...
         # postgres data dump is only 1.24 GB... load via ssh?
         # set backup retention to 0

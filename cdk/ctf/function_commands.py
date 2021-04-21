@@ -5,18 +5,10 @@ site.addsitedir(join(dirname(dirname(__file__)), "lib"))
 
 import json
 import click
-import requests
 import shutil
 from os import chdir, getcwd
 from lib import names
-from .common import (
-    run_command,
-    base64_encode_dict,
-    profile_arg,
-    get_image_uri,
-    build_docker_image,
-    get_image_id,
-)
+from .common import run_command, base64_encode_dict, profile_arg
 
 
 @click.group()
@@ -53,42 +45,6 @@ def function_deploy(ctx):
 
     build_lambda_package(ctx, func)
     __update_function_code(func)
-
-
-@function.command("local_run")
-def function_local_run():
-    """
-    Build and run the lambda locally
-    """
-    image_uri = get_image_uri()
-    build_docker_image(image_uri)
-
-    cmd = f"docker run -d -p 9000:8080 {image_uri}"
-    run_command(cmd)
-
-
-@function.command("local_test")
-def function_local_test():
-    """
-    Send a test payload to the locally running lambda
-    """
-    url = "http://localhost:9000/2015-03-31/functions/function/invocations"
-    payload = {"payload": "hello_world"}
-
-    r = requests.post(url, data=json.dumps(payload))
-
-    r.raise_for_status
-    click.echo(r.status_code)
-    click.echo(json.dumps(json.loads(r.content.decode()), indent=4))
-
-
-@function.command("local_stop")
-def function_local_stop():
-    """
-    Stop the locally running lambda
-    """
-    cmd = f"docker stop {get_image_id(running=True)}"
-    run_command(cmd)
 
 
 def build_lambda_package(ctx, func):

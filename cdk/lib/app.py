@@ -8,7 +8,11 @@ from . import names, aws
 
 
 stack_props = {
-    "notification_email": Param("notification_email").get_value(decrypt=True)
+    "notification_email": Param("notification_email").get_value(),
+    "ctfrontier_api_url": Param("ctfrontier_api_url").get_value(),
+    "django_secret": Param("django_secret").get_value(decrypt=True),
+    "db_host": Param("db_host").get_value(),
+    "db_password": Param("db_password").get_value(decrypt=True),
 }
 
 app = core.App()

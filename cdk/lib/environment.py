@@ -64,7 +64,7 @@ class Param:
         except ssm.exceptions.ParameterNotFound:
             return False
 
-    def get_value(self, decrypt=False, required=False):
+    def get_value(self, decrypt=False, required=True):
         try:
             r = ssm.get_parameter(Name=self.path_name, WithDecryption=decrypt)
             return r["Parameter"]["Value"]

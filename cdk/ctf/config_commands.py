@@ -103,9 +103,10 @@ class Config:
                         param_type = environment.ParamTypes.STRING_LIST
                     else:
                         param_type = environment.ParamTypes.SECURE_STRING
-                print(f"create param {key}, {val}, {param_type}")
                 environment.Param(key).create(val, param_type=param_type)
-                click.echo(f"Created ssm param {key}={val}")
+                click.echo(
+                    f"Created ssm param {key}={val}, type: {param_type.value}"
+                )
         except Exception as e:
             click.secho(f"Error creating ssm parameters: {e}", fg="red")
             raise click.Abort()

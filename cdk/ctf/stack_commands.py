@@ -9,13 +9,13 @@ import json
 import boto3
 from botocore.exceptions import ClientError
 import subprocess
-from .common import (
-    run_cdk_command,
-    run_command,
-    profile_arg,
-    deploy_docker_image,
-)
+from .common import run_cdk_command, run_command, profile_arg
 from .function_commands import build_lambda_package, function_deploy
+from .container_commands import (
+    build_frontend,
+    build_backend,
+    push_docker_image,
+)
 
 
 @click.group()
@@ -50,8 +50,10 @@ def stack_create(ctx):
     run_command(cmd)
     run_command(f"chmod 400 {names.BACKEND_KEY_PAIR}.pem")
 
-    frontend_path = join(dirname(dirname(dirname(__file__))), "frontend")
-    deploy_docker_image(names.FRONTEND_REPOSITORY, frontend_path)
+    build_frontend()
+    push_docker_image(names.FRONTEND_REPOSITORY)
+    build_backend()
+    push_docker_image(names.BACKEND_REPOSITORY)
 
     try:
         # Must put lambas in S3 before deploying

@@ -2,10 +2,16 @@
     "notification_email": {
         "type": "String"
     },
-    "clinicaltrials_data_url": {
+    "ctfrontier_api_url": {
         "type": "String"
     },
-    "django_secret_key": {
+    "django_secret": {
+        "type": "SecureString"
+    },
+    "db_host": {
+        "type": "String"
+    },
+    "db_password": {
         "type": "SecureString"
     }
 }
