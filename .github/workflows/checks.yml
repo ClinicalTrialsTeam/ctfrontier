@@ -20,6 +20,8 @@ jobs:
         working-directory: frontend
       - name: Run test command
         run: npm run test
+        env:
+          REACT_APP_API_BASE_URL: test-base-url
         working-directory: frontend
 
   react-lint:

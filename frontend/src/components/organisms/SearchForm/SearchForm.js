@@ -16,7 +16,7 @@ import './SearchForm.css';
 import {
   recruitment, access, phases, roa, results,
   types, sex, ageGroup, ethnicities, distance, states,
-} from '../../../variables/TopLevelSearchData';
+} from '../../../variables/SelectOptionsData';
 
 class SearchForm extends Component {
   constructor(props) {
@@ -41,27 +41,36 @@ class SearchForm extends Component {
     this.showCityDistance = this.showCityDistance.bind(this);
     this.formRef = React.createRef();
     this.state = {
-      intervention: '',
       condition: '',
-      target: '',
-      country: '',
       otherTerms: '',
-      searchResults: '',
-      countries: [],
+      subcondition: '',
+      intervention: '',
       roa: [],
-      recruitment: [],
+      modality: '',
+      target: '',
+      nct_id: '',
+      title: '',
+      status: '',
       phase: [],
+      sponsor: '',
       results: '',
       type: '',
-      sex: '',
+      age: '',
       ageGroup: [],
+      sex: '',
       ethnicity: [],
+      country: '',
       state: '',
       city: '',
       distance: '',
+      healthy: false,
+      location_terms: '',
+      countries: [],
+      searchResults: '',
       showAdvancedOptions: false,
       showState: false,
       showCityDistance: false,
+      recruitment: [],
     };
   }
 
@@ -81,19 +90,30 @@ class SearchForm extends Component {
 
   handleClear() {
     this.setState({
-      intervention: '',
       condition: '',
-      target: '',
-      country: '',
       otherTerms: '',
-      nct_id: '',
-      phase: [],
+      subcondition: '',
+      intervention: '',
       roa: [],
-      countries: [],
+      modality: '',
+      target: '',
+      nct_id: '',
+      title: '',
+      status: '',
+      phase: [],
+      sponsor: '',
+      results: '',
       type: '',
-      sex: '',
+      age: '',
       ageGroup: [],
+      sex: '',
       ethnicity: [],
+      country: '',
+      state: '',
+      city: '',
+      distance: '',
+      healthy: false,
+      location_terms: '',
     });
     this.formRef.current.resetFields();
   }
@@ -205,28 +225,53 @@ class SearchForm extends Component {
 
   async handleSearch() {
     const payload = {
-      metadata_required: true,
-      status: '',
+      status: this.state.status,
       condition: this.state.condition,
       other_terms: this.state.otherTerms,
       country: this.state.country,
       intervention: this.state.intervention,
       target: this.state.target,
       nct_id: this.state.nct_id,
-      roa: this.state.roa,
-      recruitment: this.state.recruitment,
-      phase: this.state.phase,
-      results: this.state.results,
       eligibility_criteria: '',
-      type: this.state.type,
-      sex: this.state.sex,
-      ageGroup: this.state.ageGroup,
-      ethnicity: this.state.ethnicity,
+      modality: this.state.modality,
+      sponsor: this.state.sponsor,
+      phase: this.state.phase,
+      start_date_from: '',
+      start_date_to: '',
+      primary_completion_date_from: '',
+      primary_completion_date_to: '',
+      first_posted_date_from: '',
+      first_posted_date_to: '',
+      results_first_posted_date_from: '',
+      results_first_posted_date_to: '',
+      last_update_posted_date_from: '',
+      last_update_posted_date_to: '',
+      study_results: this.state.results,
+      study_type: this.state.type,
+      eligibility_age: this.state.age,
+      eligibility_min_age: this.state.ageGroup,
+      eligibility_max_age: this.state.ageGroup,
+      eligibility_gender: this.state.sex,
+      eligibility_ethnicity: this.state.ethnicity,
+      eligibility_condition: '',
+      eligibility_healthy_volunteer: this.state.healthy,
+      study_title_acronym: this.state.title,
+      study_outcome_measure: '',
+      study_collaborator: '',
+      study_ids: '',
+      study_location_terms: this.state.location_terms,
+      study_funder_type: '',
+      study_document_type: '',
+      study_results_submitted: '',
+      study_roa: this.state.roa,
       state: this.state.state,
       city: this.state.city,
       distance: this.state.distance,
-      first: '',
-      last: '',
+      subcondition: this.state.subcondition,
+      recruitment: this.state.recruitment,
+      first: 0,
+      last: 100,
+      metadata_required: true,
     };
     try {
       const response = await ctgov.post('search_studies', payload);
@@ -423,7 +468,7 @@ class SearchForm extends Component {
                 key="field-other"
                 label="Additional Terms"
                 title="In the search feature, the Other (Additional) Terms field is used to narrow a search. For example, you may enter the name of a drug or the NCT number of a clinical study to limit the search to study records that contain these words."
-                name="other_terms"
+                name="otherTerms"
                 handleInputChange={this.handleInputChange}
               />
               <TextInputField
@@ -505,7 +550,7 @@ class SearchForm extends Component {
                 key="field-sponsor"
                 label="Sponsor / Collaborators"
                 title="Sponsor is the organization or person who initiates the study and who has authority and control over the study. Collaborator is an organization other than the sponsor that provides support for a clinical study. This support may include activities related to funding, design, implementation, data analysis, or reporting."
-                name="target"
+                name="sponsor"
                 handleInputChange={this.handleInputChange}
               />
               <SelectField
@@ -513,7 +558,7 @@ class SearchForm extends Component {
                 name="results"
                 label="Study Results"
                 title="A study record that includes the summary results posted in the ClinicalTrials.gov results database. Summary results information includes participant flow, baseline characteristics, outcome measures, and adverse events (including serious adverse events)."
-                placeholder="Select the phase"
+                placeholder="Select the results"
                 options={resultsList}
                 handleInputChange={this.handleResultsChange}
               />
@@ -552,7 +597,7 @@ class SearchForm extends Component {
                   <SelectField
                     mode="multiple"
                     key="field-age-group"
-                    name="age_group"
+                    name="ageGroup"
                     label="Age Group"
                     title="A type of eligibility criteria that indicates the age a person must be to participate in a clinical study. This may be indicated by a specific age or the following age groups:
                     Child (birth-17);
@@ -568,13 +613,14 @@ class SearchForm extends Component {
                 <Col key="checkbox-healthy" span={8}>
                   <Form.Item
                     key="form-item-healthy"
+                    onChange={this.handleInputChange}
                     label="Healthy"
                     tooltip={{
                       title: 'A type of eligibility criteria that indicates whether people who do not have the condition/disease being studied can participate in that clinical study.',
                       icon: <InfoCircleOutlined />,
                     }}
                   >
-                    <Checkbox>Is healthy?</Checkbox>
+                    <Checkbox name="healthy">Is healthy?</Checkbox>
                   </Form.Item>
                 </Col>
                 <Col key="col-field-sex" span={16}>

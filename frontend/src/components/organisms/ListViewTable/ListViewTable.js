@@ -1,19 +1,24 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import {
-  Table, Space, Button, Row, Col, Card,
+  Table, Space, Button, Row, Col, Card, Tooltip,
 } from 'antd';
 import PropTypes from 'prop-types';
 import {
-  GlobalOutlined, BarChartOutlined, DownloadOutlined,
+  AlignLeftOutlined, BarChartOutlined, DownloadOutlined,
 } from '@ant-design/icons';
 import ctgov from '../../../apis/ctgov';
 
 import FacetedSearchGroup from '../../molecules/FacetedSearchGroup/FacetedSearchGroup';
+import DashboardModal from '../../molecules/modals/DashboardModal/DashboardModal';
+import TimelineModal from '../../molecules/modals/TimelineModal/TimelineModal';
+import DownloadModal from '../../molecules/modals/DownloadModal/DownloadModal';
 
 import {
-  recruitment, access, phases, roa,
-} from '../../../variables/TopLevelSearchData';
+  recruitment, access, phases, roa, results,
+  types, sex, ageGroup, ethnicities, distance, states,
+  funder, documents, submission,
+} from '../../../variables/SelectOptionsData';
 
 import { columns } from './ListViewTableConfig';
 import './ListViewTable.css';
@@ -22,6 +27,9 @@ class ListViewTable extends Component {
   constructor(props) {
     super(props);
     this.handleInputChange = this.handleInputChange.bind(this);
+    this.setDashboardModalVisible = this.setDashboardModalVisible.bind(this);
+    this.setTimelineModalVisible = this.setTimelineModalVisible.bind(this);
+    this.setDownloadModalVisible = this.setDownloadModalVisible.bind(this);
     this.handleSearch = this.handleSearch.bind(this);
     this.handleClear = this.handleClear.bind(this);
     this.formRef = React.createRef();
@@ -30,6 +38,9 @@ class ListViewTable extends Component {
       condition: '',
       target: '',
       otherTerms: '',
+      isDashboardModalVisible: false,
+      isTimelineModalVisible: false,
+      isDownloadModalVisible: false,
     };
   }
 
@@ -73,6 +84,24 @@ class ListViewTable extends Component {
     }
   }
 
+  setDashboardModalVisible(isDashboardModalVisible) {
+    this.setState({
+      isDashboardModalVisible,
+    });
+  }
+
+  setTimelineModalVisible(isTimelineModalVisible) {
+    this.setState({
+      isTimelineModalVisible,
+    });
+  }
+
+  setDownloadModalVisible(isDownloadModalVisible) {
+    this.setState({
+      isDownloadModalVisible,
+    });
+  }
+
   render() {
     const { data } = this.props.history.location.state;
     const parsedResults = data.search_results.map((result) => {
@@ -87,6 +116,7 @@ class ListViewTable extends Component {
         status: result.status,
       };
     });
+    const dataPlaceholder = [];
 
     return (
       <div>
@@ -119,21 +149,87 @@ class ListViewTable extends Component {
                 recruitment={recruitment}
                 phases={phases}
                 roa={roa}
+                results={results}
+                types={types}
+                sex={sex}
+                ageGroup={ageGroup}
+                ethnicities={ethnicities}
+                states={states}
+                distance={distance}
+                funder={funder}
+                documents={documents}
+                submission={submission}
               />
             </Col>
             <Col key="trails_table-col" className="gutter-row" span={20}>
               <Row key="trials-table-extras">
                 <Col key="trials-stat-col" span={8}>
                   <Row id="trials-stat-row" justify="start" align="middle">
-                    Total number of trials: 512
+                    Total number of trials:
+                    {' '}
+                    {data.metadata[0].results_count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                   </Row>
                 </Col>
                 <Col key="trials-modal-btn-col" span={16}>
                   <Row id="trials-modal-btn-row" justify="end">
                     <Space align="end">
-                      <Button key="btn_dashboard" icon={<BarChartOutlined />} />
-                      <Button key="btn_map" icon={<GlobalOutlined />} />
-                      <Button key="btn_download" icon={<DownloadOutlined />} />
+                      <Tooltip title="View dashboard">
+                        <Button
+                          key="btn_dashboard"
+                          onClick={() => {
+                            return this.setDashboardModalVisible(true);
+                          }}
+                          icon={<BarChartOutlined />}
+                        />
+                      </Tooltip>
+                      <Tooltip title="View timeline">
+                        <Button
+                          key="btn_timeline"
+                          onClick={() => {
+                            return this.setTimelineModalVisible(true);
+                          }}
+                          icon={<AlignLeftOutlined />}
+                        />
+                      </Tooltip>
+                      <Tooltip title="Download options">
+                        <Button
+                          key="btn_download"
+                          onClick={() => {
+                            return this.setDownloadModalVisible(true);
+                          }}
+                          icon={<DownloadOutlined />}
+                        />
+                      </Tooltip>
+                      <DashboardModal
+                        isModalVisible={this.state.isDashboardModalVisible}
+                        data={dataPlaceholder}
+                        handleOk={() => {
+                          return this.setDashboardModalVisible(false, '');
+                        }}
+                        handleCancel={() => {
+                          return this.setDashboardModalVisible(false, '');
+                        }}
+                      />
+                      <TimelineModal
+                        isModalVisible={this.state.isTimelineModalVisible}
+                        data={dataPlaceholder}
+                        handleOk={() => {
+                          return this.setTimelineModalVisible(false, '');
+                        }}
+                        handleCancel={() => {
+                          return this.setTimelineModalVisible(false, '');
+                        }}
+                      />
+                      <DownloadModal
+                        isModalVisible={this.state.isDownloadModalVisible}
+                        data={dataPlaceholder}
+                        handleOk={() => {
+                          return this.setDownloadModalVisible(false, '');
+                        }}
+                        handleCancel={() => {
+                          return this.setDownloadModalVisible(false, '');
+                        }}
+                      />
                     </Space>
                   </Row>
                 </Col>
