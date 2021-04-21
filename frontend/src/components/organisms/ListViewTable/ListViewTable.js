@@ -12,7 +12,9 @@ import ctgov from '../../../apis/ctgov';
 import FacetedSearchGroup from '../../molecules/FacetedSearchGroup/FacetedSearchGroup';
 
 import {
-  recruitment, access, phases, roa,
+  recruitment, access, phases, roa, results,
+  types, sex, ageGroup, ethnicities, distance, states,
+  funder, documents, submission,
 } from '../../../variables/TopLevelSearchData';
 
 import { columns } from './ListViewTableConfig';
@@ -119,6 +121,16 @@ class ListViewTable extends Component {
                 recruitment={recruitment}
                 phases={phases}
                 roa={roa}
+                results={results}
+                types={types}
+                sex={sex}
+                ageGroup={ageGroup}
+                ethnicities={ethnicities}
+                states={states}
+                distance={distance}
+                funder={funder}
+                documents={documents}
+                submission={submission}
               />
             </Col>
             <Col key="trails_table-col" className="gutter-row" span={20}>
