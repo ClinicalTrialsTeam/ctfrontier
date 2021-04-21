@@ -14,6 +14,7 @@ class TimelineModal extends Component {
 
     return (
       <Modal
+        style={{ top: 50 }}
         title="Trials Timeline"
         visible={isModalVisible}
         onOk={handleOk}

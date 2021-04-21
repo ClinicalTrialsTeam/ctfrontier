@@ -49,7 +49,7 @@ class TimelineChart extends Component {
         <Bar
           data={timelineData.reverse()}
           color={config.color}
-          xField="values"
+          xField="dates"
           yField="nct_id"
           seriesField="phase"
           maxBarWidth={10}

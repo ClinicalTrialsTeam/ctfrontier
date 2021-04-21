@@ -13,6 +13,7 @@ class DownloadModal extends Component {
 
     return (
       <Modal
+        style={{ top: 50 }}
         title="Downloads"
         visible={isModalVisible}
         onOk={handleOk}
