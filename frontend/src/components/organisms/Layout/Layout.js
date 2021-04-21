@@ -11,7 +11,7 @@ const { Footer, Content } = Layout;
 const TrialsLayout = ({ children }) => {
   return (
     <Layout className="layout" style={{ backgroundColor: 'white' }}>
-      <CommonLogo />
+      <CommonLogo className="logo" />
       <Content id="content-bg">
         {children}
       </Content>

@@ -10,7 +10,7 @@ import RangePickerField from '../../atoms/RangePickerField/RangePickerField';
 
 import {
   funder, documents, submission,
-} from '../../../variables/TopLevelSearchData';
+} from '../../../variables/SelectOptionsData';
 
 class AdvancedSearchGroup extends Component {
   render() {

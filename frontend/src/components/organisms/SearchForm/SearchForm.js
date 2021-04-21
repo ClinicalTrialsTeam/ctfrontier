@@ -16,7 +16,7 @@ import './SearchForm.css';
 import {
   recruitment, access, phases, roa, results,
   types, sex, ageGroup, ethnicities, distance, states,
-} from '../../../variables/TopLevelSearchData';
+} from '../../../variables/SelectOptionsData';
 
 class SearchForm extends Component {
   constructor(props) {
@@ -725,7 +725,7 @@ class SearchForm extends Component {
                 name="results"
                 label="Study Results"
                 title="A study record that includes the summary results posted in the ClinicalTrials.gov results database. Summary results information includes participant flow, baseline characteristics, outcome measures, and adverse events (including serious adverse events)."
-                placeholder="Select the phase"
+                placeholder="Select the results"
                 options={resultsList}
                 handleInputChange={this.handleResultsChange}
               />
