@@ -6,9 +6,55 @@ from .serializers import (
     BriefSummariesSerializer,
     SearchStudiesSerializer,
     CountriesSerializer,
+    SearchStudiesDocumentSerializer,
 )
 from datetime import datetime
 from django.db.models import Q
+
+
+from django_elasticsearch_dsl_drf.filter_backends import (
+    FilteringFilterBackend,
+    IdsFilterBackend,
+    OrderingFilterBackend,
+    DefaultOrderingFilterBackend,
+    SearchFilterBackend,
+)
+
+from django_elasticsearch_dsl_drf.viewsets import BaseDocumentViewSet
+from django_elasticsearch_dsl_drf.pagination import PageNumberPagination
+from ctgov.documents import ClinicalTrialsSearchStudies
+
+
+class SearchStudiesDocumentView(BaseDocumentViewSet):
+    document = ClinicalTrialsSearchStudies
+    serializer_class = SearchStudiesDocumentSerializer
+    pagination_class = PageNumberPagination
+
+    filter_backends = [
+        FilteringFilterBackend,
+        IdsFilterBackend,
+        OrderingFilterBackend,
+        DefaultOrderingFilterBackend,
+        SearchFilterBackend,
+    ]
+
+    search_fields = (
+        "status",
+        "brief_title",
+        "nct_id",
+        "condition_name",
+        "study_detailed_desc",
+        "country_name",
+        "intervention_name",
+        "eligibility_criteria",
+        "study_brief_desc",
+        "location_name",
+    )
+
+    ordering_fields = {
+        "status": "status.raw",
+        "country_name": "country_name.raw",
+    }
 
 
 # Test API call to get brief summaries of clinical studies
