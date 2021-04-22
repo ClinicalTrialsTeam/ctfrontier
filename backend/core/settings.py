@@ -31,7 +31,7 @@ SECRET_KEY = getenv("DJANGO_SECRET")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["django", "localhost"]
+ALLOWED_HOSTS = ["django"]
 
 # Elastic Search
 # https://django-elasticsearch-dsl.readthedocs.io/en/latest/quickstart.html
