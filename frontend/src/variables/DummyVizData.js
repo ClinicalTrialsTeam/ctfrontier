@@ -1,5 +1,5 @@
 const timelineData = [
-  { nct_id: 'NCT04218877', dates: ['2020-03-10', '2020-07-10'], phase: 'Phase 1' },
+  { nct_id: 'NCT04218877', dates: ['2020-03-10', '2020-07-10'], phase: 'Early Phase 1' },
   { nct_id: 'NCT04307862', dates: ['2019-12-29', '2021-12-31'], phase: 'Phase 2' },
   { nct_id: 'NCT04444726', dates: ['2019-01-20', '2020-11-20'], phase: 'Not Applicable' },
   { nct_id: 'NCT04435392', dates: ['2020-10-14', '2022-12-01'], phase: 'Phase 1 Phase 2' },
