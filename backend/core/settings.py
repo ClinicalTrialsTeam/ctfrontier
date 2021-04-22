@@ -27,9 +27,10 @@ SECRET_KEY = getenv("DJANGO_SECRET")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False if PROD else True
 
-ALLOWED_HOSTS = []
 if PROD:
     ALLOWED_HOSTS = [getenv("SITE_DOMAIN")]
+else:
+    ALLOWED_HOSTS = ["django"]
 
 # Elastic Search
 # https://django-elasticsearch-dsl.readthedocs.io/en/latest/quickstart.html
