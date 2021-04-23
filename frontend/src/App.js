@@ -7,7 +7,9 @@ import './App.css';
 // Import local files
 import TrialsLayout from './components/organisms/Layout/Layout';
 import SearchView from './components/views/SearchView/SearchView';
-import TrialView from './components/views/TrialView/TrialView';
+import TrialListView from './components/views/TrialListView/TrialListView';
+import SingleTrialView from './components/views/SingleTrialView/SingleTrialView';
+import PageNotFoundView from './components/views/PageNotFoundView/PageNotFoundView';
 
 function App() {
   return (
@@ -15,7 +17,9 @@ function App() {
       <main>
         <Switch>
           <RouteWrapper path="/" component={SearchView} layout={TrialsLayout} exact />
-          <RouteWrapper path="/trials" component={TrialView} layout={TrialsLayout} exact />
+          <RouteWrapper path="/trials" component={TrialListView} layout={TrialsLayout} exact />
+          <RouteWrapper path="/trials/:nctId" component={SingleTrialView} layout={TrialsLayout} />
+          <RouteWrapper path="/" component={PageNotFoundView} layout={TrialsLayout} />
         </Switch>
       </main>
     </BrowserRouter>
