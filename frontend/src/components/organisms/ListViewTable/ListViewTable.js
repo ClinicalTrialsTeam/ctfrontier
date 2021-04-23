@@ -104,6 +104,8 @@ class ListViewTable extends Component {
 
   render() {
     const { data } = this.props.history.location.state;
+    const dataCount = parseInt(data.metadata[0].results_count);
+    console.log(dataCount);
     const parsedResults = data.search_results.map((result) => {
       return {
         key: result.nct_id,
@@ -167,7 +169,7 @@ class ListViewTable extends Component {
                   <Row id="trials-stat-row" justify="start" align="middle">
                     Total number of trials:
                     {' '}
-                    {data.metadata[0].results_count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                    {dataCount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                   </Row>
                 </Col>
                 <Col key="trials-modal-btn-col" span={16}>
@@ -235,8 +237,8 @@ class ListViewTable extends Component {
                 </Col>
               </Row>
               <Table
-                pagination={{ pageSize: 20 }}
-                scroll={{ x: 1000, y: 1098 }}
+                pagination={{ total: dataCount, pageSize: 20 }}
+                scroll={{ x: '1000', y: 1100 }}
                 className="trials-table"
                 key="trials-table"
                 rowSelection={{
