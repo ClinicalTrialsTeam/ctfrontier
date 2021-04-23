@@ -5,7 +5,8 @@ const columns = [
     key: 'nct_id',
     fixed: 'left',
     width: 120,
-    sorter: true,
+    sortDirections: ['descend', 'ascend'],
+    sorter: (a, b) => { return a.nct_id.localeCompare(b.nct_id); },
   },
   {
     title: 'Brief Title',
@@ -16,7 +17,10 @@ const columns = [
     title: 'Condition',
     dataIndex: 'condition_name',
     key: 'condition_name',
-    sorter: true,
+    sortDirections: ['descend', 'ascend'],
+    sorter: (a, b) => {
+      return a.condition_name.localeCompare(b.condition_name);
+    },
   },
   {
     title: 'Intervention',
@@ -29,7 +33,8 @@ const columns = [
     title: 'Status',
     dataIndex: 'status',
     key: 'status',
-    sorter: true,
+    sortDirections: ['descend', 'ascend'],
+    sorter: (a, b) => { return a.status.localeCompare(b.status); },
     width: 120,
   },
 ];
