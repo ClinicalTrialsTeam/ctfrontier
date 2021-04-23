@@ -13,8 +13,6 @@ import RangePickerField from '../../atoms/RangePickerField/RangePickerField';
 
 import './FacetedSearchGroup.css';
 
-// const { RangePicker } = DatePicker;
-
 class FacetedSearchGroup extends Component {
   render() {
     const {

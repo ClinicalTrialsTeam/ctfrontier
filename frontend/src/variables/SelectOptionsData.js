@@ -28,18 +28,18 @@ const phases = [
 
 const roa = [
   'Oral',
-  'Intradermal',
+  'Otic',
   'Intravenous',
+  'Implant',
   'Subcutaneous',
+  'Cutaneous',
+  'Rectal',
+  'Nasal',
+  'Topical',
+  'Vaginal',
+  'Ocular',
   'Intramuscular',
   'Sublingual',
-  'Topical',
-  'Nasal',
-  'Ocular',
-  'Otic',
-  'Vaginal',
-  'Rectal',
-  'Other',
 ];
 
 const results = [
