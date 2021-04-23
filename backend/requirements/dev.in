@@ -1,0 +1,8 @@
+-r base.in
+pytest-django
+pytest-cov
+pytest-env
+pytest-postgresql
+pre-commit
+black
+flake8

@@ -52,7 +52,7 @@ jobs:
         with:
           python-version: 3.8
       - name: Install pytest
-        run: pip install -r requirements.txt
+        run: pip install -r requirements/dev.txt
         working-directory: backend
       - run: pytest tests
         env:

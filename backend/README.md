@@ -193,7 +193,7 @@ Countries API will return a unique list of countries associated with studies in 
 
 ## Changing your Postgres DB password
 
-In order to run your docker containers, `DB_PASSWORD` in `backend/core/.env` must match the actual postgres database password. If you want to change your postgres database password, you cannot just changed the stored value in `.env`, you must connect to postgres and change the actual postgres database password first.
+In order to run your docker containers, `DB_PASSWORD` in `backend/.env` must match the actual postgres database password. If you want to change your postgres database password, you cannot just changed the stored value in `.env`, you must connect to postgres and change the actual postgres database password first.
 
 Steps to take: 
 
