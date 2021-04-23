@@ -105,7 +105,6 @@ class ListViewTable extends Component {
   render() {
     const { data } = this.props.history.location.state;
     const dataCount = parseInt(data.metadata[0].results_count);
-    console.log(dataCount);
     const parsedResults = data.search_results.map((result) => {
       return {
         key: result.nct_id,
