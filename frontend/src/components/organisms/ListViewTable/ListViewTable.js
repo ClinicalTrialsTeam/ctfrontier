@@ -235,6 +235,8 @@ class ListViewTable extends Component {
                 </Col>
               </Row>
               <Table
+                pagination={{ pageSize: 20 }}
+                scroll={{ x: 1000, y: 1098 }}
                 className="trials-table"
                 key="trials-table"
                 rowSelection={{
