@@ -1,0 +1,22 @@
+.download-modal .ant-modal-body {
+    padding-top: 10px;
+  }
+  
+.download-icon {
+    height: 100px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.download-title {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.download-button {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}

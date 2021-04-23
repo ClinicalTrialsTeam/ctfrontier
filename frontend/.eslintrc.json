@@ -22,6 +22,15 @@
         "react"
     ],
         "rules": {
+          "import/no-extraneous-dependencies": [
+            "error",
+            {
+              "devDependencies": [
+                "**/*.test.js",
+                "**/*.spec.js"
+              ]
+            }
+          ],
           "react/destructuring-assignment": [0],
           "react/forbid-prop-types": [0],
           "arrow-body-style": [
@@ -47,7 +56,7 @@
           "max-len": [
             "error",
             {
-              "code": 80,
+              "code": 260,
               "ignoreStrings": true,
               "ignoreTemplateLiterals": true,
               "ignoreUrls": true

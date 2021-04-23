@@ -4,10 +4,5 @@ django_elasticsearch_dsl_drf==0.21
 psycopg2-binary>=2.8
 python-dotenv
 djangorestframework
-markdown
 django-filter
-pytest-django
-pytest-cov
-pytest-env
-pytest-postgresql
 django-cors-headers

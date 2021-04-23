@@ -1,0 +1,25 @@
+{
+  "size": 50,
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "match": {
+            "status": {
+              "query": "complte",
+              "fuzziness": "AUTO"
+            }
+          }
+        },
+        {
+          "match": {
+            "brief_title": {
+              "query": "atpic",
+              "fuzziness": "AUTO"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
