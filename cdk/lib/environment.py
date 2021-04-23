@@ -43,6 +43,10 @@ class Param:
             raise Exception(f"{param_type} is an invalid ssm parameter type")
         self.type = param_type.value
 
+        if self.exists():
+            self.update(value)
+            return
+
         try:
             ssm.put_parameter(
                 Name=self.path_name,

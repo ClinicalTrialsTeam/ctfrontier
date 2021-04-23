@@ -15,11 +15,15 @@ from .database import CtfDatabase
 from . import names, environment, aws
 
 
+DB_PORT = 5432
+
+
 class CtStack(core.Stack):
     def __init__(
         self,
         scope: core.Construct,
         id: str,
+        site_domain,
         notification_email,
         ctfrontier_api_url,
         django_secret,
@@ -72,10 +76,22 @@ class CtStack(core.Stack):
         )
 
         vpc = ec2.Vpc(self, "CtfVPC", max_azs=2)
-        sg = ec2.SecurityGroup(
+        frontend_sg = ec2.SecurityGroup(
             self,
-            "CtfSecurityGroup",
+            "CtfFrontendSecurityGroup",
             allow_all_outbound=True,
+            vpc=vpc,
+        )
+        backend_sg = ec2.SecurityGroup(
+            self,
+            "CtfBackendSecurityGroup",
+            allow_all_outbound=False,
+            vpc=vpc,
+        )
+        database_sg = ec2.SecurityGroup(
+            self,
+            "CtfDatabaseSecurityGroup",
+            allow_all_outbound=False,
             vpc=vpc,
         )
         preferred_az = f"{aws.AWS_REGION}a"
@@ -102,7 +118,7 @@ class CtStack(core.Stack):
             "CtfFrontendService",
             ecs_cluster.cluster,
             frontend_task.task,
-            sg,
+            frontend_sg,
             preferred_az,
             port=frontend_port,
         )
@@ -110,8 +126,9 @@ class CtStack(core.Stack):
         CtfLoadBalancer(
             self,
             "CtfLoadBalancer",
+            site_domain,
             vpc,
-            sg,
+            frontend_sg,
             load_balancer_target=frontend_service.service,
         )
 
@@ -128,15 +145,23 @@ class CtStack(core.Stack):
                 "DB_PASSWORD": db_password,
             },
         )
-        CtfBackendService(
+        backend_service = CtfBackendService(
             self,
             "CtfBackendService",
             ecs_cluster.cluster,
             backend_task.task,
-            sg,
+            backend_sg,
             preferred_az,
             frontend_service,
             backend_port,
         )
 
-        CtfDatabase(self, "PostgresDatabase", vpc, sg, preferred_az)
+        CtfDatabase(
+            self,
+            "PostgresDatabase",
+            vpc,
+            database_sg,
+            preferred_az,
+            backend_service,
+            DB_PORT,
+        )

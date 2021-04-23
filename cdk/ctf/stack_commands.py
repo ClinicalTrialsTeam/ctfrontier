@@ -9,6 +9,7 @@ import json
 import boto3
 from botocore.exceptions import ClientError
 import subprocess
+from pprint import pprint
 from .common import run_cdk_command, run_command, profile_arg
 from .function_commands import build_lambda_package, function_deploy
 from .container_commands import (
@@ -74,6 +75,17 @@ def stack_update(ctx, update_functions=False):
 
     if update_functions:
         ctx.invoke(function_deploy)
+
+
+@stack.command("outputs")
+def stack_outputs():
+    cloudformation = boto3.client("cloudformation")
+    r = cloudformation.describe_stacks(
+        StackName=names.PROJECT_NAME,
+    )
+    outputs = r["Stacks"][0]["Outputs"]
+    pprint(outputs)
+    return outputs
 
 
 @stack.command("diff")

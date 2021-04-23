@@ -14,14 +14,12 @@ class CtfDatabase(core.Construct):
         vpc,
         sg,
         preferred_az,
+        backend_service,
+        db_port,
     ):
         super().__init__(scope, id)
 
-        # TODO: credentials - let secrets manager generate a password?
-        # s3 import buckets...
-        # postgres data dump is only 1.24 GB... load via ssh?
-        # set backup retention to 0
-        rds.DatabaseInstance(
+        self.database = rds.DatabaseInstance(
             self,
             id,
             database_name=names.DATABASE,
@@ -37,4 +35,29 @@ class CtfDatabase(core.Construct):
             backup_retention=core.Duration.days(1),
             delete_automated_backups=True,
             removal_policy=core.RemovalPolicy.SNAPSHOT,
+        )
+
+        self.database.connections.allow_from(
+            backend_service.service, ec2.Port.tcp(db_port)
+        )
+
+        core.CfnOutput(
+            self,
+            "CfnDatabaseEndpoint",
+            export_name="cfn-database-endpoint",
+            value=self.database.db_instance_endpoint_address,
+        )
+
+        core.CfnOutput(
+            self,
+            "CfnDatabasePort",
+            export_name="cfn-database-port",
+            value=self.database.db_instance_endpoint_port,
+        )
+
+        core.CfnOutput(
+            self,
+            "CfnDatabaseInstanceIdentifier",
+            export_name="cfn-database-identifier",
+            value=self.database.instance_identifier,
         )

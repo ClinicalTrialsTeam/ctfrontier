@@ -35,7 +35,10 @@ class CtfCluster(core.Construct):
             task_drain_time=core.Duration.minutes(0),
             key_name=names.BACKEND_KEY_PAIR,
             max_capacity=1,
-            vpc_subnets=ec2.SubnetSelection(availability_zones=[preferred_az]),
+            vpc_subnets=ec2.SubnetSelection(
+                availability_zones=[preferred_az],
+                subnet_type=ec2.SubnetType.PUBLIC,
+            ),
         )
 
         core.CfnOutput(

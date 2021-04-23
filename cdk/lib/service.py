@@ -43,6 +43,14 @@ class CtfFrontendService(core.Construct):
             ec2.Port.tcp(443), "react inbound https"
         )
 
+        # Export frontend service name
+        core.CfnOutput(
+            self,
+            "CfnFrontendServiceName",
+            export_name="frontend-service-name",
+            value=self.service.service_name,
+        )
+
 
 class CtfBackendService(core.Construct):
     def __init__(
@@ -62,14 +70,22 @@ class CtfBackendService(core.Construct):
             self,
             id=id,
             service_name=names.BACKEND_SERVICE,
+            daemon=True,
             security_groups=[sg],
             vpc_subnets=ec2.SubnetSelection(availability_zones=[preferred_az]),
             cluster=cluster,
             task_definition=task_definition,
-            desired_count=1,
             circuit_breaker=ecs.DeploymentCircuitBreaker(rollback=True),
         )
 
         self.service.connections.allow_from(
             frontend_service.service, ec2.Port.tcp(port)
+        )
+
+        # Export backend service name
+        core.CfnOutput(
+            self,
+            "CfnBackendServiceName",
+            export_name="backend-service-name",
+            value=self.service.service_name,
         )

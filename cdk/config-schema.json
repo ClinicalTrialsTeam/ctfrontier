@@ -1,4 +1,7 @@
 {
+    "site_domain": {
+        "type": "String"
+    },
     "notification_email": {
         "type": "String"
     },

@@ -1,5 +1,4 @@
 PROJECT_NAME = "ctfrontier"
-DOMAIN = "ctfrontier.com"
 
 CDK_BOOTSTRAP_BUCKET = "ctf-bootstrap-bucket"
 LAMBDA_CODE_BUCKET = "ctf-lambda-code-bucket"
@@ -15,7 +14,7 @@ CLUSTER = "ctf-ecs-cluster"
 FRONTEND_SERVICE = "frontend"
 FRONTEND_TASK_FAMILY = "react-task"
 
-BACKEND_SERVICE = "backend"
+BACKEND_SERVICE = "backend-service"
 BACKEND_TASK_FAMILY = "django-task"
 BACKEND_KEY_PAIR = "CtfBackendKeyPair"
 

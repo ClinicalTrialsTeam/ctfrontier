@@ -4,7 +4,6 @@ from aws_cdk import (
     aws_elasticloadbalancingv2 as elb,
     aws_certificatemanager as acm,
 )
-from . import names
 
 
 class CtfLoadBalancer(core.Construct):
@@ -12,6 +11,7 @@ class CtfLoadBalancer(core.Construct):
         self,
         scope: core.Construct,
         id: str,
+        site_domain,
         vpc,
         sg,
         load_balancer_target,
@@ -21,7 +21,7 @@ class CtfLoadBalancer(core.Construct):
         certificate = acm.Certificate(
             self,
             "CtfCertificate",
-            domain_name=f"*.{names.DOMAIN}",
+            domain_name=f"*.{site_domain}",
         )
 
         lb = elb.ApplicationLoadBalancer(

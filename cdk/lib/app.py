@@ -8,6 +8,7 @@ from . import names, aws
 
 
 stack_props = {
+    "site_domain": Param("site_domain").get_value(),
     "notification_email": Param("notification_email").get_value(),
     "ctfrontier_api_url": Param("ctfrontier_api_url").get_value(),
     "django_secret": Param("django_secret").get_value(decrypt=True),
