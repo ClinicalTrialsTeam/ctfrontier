@@ -16,25 +16,25 @@ class TimelineChart extends Component {
       color: function color(_ref) {
         const { phase } = _ref;
         if (phase === 'Early Phase 1') {
-          return '#0072DD';
+          return '#17EAD9';
         }
         if (phase === 'Phase 1') {
-          return '#1890FF';
+          return '#00c4ff';
         }
         if (phase === 'Phase 1 Phase 2') {
-          return '#677DE9';
+          return '#1890FF';
         }
         if (phase === 'Phase 2') {
-          return '#866BCE';
+          return '#677DE9';
         }
         if (phase === 'Phase 2 Phase 3') {
-          return '#9759B1';
+          return '#756EED';
         }
         if (phase === 'Phase 3') {
-          return '#9E4994';
+          return '#A73EC7';
         }
         if (phase === 'Phase 4') {
-          return '#9D3B77';
+          return '#c91e93';
         }
         if (phase === 'Not Applicable') {
           return '#414756';
@@ -49,7 +49,7 @@ class TimelineChart extends Component {
         <Bar
           data={timelineData.reverse()}
           color={config.color}
-          xField="values"
+          xField="dates"
           yField="nct_id"
           seriesField="phase"
           maxBarWidth={10}

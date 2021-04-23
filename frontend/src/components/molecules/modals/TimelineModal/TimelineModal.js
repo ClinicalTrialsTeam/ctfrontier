@@ -3,6 +3,8 @@ import { Modal } from 'antd';
 import PropTypes from 'prop-types';
 import TimelineChart from '../../charts/TimelineChart/TimelineChart';
 
+import './TimelineModal.css';
+
 class TimelineModal extends Component {
   render() {
     const {
@@ -14,6 +16,8 @@ class TimelineModal extends Component {
 
     return (
       <Modal
+        className="timeline-modal"
+        style={{ top: 50 }}
         title="Trials Timeline"
         visible={isModalVisible}
         onOk={handleOk}
