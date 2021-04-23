@@ -36,6 +36,7 @@ class SearchForm extends Component {
     this.handleDistanceChange = this.handleDistanceChange.bind(this);
     this.handleSearch = this.handleSearch.bind(this);
     this.handleClear = this.handleClear.bind(this);
+    this.handleLoading = this.handleLoading.bind(this);
     this.showAdvancedOptions = this.showAdvancedOptions.bind(this);
     this.showState = this.showState.bind(this);
     this.showCityDistance = this.showCityDistance.bind(this);
@@ -71,6 +72,7 @@ class SearchForm extends Component {
       showState: false,
       showCityDistance: false,
       recruitment: [],
+      isLoading: false,
     };
   }
 
@@ -223,7 +225,14 @@ class SearchForm extends Component {
     });
   }
 
+  handleLoading() {
+    this.setState({
+      isLoading: true,
+    });
+  }
+
   async handleSearch() {
+    this.handleLoading();
     const payload = {
       status: this.state.status,
       condition: this.state.condition,
@@ -673,6 +682,7 @@ class SearchForm extends Component {
             <Form.Item>
               <Space>
                 <Button
+                  loading={this.state.isLoading}
                   key="btn_search"
                   inputType="primary"
                   text="Search"

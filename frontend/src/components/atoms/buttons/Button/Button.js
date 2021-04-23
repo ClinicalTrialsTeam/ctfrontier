@@ -4,9 +4,11 @@ import PropTypes from 'prop-types';
 
 class Button extends Component {
   render() {
-    const { inputType, text, clickHandler } = this.props;
+    const {
+      inputType, text, loading, clickHandler,
+    } = this.props;
     return (
-      <AntButton type={inputType} onClick={clickHandler}>
+      <AntButton type={inputType} onClick={clickHandler} loading={loading}>
         {text}
       </AntButton>
     );
@@ -16,11 +18,13 @@ class Button extends Component {
 Button.propTypes = {
   inputType: PropTypes.string,
   text: PropTypes.string.isRequired,
+  loading: PropTypes.bool,
   clickHandler: PropTypes.func.isRequired,
 };
 
 Button.defaultProps = {
   inputType: 'default',
+  loading: false,
 };
 
 export default Button;
