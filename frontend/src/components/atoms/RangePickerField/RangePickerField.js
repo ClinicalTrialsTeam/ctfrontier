@@ -21,9 +21,8 @@ class RangePickerField extends Component {
           title,
           icon: <InfoCircleOutlined />,
         }}
-        onChange={handleInputChange}
       >
-        <RangePicker />
+        <RangePicker onChange={handleInputChange} />
       </Form.Item>
     );
   }
