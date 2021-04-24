@@ -14,7 +14,11 @@ import {
 
 class AdvancedSearchGroup extends Component {
   render() {
-    const { handleInputChange } = this.props;
+    const {
+      handleInputChange,
+      handleDatePickers,
+      handleSelectChange,
+    } = this.props;
     const { Text } = Typography;
     const { Option } = Select;
 
@@ -47,7 +51,7 @@ class AdvancedSearchGroup extends Component {
       ['range-primary-completion', 'Primary completion', primaryCompletionTitle],
       ['range-first-posted', 'Last update posted', firstPostedTitle],
       ['range-results-first-posted', 'First posted', resultsFirstPostedTitle],
-      ['rang-last-update-posted', 'Results first posted', lastUpdatePostedTitle],
+      ['range-last-update-posted', 'Results first posted', lastUpdatePostedTitle],
     ];
     const rangePickers = [];
 
@@ -58,7 +62,7 @@ class AdvancedSearchGroup extends Component {
           label={element[1]}
           title={element[2]}
           name={element[0]}
-          handleInputChange={handleInputChange}
+          handleInputChange={handleDatePickers[element[0]]}
         />
       );
     });
@@ -90,21 +94,21 @@ class AdvancedSearchGroup extends Component {
               key="field-collaborator"
               label="Collaborator"
               title="An organization other than the sponsor that provides support for a clinical study. This support may include activities related to funding, design, implementation, data analysis, or reporting."
-              name="study_collaborator"
+              name="studyCollaborator"
               handleInputChange={handleInputChange}
             />
             <TextInputField
               key="field-outcome"
               label="Outcome measure"
               title="For clinical trials, a planned measurement described in the protocol that is used to determine the effect of an intervention/treatment on participants. For observational studies, a measurement or observation that is used to describe patterns of diseases or traits, or associations with exposures, risk factors, or treatment. Types of outcome measures include primary outcome measure and secondary outcome measure."
-              name="study_outcome_measure"
+              name="studyOutcomeMeasure"
               handleInputChange={handleInputChange}
             />
             <TextInputField
               key="field-study-ids"
               label="Study IDs"
               title="Identifiers that are assigned to a clinical study by the study's sponsor, funders, or others. They include unique identifiers from other trial study registries and National Institutes of Health grant numbers. Note: ClinicalTrials.gov assigns a unique identification code to each clinical study registered on ClinicalTrials.gov. Also called the NCT number, the format is 'NCT' followed by an 8-digit number (for example, NCT00000419)."
-              name="study_ids"
+              name="studyIds"
               handleInputChange={handleInputChange}
             />
           </Col>
@@ -112,30 +116,30 @@ class AdvancedSearchGroup extends Component {
             <Text className="section-text" strong key="t_3">Additional Criteria</Text>
             <SelectField
               key="field-funder"
-              name="study_funder_type"
+              name="studyFunderType"
               label="Funder Type"
               title="Describes the organization that provides funding or support for a clinical study. This support may include activities related to funding, design, implementation, data analysis, or reporting. Organizations listed as sponsors and collaborators for a study are considered the funders of the study. ClinicalTrials.gov refers to four types of funders: U.S. National Institutes of Health; Other U.S. Federal agencies (for example, Food and Drug Administration, Centers for Disease Control and Prevention, or U.S. Department of Veterans Affairs); Industry (for example: pharmaceutical and device companies); All others (including individuals, universities, and community-based organizations)."
               placeholder="Select the funder type"
               options={funderList}
-              handleInputChange={this.handleFunderChange}
+              handleInputChange={handleSelectChange.handleFunderChange}
             />
             <SelectField
               key="field-documents"
-              name="study_document_type"
+              name="studyDocumentType"
               label="Study Documents"
               title="Refers to the type of documents that the study sponsor or principal investigator may add to their study record. These include a study protocol, statistical analysis plan, and informed consent form."
               placeholder="Select the type of documents"
               options={documentsList}
-              handleInputChange={this.handleDocumentsChange}
+              handleInputChange={handleSelectChange.handleDocumentsChange}
             />
             <SelectField
               key="field-submission"
-              name="study_results_submitted"
+              name="studyResultsSubmitted"
               label="Results Submitted"
               title="Indicates that the study sponsor or investigator has submitted summary results information for a clinical study to ClinicalTrials.gov but the quality control (QC) review process has not concluded."
               placeholder="Select the type of submission"
               options={submissionList}
-              handleInputChange={this.handleSubmissionChange}
+              handleInputChange={handleSelectChange.handleSubmissionChange}
             />
           </Col>
         </Row>
@@ -146,6 +150,8 @@ class AdvancedSearchGroup extends Component {
 
 AdvancedSearchGroup.propTypes = {
   handleInputChange: PropTypes.func.isRequired,
+  handleDatePickers: PropTypes.object.isRequired,
+  handleSelectChange: PropTypes.object.isRequired,
 };
 
 export default AdvancedSearchGroup;

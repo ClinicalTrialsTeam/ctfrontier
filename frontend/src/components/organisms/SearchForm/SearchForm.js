@@ -34,12 +34,21 @@ class SearchForm extends Component {
     this.handleStateChange = this.handleStateChange.bind(this);
     this.handleCityChange = this.handleCityChange.bind(this);
     this.handleDistanceChange = this.handleDistanceChange.bind(this);
+    this.handleFunderChange = this.handleFunderChange.bind(this);
+    this.handleDocumentsChange = this.handleDocumentsChange.bind(this);
+    this.handleSubmissionChange = this.handleSubmissionChange.bind(this);
     this.handleSearch = this.handleSearch.bind(this);
     this.handleClear = this.handleClear.bind(this);
     this.showAdvancedOptions = this.showAdvancedOptions.bind(this);
     this.showState = this.showState.bind(this);
     this.showCityDistance = this.showCityDistance.bind(this);
+    this.handleStartDateChange = this.handleStartDateChange.bind(this);
+    this.handlePrimaryCompletionDateChange = this.handlePrimaryCompletionDateChange.bind(this);
+    this.handleFirstPostedDateChange = this.handleFirstPostedDateChange.bind(this);
+    this.handleResultsFirstPostedDateChange = this.handleResultsFirstPostedDateChange.bind(this);
+    this.handleLastUpdatePostedDateChange = this.handleLastUpdatePostedDateChange.bind(this);
     this.formRef = React.createRef();
+
     this.state = {
       condition: '',
       otherTerms: '',
@@ -56,7 +65,8 @@ class SearchForm extends Component {
       results: '',
       type: '',
       age: '',
-      ageGroup: [],
+      minAge: 0,
+      maxAge: 100,
       sex: '',
       ethnicity: [],
       country: '',
@@ -64,7 +74,23 @@ class SearchForm extends Component {
       city: '',
       distance: '',
       healthy: false,
-      location_terms: '',
+      locationTerms: '',
+      studyCollaborator: '',
+      studyOutcomeMeasure: '',
+      studyIds: '',
+      studyFunderType: '',
+      studyDocumentType: '',
+      studyResultsSubmitted: '',
+      startDateFrom: '',
+      startDateTo: '',
+      primaryCompletionDateFrom: '',
+      primaryCompletionDateTo: '',
+      firstPostedDateFrom: '',
+      firstPostedDateTo: '',
+      resultsFirstPostedDateFrom: '',
+      resultsFirstPostedDateTo: '',
+      lastUpdatePostedDateFrom: '',
+      lastUpdatePostedDateTo: '',
       countries: [],
       searchResults: '',
       showAdvancedOptions: false,
@@ -105,7 +131,8 @@ class SearchForm extends Component {
       results: '',
       type: '',
       age: '',
-      ageGroup: [],
+      minAge: 0,
+      maxAge: 100,
       sex: '',
       ethnicity: [],
       country: '',
@@ -113,14 +140,30 @@ class SearchForm extends Component {
       city: '',
       distance: '',
       healthy: false,
-      location_terms: '',
+      locationTerms: '',
+      studyCollaborator: '',
+      studyOutcomeMeasure: '',
+      studyIds: '',
+      studyFunderType: '',
+      studyDocumentType: '',
+      studyResultsSubmitted: '',
+      startDateFrom: '',
+      startDateTo: '',
+      primaryCompletionDateFrom: '',
+      primaryCompletionDateTo: '',
+      firstPostedDateFrom: '',
+      firstPostedDateTo: '',
+      resultsFirstPostedDateFrom: '',
+      resultsFirstPostedDateTo: '',
+      lastUpdatePostedDateFrom: '',
+      lastUpdatePostedDateTo: '',
     });
     this.formRef.current.resetFields();
   }
 
   handleInputChange(e) {
     const { target } = e;
-    const value = target.inputType === 'checkbox' ? target.checked : target.value;
+    const value = target.type === 'checkbox' ? target.checked : target.value;
     const { name } = target;
 
     this.setState({
@@ -130,7 +173,6 @@ class SearchForm extends Component {
 
   handleCountryChange(e) {
     if (e === 'United States') {
-      this.state.showState = true;
       this.setState({
         showState: true,
         showCityDistance: true,
@@ -182,20 +224,56 @@ class SearchForm extends Component {
   }
 
   handleTypeChange(e) {
+    let type = '';
+    if (e === 'Interventional Studies (Clinical Trials)') {
+      type = 'Interventional';
+    }
+    if (e === 'Observational Studies') {
+      type = 'Observational';
+    }
+    if (e === 'Patient Registries') {
+      type = 'Patient Registry';
+    }
+    if (e === 'Expanded Access Studies') {
+      type = 'Expanded Access';
+    }
     this.setState({
-      type: e,
+      type,
     });
   }
 
   handleSexChange(e) {
+    let sexSelection = 'All';
+    if (e === 'Only Female Participants') {
+      sexSelection = 'Female';
+    }
+    if (e === 'Only Male Participants') {
+      sexSelection = 'Male';
+    }
     this.setState({
-      sex: e,
+      sex: sexSelection,
     });
   }
 
   handleAgeGroupChange(e) {
+    let minAge = 0;
+    let maxAge = 100;
+    const lastItem = e.slice(-1)[0];
+    if (e[0] === 'Adult (18-64)') {
+      minAge = 18;
+    }
+    if (e[0] === 'Older Adult (65+)') {
+      minAge = 65;
+    }
+    if (lastItem === 'Adult (18-64)') {
+      maxAge = 64;
+    }
+    if (lastItem === 'Child (birth-17)') {
+      maxAge = 17;
+    }
     this.setState({
-      ageGroup: e,
+      minAge,
+      maxAge,
     });
   }
 
@@ -223,6 +301,81 @@ class SearchForm extends Component {
     });
   }
 
+  handleFunderChange(e) {
+    let funderType;
+    if (e === 'Other U.S. Federal agency') {
+      funderType = 'U.S. Fed';
+    } else if (e === 'All others (individuals, universities, organizations)') {
+      funderType = 'Other';
+    } else {
+      funderType = this.state.studyFunderType;
+    }
+    this.setState({
+      studyFunderType: funderType,
+    });
+  }
+
+  handleDocumentsChange(e) {
+    let documentType = 'Study Protocol';
+    if (e === 'Statistical Analysis Plans (SAPs)') {
+      documentType = 'Statistical Analysis Plan';
+    }
+    if (e === 'Informed Consent Forms (ICFs)') {
+      documentType = 'Informed Consent Forms';
+    }
+    this.setState({
+      studyDocumentType: documentType,
+    });
+  }
+
+  handleSubmissionChange(e) {
+    let resultsSubmitted = 'Not Submitted';
+    if (e === 'Submitted, QC review not concluded') {
+      resultsSubmitted = 'Submitted';
+    }
+    if (e === 'Submitted with QC comments available') {
+      resultsSubmitted = 'QC Done';
+    }
+    this.setState({
+      studyResultsSubmitted: resultsSubmitted,
+    });
+  }
+
+  handleStartDateChange(e) {
+    this.setState({
+      startDateFrom: e[0].format('YYYY-MM-DD'),
+      startDateTo: e[1].format('YYYY-MM-DD'),
+    });
+  }
+
+  handlePrimaryCompletionDateChange(e) {
+    this.setState({
+      primaryCompletionDateFrom: e[0].format('YYYY-MM-DD'),
+      primaryCompletionDateTo: e[1].format('YYYY-MM-DD'),
+    });
+  }
+
+  handleFirstPostedDateChange(e) {
+    this.setState({
+      firstPostedDateFrom: e[0].format('YYYY-MM-DD'),
+      firstPostedDateTo: e[1].format('YYYY-MM-DD'),
+    });
+  }
+
+  handleResultsFirstPostedDateChange(e) {
+    this.setState({
+      resultsFirstPostedDateFrom: e[0].format('YYYY-MM-DD'),
+      resultsFirstPostedDateTo: e[1].format('YYYY-MM-DD'),
+    });
+  }
+
+  handleLastUpdatePostedDateChange(e) {
+    this.setState({
+      lastUpdatePostedDateFrom: e[0].format('YYYY-MM-DD'),
+      lastUpdatePostedDateTo: e[1].format('YYYY-MM-DD'),
+    });
+  }
+
   async handleSearch() {
     const payload = {
       status: this.state.status,
@@ -236,33 +389,33 @@ class SearchForm extends Component {
       modality: this.state.modality,
       sponsor: this.state.sponsor,
       phase: this.state.phase,
-      start_date_from: '',
-      start_date_to: '',
-      primary_completion_date_from: '',
-      primary_completion_date_to: '',
-      first_posted_date_from: '',
-      first_posted_date_to: '',
-      results_first_posted_date_from: '',
-      results_first_posted_date_to: '',
-      last_update_posted_date_from: '',
-      last_update_posted_date_to: '',
+      start_date_from: this.state.startDateFrom,
+      start_date_to: this.state.startDateTo,
+      primary_completion_date_from: this.state.primaryCompletionDateFrom,
+      primary_completion_date_to: this.state.primaryCompletionDateTo,
+      first_posted_date_from: this.state.firstPostedDateFrom,
+      first_posted_date_to: this.state.firstPostedDateTo,
+      results_first_posted_date_from: this.state.resultsFirstPostedDateFrom,
+      results_first_posted_date_to: this.state.resultsFirstPostedDateTo,
+      last_update_posted_date_from: this.state.lastUpdatePostedDateFrom,
+      last_update_posted_date_to: this.state.lastUpdatePostedDateTo,
       study_results: this.state.results,
       study_type: this.state.type,
       eligibility_age: this.state.age,
-      eligibility_min_age: this.state.ageGroup,
-      eligibility_max_age: this.state.ageGroup,
+      eligibility_min_age: this.state.minAge,
+      eligibility_max_age: this.state.maxAge,
       eligibility_gender: this.state.sex,
       eligibility_ethnicity: this.state.ethnicity,
       eligibility_condition: '',
-      eligibility_healthy_volunteer: this.state.healthy,
+      eligibility_healthy_volunteer: this.state.healthy === true ? 'Accepts Healthy Volunteers' : '',
       study_title_acronym: this.state.title,
-      study_outcome_measure: '',
-      study_collaborator: '',
-      study_ids: '',
-      study_location_terms: this.state.location_terms,
-      study_funder_type: '',
-      study_document_type: '',
-      study_results_submitted: '',
+      study_outcome_measure: this.state.studyOutcomeMeasure,
+      study_collaborator: this.state.studyCollaborator,
+      study_ids: this.state.studyIds,
+      study_location_terms: this.state.locationTerms,
+      study_funder_type: this.state.studyFunderType,
+      study_document_type: this.state.studyDocumentType,
+      study_results_submitted: this.state.studyResultsSubmitted,
       study_roa: this.state.roa,
       state: this.state.state,
       city: this.state.city,
@@ -273,6 +426,7 @@ class SearchForm extends Component {
       last: 100,
       metadata_required: true,
     };
+
     try {
       const response = await ctgov.post('search_studies', payload);
       this.setState({
@@ -387,6 +541,19 @@ class SearchForm extends Component {
           access={access}
           recruitment={recruitment}
           handleInputChange={this.handleInputChange}
+          handleDatePickers={{
+            'range-study-start': this.handleStartDateChange,
+            'range-primary-completion': this.handlePrimaryCompletionDateChange,
+            'range-first-posted': this.handleFirstPostedDateChange,
+            'range-results-first-posted': this.handleResultsFirstPostedDateChange,
+            'range-last-update-posted': this.handleLastUpdatePostedDateChange,
+          }}
+          handleSelectChange={{
+            handleFunderChange: this.handleFunderChange,
+            handleDocumentsChange: this.handleDocumentsChange,
+            handleSubmissionChange: this.handleSubmissionChange,
+
+          }}
         />
       );
     } else {
@@ -664,7 +831,7 @@ class SearchForm extends Component {
                 key="field-location-terms"
                 label="Location Terms"
                 title="In the search feature, the Location terms field is used to narrow a search by location-related terms other than Country, State, and City or distance. For example, you may enter a specific facility name (such as National Institutes of Health Clinical Center) or a part of a facility name (such as Veteran for studies listing Veterans Hospital or Veteran Affairs in the facility name). Note: Not all study records include this level of detail about locations."
-                name="nct_id"
+                name="locationTerms"
                 handleInputChange={this.handleInputChange}
               />
             </Col>
