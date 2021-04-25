@@ -7,13 +7,7 @@ import image from './icon-json-search.png';
 class SearchConfigDownload extends Component {
   static downloadSearchConfig(payload) {
     FileDownload(JSON.stringify(payload), 'search-config.json');
-    console.log(payload);
   }
-
-  // constructor(props) {
-  //   super(props);
-  //   this.downloadSearchConfig = this.downloadSearchConfig.bind(this);
-  // }
 
   render() {
     const {

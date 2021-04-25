@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import SearchConfigDownload from '../../downloads/SearchConfigDownload/SearchConfigDownload';
 import TrialsCSVDownload from '../../downloads/TrialsCSVDownload/TrialsCSVDownload';
 import TrialsJSONDownload from '../../downloads/TrialsJSONDownload/TrialsJSONDownload';
-import EndpointReportDownload from '../../downloads/EndpointReportDownload/EndpointReportDownload';
+import EndpointsReportDownload from '../../downloads/EndpointsReportDownload/EndpointsReportDownload';
 
 import './DownloadModal.css';
 
@@ -46,7 +46,7 @@ class DownloadModal extends Component {
             <SearchConfigDownload payload={payload} />
           </Col>
           <Col key="col-downloads-4" span={12}>
-            <EndpointReportDownload />
+            <EndpointsReportDownload />
           </Col>
         </Row>
       </Modal>
