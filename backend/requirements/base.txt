@@ -7,7 +7,11 @@
 asgiref==3.3.4
     # via django
 certifi==2020.12.5
-    # via elasticsearch
+    # via
+    #   elasticsearch
+    #   requests
+chardet==4.0.0
+    # via requests
 django-cors-headers==3.7.0
     # via -r ../backend/requirements/base.in
 django-elasticsearch-dsl==7.1.4
@@ -42,6 +46,8 @@ elasticsearch==7.12.0
     # via
     #   django-elasticsearch-dsl-drf
     #   elasticsearch-dsl
+idna==2.10
+    # via requests
 psycopg2-binary==2.8.6
     # via -r ../backend/requirements/base.in
 python-dateutil==2.8.1
@@ -50,6 +56,8 @@ python-dotenv==0.17.0
     # via -r ../backend/requirements/base.in
 pytz==2021.1
     # via django
+requests==2.25.1
+    # via -r ../backend/requirements/base.in
 six==1.15.0
     # via
     #   django-elasticsearch-dsl
@@ -59,4 +67,6 @@ six==1.15.0
 sqlparse==0.4.1
     # via django
 urllib3==1.26.4
-    # via elasticsearch
+    # via
+    #   elasticsearch
+    #   requests

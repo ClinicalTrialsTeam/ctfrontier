@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 from os import getenv
+import requests
 
 PROD = True if getenv("MODE") == "prod" else False
 
@@ -29,6 +30,14 @@ DEBUG = False if PROD else True
 
 if PROD:
     ALLOWED_HOSTS = [f".{getenv('SITE_DOMAIN')}"]
+
+    # Get IP address of load balancer to allow load balancer health checks
+    ecs_metadata_endpoint = getenv("ECS_CONTAINER_METADATA_URI_V4")
+    r = requests.get(ecs_metadata_endpoint)
+    r.raise_for_status
+    for network in r.json()["Networks"]:
+        if network["NetworkMode"] == "awsvpc":
+            ALLOWED_HOSTS.extend(network["IPv4Addresses"])
 else:
     ALLOWED_HOSTS = ["django"]
 

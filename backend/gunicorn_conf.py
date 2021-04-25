@@ -9,7 +9,7 @@ web_concurrency_str = os.getenv("WEB_CONCURRENCY", None)
 host = os.getenv("HOST", "0.0.0.0")
 port = os.getenv("PORT", "80")
 bind_env = os.getenv("BIND", None)
-use_loglevel = os.getenv("LOG_LEVEL", "info")
+use_loglevel = os.getenv("LOG_LEVEL", "debug")
 if bind_env:
     use_bind = bind_env
 else:
@@ -30,6 +30,7 @@ workers = web_concurrency
 bind = use_bind
 keepalive = 120
 errorlog = "-"
+accesslog = "-"
 
 # For debugging and testing
 log_data = {
