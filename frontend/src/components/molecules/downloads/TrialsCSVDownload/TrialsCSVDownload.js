@@ -13,7 +13,6 @@ class TrialsCSVDownload extends Component {
       ...data.map((row) => { return header.map((fieldName) => { return JSON.stringify(row[fieldName], replacer); }).join(','); }),
     ].join('\r\n');
 
-    console.log(csv);
     FileDownload(csv, 'trials.csv');
   }
 
