@@ -6,7 +6,7 @@ site.addsitedir(join(dirname(dirname(__file__)), "lib"))
 import json
 import click
 import subprocess
-from lib import aws, names
+from lib import aws, names, environment
 from .common import profile_arg, run_command
 
 
@@ -21,7 +21,11 @@ def container():
 
 @container.command("build.frontend")
 def build_frontend():
-    build_docker_image(names.FRONTEND_REPOSITORY, FRONTEND_PATH)
+    build_docker_image(
+        names.FRONTEND_REPOSITORY,
+        FRONTEND_PATH,
+        additional_args=f"--build-arg REACT_APP_API_BASE_URL={environment.Param('site_domain').get_value()}",
+    )
 
 
 @container.command("build.backend")
@@ -67,10 +71,10 @@ def __get_image_id(image_uri, running=False):
     return p.communicate()[0].decode()
 
 
-def build_docker_image(repository, dockerfile_folder):
+def build_docker_image(repository, dockerfile_folder, additional_args=""):
     image_uri = __get_image_uri(repository)
     # Build docker image
-    cmd = f"docker build -t {image_uri} {dockerfile_folder}"
+    cmd = f"docker build -t {image_uri} {dockerfile_folder} {additional_args}"
     click.echo(cmd)
     r = subprocess.run(cmd.split())
     if r.returncode != 0:

@@ -28,7 +28,7 @@ SECRET_KEY = getenv("DJANGO_SECRET")
 DEBUG = False if PROD else True
 
 if PROD:
-    ALLOWED_HOSTS = [getenv("SITE_DOMAIN")]
+    ALLOWED_HOSTS = [f".{getenv('SITE_DOMAIN')}"]
 else:
     ALLOWED_HOSTS = ["django"]
 
@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "ctgov",
     "corsheaders",
+    "health_check",
     "django_elasticsearch_dsl",
     "django_elasticsearch_dsl_drf",
 ]
@@ -67,10 +68,18 @@ MIDDLEWARE = [
 
 CORS_ALLOW_CREDENTIALS = True
 
-# Whitelist the dev frontend
+# Whitelist the frontend
 CORS_ORIGIN_WHITELIST = ["http://localhost:3000"]
 
 ROOT_URLCONF = "core.urls"
+
+REST_FRAMEWORK = {
+    "DEFAULT_THROTTLE_CLASSES": [
+        "rest_framework.throttling.AnonRateThrottle",
+        "rest_framework.throttling.UserRateThrottle",
+    ],
+    "DEFAULT_THROTTLE_RATES": {"anon": "100/day", "user": "1000/day"},
+}
 
 TEMPLATES = [
     {

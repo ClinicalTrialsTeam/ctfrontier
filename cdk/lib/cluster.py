@@ -14,6 +14,7 @@ class CtfCluster(core.Construct):
         id: str,
         cluster_name,
         vpc,
+        backend_sg,
         preferred_az,
     ):
         super().__init__(scope, id)
@@ -24,10 +25,10 @@ class CtfCluster(core.Construct):
             cluster_name=cluster_name,
             vpc=vpc,
         )
-        # self.cluster.add_default_cloud_map_namespace(name="service.local")
+        self.cluster.add_default_cloud_map_namespace(name="service.local")
         self.cluster.apply_removal_policy(core.RemovalPolicy.DESTROY)
 
-        self.cluster.add_capacity(
+        auto_scaling_group = self.cluster.add_capacity(
             "CtfAutoScaling",
             instance_type=ec2.InstanceType("t2.micro"),
             machine_image_type=ecs.MachineImageType.AMAZON_LINUX_2,
@@ -40,6 +41,8 @@ class CtfCluster(core.Construct):
                 subnet_type=ec2.SubnetType.PUBLIC,
             ),
         )
+
+        auto_scaling_group.add_security_group(backend_sg)
 
         core.CfnOutput(
             self,

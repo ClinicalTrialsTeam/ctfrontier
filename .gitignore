@@ -5,6 +5,8 @@ clinical_trials.zip
 database/data
 **.pem
 **.key
+**.crt
+**.csr
 
 __pycache__
 

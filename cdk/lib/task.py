@@ -13,7 +13,6 @@ class CtfFrontendTaskDefinition(core.Construct):
         scope: core.Construct,
         id: str,
         port,
-        environment,
     ):
 
         super().__init__(scope, id)
@@ -26,7 +25,6 @@ class CtfFrontendTaskDefinition(core.Construct):
             memory_limit_mib=1024,
         )
 
-        environment["LOCALDOMAIN"] = "service.local"
         self.task.add_container(
             "FrontendContainer",
             image=ecs.ContainerImage.from_ecr_repository(
@@ -37,7 +35,7 @@ class CtfFrontendTaskDefinition(core.Construct):
                 )
             ),
             essential=True,
-            environment=environment,
+            environment={"LOCALDOMAIN": "service.local"},
             logging=ecs.LogDrivers.aws_logs(
                 stream_prefix="FrontendContainer",
                 log_retention=logs.RetentionDays.ONE_WEEK,
@@ -51,7 +49,6 @@ class CtfBackendTaskDefinition(core.Construct):
         self,
         scope: core.Construct,
         id: str,
-        port,
         environment,
     ):
 
@@ -82,5 +79,5 @@ class CtfBackendTaskDefinition(core.Construct):
                 stream_prefix=container_id,
                 log_retention=logs.RetentionDays.ONE_WEEK,
             ),
-            port_mappings=[ecs.PortMapping(container_port=port)],
+            port_mappings=[ecs.PortMapping(container_port=80)],
         )

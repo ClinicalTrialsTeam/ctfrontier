@@ -14,7 +14,8 @@ class CtfLoadBalancer(core.Construct):
         site_domain,
         vpc,
         sg,
-        load_balancer_target,
+        frontend_target,
+        backend_target,
     ):
         super().__init__(scope, id)
 
@@ -35,12 +36,22 @@ class CtfLoadBalancer(core.Construct):
 
         lb.apply_removal_policy(core.RemovalPolicy.DESTROY)
 
-        target_group = elb.ApplicationTargetGroup(
+        frontend_target_group = elb.ApplicationTargetGroup(
             self,
-            "TargetGroup",
+            "FrontendTargetGroup",
             port=80,
             protocol=elb.ApplicationProtocol.HTTP,
-            targets=[load_balancer_target],
+            targets=[frontend_target],
+            vpc=vpc,
+        )
+
+        backend_target_group = elb.ApplicationTargetGroup(
+            self,
+            "BackendTargetGroup",
+            port=80,
+            protocol=elb.ApplicationProtocol.HTTP,
+            health_check=elb.HealthCheck(path="/ctgov/api/healthz", port="80"),
+            targets=[backend_target],
             vpc=vpc,
         )
 
@@ -55,12 +66,33 @@ class CtfLoadBalancer(core.Construct):
             ),
         )
 
-        lb.add_listener(
+        https_listener = lb.add_listener(
             "CtfHttpsListener",
             port=443,
             certificates=[certificate],
             protocol=elb.Protocol.HTTPS,
-            default_target_groups=[target_group],
+            default_target_groups=[
+                frontend_target_group,
+                backend_target_group,
+            ],
+        )
+
+        https_listener.add_action(
+            "CtfFrontendRule",
+            action=elb.ListenerAction.forward(
+                target_groups=[frontend_target_group]
+            ),
+        )
+
+        https_listener.add_action(
+            "CtfApiRule",
+            priority=10,
+            action=elb.ListenerAction.forward(
+                target_groups=[backend_target_group]
+            ),
+            conditions=[
+                elb.ListenerCondition.path_patterns(values=["/ctgov/api/*"])
+            ],
         )
 
         sg.add_ingress_rule(

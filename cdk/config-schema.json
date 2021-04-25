@@ -5,9 +5,6 @@
     "notification_email": {
         "type": "String"
     },
-    "ctfrontier_api_url": {
-        "type": "String"
-    },
     "django_secret": {
         "type": "SecureString"
     },

@@ -31,8 +31,8 @@ class CtfDatabase(core.Construct):
             security_groups=[sg],
             availability_zone=preferred_az,
             storage_encrypted=False,  # db.t2.micro does not support encryption at rest
-            allocated_storage=20,
-            backup_retention=core.Duration.days(1),
+            allocated_storage=30,
+            backup_retention=core.Duration.days(0),
             delete_automated_backups=True,
             removal_policy=core.RemovalPolicy.SNAPSHOT,
         )

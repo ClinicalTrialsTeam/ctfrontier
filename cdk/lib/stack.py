@@ -25,7 +25,6 @@ class CtStack(core.Stack):
         id: str,
         site_domain,
         notification_email,
-        ctfrontier_api_url,
         django_secret,
         db_host,
         db_password,
@@ -76,16 +75,10 @@ class CtStack(core.Stack):
         )
 
         vpc = ec2.Vpc(self, "CtfVPC", max_azs=2)
-        frontend_sg = ec2.SecurityGroup(
+        site_sg = ec2.SecurityGroup(
             self,
             "CtfFrontendSecurityGroup",
             allow_all_outbound=True,
-            vpc=vpc,
-        )
-        backend_sg = ec2.SecurityGroup(
-            self,
-            "CtfBackendSecurityGroup",
-            allow_all_outbound=False,
             vpc=vpc,
         )
         database_sg = ec2.SecurityGroup(
@@ -101,6 +94,7 @@ class CtStack(core.Stack):
             "CtfCluster",
             names.CLUSTER,
             vpc,
+            site_sg,
             preferred_az,
         )
 
@@ -109,40 +103,27 @@ class CtStack(core.Stack):
             self,
             "FrontendTask",
             frontend_port,
-            {
-                "REACT_APP_API_BASE_URL": ctfrontier_api_url,
-            },
         )
         frontend_service = CtfFrontendService(
             self,
             "CtfFrontendService",
             ecs_cluster.cluster,
             frontend_task.task,
-            frontend_sg,
+            site_sg,
             preferred_az,
             port=frontend_port,
         )
 
-        CtfLoadBalancer(
-            self,
-            "CtfLoadBalancer",
-            site_domain,
-            vpc,
-            frontend_sg,
-            load_balancer_target=frontend_service.service,
-        )
-
-        backend_port = 8000
         backend_task = CtfBackendTaskDefinition(
             self,
             "BackendTask",
-            backend_port,
             {
                 "MODE": "prod",
                 "DJANGO_SECRET": django_secret,
                 "DB_HOST": db_host,
                 "DB_PORT": "5432",
                 "DB_PASSWORD": db_password,
+                "SITE_DOMAIN": site_domain,
             },
         )
         backend_service = CtfBackendService(
@@ -150,10 +131,19 @@ class CtStack(core.Stack):
             "CtfBackendService",
             ecs_cluster.cluster,
             backend_task.task,
-            backend_sg,
+            site_sg,
             preferred_az,
             frontend_service,
-            backend_port,
+        )
+
+        CtfLoadBalancer(
+            self,
+            "CtfLoadBalancer",
+            site_domain,
+            vpc,
+            site_sg,
+            frontend_target=frontend_service.service,
+            backend_target=backend_service.service,
         )
 
         CtfDatabase(

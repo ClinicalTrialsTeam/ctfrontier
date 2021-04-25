@@ -22,8 +22,8 @@ ETL_DOWNLOAD_FUNCTION = "etl-download"
 
 FRONTEND_IMAGE = "ctf-frontend"
 
-DATABASE = "ctfdatabase"
-DATABASE_INSTANCE = "ctf-postgres-db-instance"
+DATABASE = "aact"
+DATABASE_INSTANCE = "ctf-db-instance"
 
 FUNCTIONS = [ETL_DOWNLOAD_FUNCTION]
 

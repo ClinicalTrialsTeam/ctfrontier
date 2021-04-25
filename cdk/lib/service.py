@@ -29,7 +29,7 @@ class CtfFrontendService(core.Construct):
             security_groups=[sg],
             vpc_subnets=ec2.SubnetSelection(availability_zones=[preferred_az]),
             cluster=cluster,
-            # cloud_map_options=ecs.CloudMapOptions(name="frontend"),
+            cloud_map_options=ecs.CloudMapOptions(name="frontend"),
             desired_count=1,
             task_definition=task_definition,
             circuit_breaker=ecs.DeploymentCircuitBreaker(rollback=True),
@@ -62,7 +62,6 @@ class CtfBackendService(core.Construct):
         sg,
         preferred_az,
         frontend_service,
-        port,
     ):
         super().__init__(scope, id)
 
@@ -74,12 +73,19 @@ class CtfBackendService(core.Construct):
             security_groups=[sg],
             vpc_subnets=ec2.SubnetSelection(availability_zones=[preferred_az]),
             cluster=cluster,
+            cloud_map_options=ecs.CloudMapOptions(name="backend"),
             task_definition=task_definition,
             circuit_breaker=ecs.DeploymentCircuitBreaker(rollback=True),
         )
 
-        self.service.connections.allow_from(
-            frontend_service.service, ec2.Port.tcp(port)
+        self.service.connections.allow_from_any_ipv4(ec2.Port.tcp(80))
+
+        # self.service.connections.allow_from(
+        #     frontend_service.service, ec2.Port.tcp(80)
+        # )
+
+        self.service.connections.allow_from_any_ipv4(
+            ec2.Port.tcp(443), "django inbound https"
         )
 
         # Export backend service name
