@@ -41,6 +41,8 @@ class ListViewTable extends Component {
       isDashboardModalVisible: false,
       isTimelineModalVisible: false,
       isDownloadModalVisible: false,
+      searchData: this.props.history.location.state.data,
+      payload: this.props.history.location.state.payload,
     };
   }
 
@@ -97,6 +99,8 @@ class ListViewTable extends Component {
   }
 
   setDownloadModalVisible(isDownloadModalVisible) {
+    console.log(this.state.searchData);
+    console.log(this.state.payload);
     this.setState({
       isDownloadModalVisible,
     });
@@ -223,7 +227,8 @@ class ListViewTable extends Component {
                       />
                       <DownloadModal
                         isModalVisible={this.state.isDownloadModalVisible}
-                        data={dataPlaceholder}
+                        data={this.state.searchData}
+                        payload={this.state.payload}
                         handleOk={() => {
                           return this.setDownloadModalVisible(false, '');
                         }}
