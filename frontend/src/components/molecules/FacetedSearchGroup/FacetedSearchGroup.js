@@ -100,7 +100,7 @@ class FacetedSearchGroup extends Component {
         <Form
           layout="vertical"
         >
-          <Collapse defaultActiveKey={['1']} className="fs-group-collapse">
+          <Collapse defaultActiveKey={['1', 'facet-eligibility']} className="fs-group-collapse">
             <Panel
               key="1"
               header="Status"
