@@ -37,15 +37,6 @@ class TrialsCSVDownload extends Component {
   }
 }
 
-// const TrialsCSVDownload = () => {
-//   return (
-//     <>
-//       <img className="download-icon" src={image} alt="icon" />
-//       <Button className="download-button" type="primary">Save Search Results</Button>
-//     </>
-//   );
-// };
-
 TrialsCSVDownload.propTypes = {
   data: PropTypes.object.isRequired,
 };
