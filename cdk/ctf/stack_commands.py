@@ -11,7 +11,6 @@ from botocore.exceptions import ClientError
 import subprocess
 from pprint import pprint
 from .common import run_cdk_command, run_command, profile_arg
-from .function_commands import build_lambda_package, function_deploy
 from .container_commands import (
     build_frontend,
     build_backend,
@@ -57,8 +56,6 @@ def stack_create(ctx):
     push_docker_image(names.BACKEND_REPOSITORY)
 
     try:
-        # Must put lambas in S3 before deploying
-        build_lambda_package(ctx, func=names.ETL_DOWNLOAD_FUNCTION)
         ctx.invoke(stack_update)
     except Exception as e:
         click.secho(f"Error creating stack: {e}", fg="red")
@@ -72,9 +69,6 @@ def stack_update(ctx, update_functions=False):
     Update the existing CloudFormation stack
     """
     run_cdk_command("deploy")
-
-    if update_functions:
-        ctx.invoke(function_deploy)
 
 
 @stack.command("outputs")
@@ -132,14 +126,6 @@ Private functions
 
 
 def __bootstrap_custom():
-
-    # Create S3 bucket to store lambda code
-    cmd = (
-        f"aws {profile_arg()} s3api create-bucket "
-        f"--bucket {names.LAMBDA_CODE_BUCKET}"
-    )
-    run_command(cmd)
-
     # Create ECR repositories
     tags = ""
     for tag in aws.STACK_TAGS:
@@ -173,14 +159,6 @@ def __bootstrap_custom():
 
 
 def __delete_bootstrap_custom():
-    # Clear lambda code S3 bucket and delete the bucket
-    __empty_s3_bucket(names.LAMBDA_CODE_BUCKET)
-    cmd = (
-        f"aws {profile_arg()} s3api delete-bucket "
-        f"--bucket {names.LAMBDA_CODE_BUCKET}"
-    )
-    run_command(cmd)
-
     for repo in names.REPOSITORIES:
         # Find and all ECR repository images
         cmd = (

@@ -6,7 +6,6 @@ site.addsitedir(join(dirname(dirname(__file__)), "lib"))
 import click
 from .stack_commands import stack
 from .config_commands import config
-from .function_commands import function
 from .docker_commands import docker
 from .container_commands import container
 
@@ -18,6 +17,5 @@ def cli():
 
 cli.add_command(stack)
 cli.add_command(config)
-cli.add_command(function)
 cli.add_command(docker)
 cli.add_command(container)
