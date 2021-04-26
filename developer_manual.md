@@ -2,6 +2,9 @@
 
 CTFrontier Team Members: Balaji Ragupathi, Bry Power, Elena Arens, Mike Blanchard, Stephen Thompson, Natalie Mona Matthews
 
+* [Local Setup](#ctfrontier-local-setup)
+* [Cloud Setup](#ctfrontier-cloud-setup)
+
 ## Overview
 
 **Github link:** <https://github.com/ClinicalTrialsTeam/ctfrontier>

@@ -23,9 +23,6 @@ RUN apk add --no-cache --virtual .build-deps gcc musl-dev libc-dev \
     && pip install --no-cache-dir -r requirements/base.txt \
     && apk del .build-deps gcc libc-dev
 
-COPY ./entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
-
 COPY ./start.sh /start.sh
 RUN chmod +x /start.sh
 
@@ -35,8 +32,4 @@ ENV PYTHONPATH=/app
 
 EXPOSE 80
 
-ENTRYPOINT ["/entrypoint.sh"]
-
-# Run the start script, it will check for an /app/prestart.sh script (e.g. for migrations)
-# And then will start Gunicorn with Meinheld
 CMD ["/start.sh"]

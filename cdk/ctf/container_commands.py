@@ -99,7 +99,8 @@ def push_docker_image(repository):
     r = subprocess.run(cmd.split())
     if r.returncode != 0:
         click.secho(
-            "Error pushing docker image. Try `ctf docker login` ?",
+            "Error pushing docker image. Try `ctf docker login` "
+            "and then retry command?",
             fg="red",
         )
         raise click.Abort()
