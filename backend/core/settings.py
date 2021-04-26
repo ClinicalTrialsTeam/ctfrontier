@@ -39,7 +39,7 @@ if PROD:
         if network["NetworkMode"] == "awsvpc":
             ALLOWED_HOSTS.extend(network["IPv4Addresses"])
 else:
-    ALLOWED_HOSTS = ["django"]
+    ALLOWED_HOSTS = ["django", "localhost"]
 
 # Elastic Search
 # https://django-elasticsearch-dsl.readthedocs.io/en/latest/quickstart.html
