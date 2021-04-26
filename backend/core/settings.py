@@ -77,8 +77,9 @@ MIDDLEWARE = [
 
 CORS_ALLOW_CREDENTIALS = True
 
-# Whitelist the frontend
-CORS_ORIGIN_WHITELIST = ["http://localhost:3000"]
+# Whitelist the dev frontend
+if not PROD:
+    CORS_ORIGIN_WHITELIST = ["http://localhost:3000"]
 
 ROOT_URLCONF = "core.urls"
 
