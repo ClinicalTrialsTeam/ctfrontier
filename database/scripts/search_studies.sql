@@ -74,7 +74,9 @@ SELECT
 	A.is_unapproved_device,
 	A.results_first_submitted_qc_date results_submitted_qc_not_done,
 	A.results_first_posted_date results_submitted_qc_done,
-	A.acronym
+	A.acronym,
+	O.names city_name,
+	P.names state_name
 FROM 
 	studies A
 LEFT JOIN all_conditions B
@@ -103,4 +105,8 @@ LEFT JOIN all_id_information M
 	ON A.nct_id = M.nct_id
 LEFT JOIN all_documents N
 	ON A.nct_id = N.nct_id
+LEFT JOIN all_cities O
+	ON A.nct_id = O.nct_id
+LEFT JOIN all_states P
+	ON A.nct_id = P.nct_id
 ORDER BY A.start_date;
