@@ -37,37 +37,3 @@ RUN sudo apk add --no-cache --virtual .build-deps gcc musl-dev \
     && pip-compile requirements/base.in \
     && pip install --no-cache-dir -r requirements/base.txt \
     && sudo apk del .build-deps
-
-#CMD ["python", "manage.py" "migrate", "&&", "nginx", "-c", "nginx.conf", "-g", "daemon off;"]
-
-# Run uwsgi server
-# FROM base as build
-# EXPOSE 8000
-# CMD python manage.py migrate\ 
-#   && uwsgi \
-#   --plugins-dir /usr/lib/uwsgi/ \
-#   --need-plugin python --plugins-list \
-#   --ini uwsgi.ini \
-#   --show-config
-
-# CMD uwsgi \
-#   --plugins-dir /usr/lib/uwsgi/ \
-#   --need-plugin python --plugins-list \
-#   --ini uwsgi.ini \
-#   --show-config
-
-
-
-
-#uwsgi --shared-socket 0.0.0.0:443 --uid roberto --gid roberto --https =0,foobar.crt,foobar.key
-
-
-# # production environment
-FROM tiangolo/uwsgi-nginx:python3.8-alpine
-EXPOSE 80
-COPY --from=base /usr/src/app /usr/src/app
-ENV UWSGI_INI /usr/src/app/uwsgi.ini
-WORKDIR /usr/src/app
-# CMD ["nginx", "-c", "nginx.conf", "-g", "daemon off;"]
-
-
