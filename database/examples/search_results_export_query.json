@@ -39,8 +39,5 @@
 	"study_roa":"Oral, Intradermal, Intravenous",
 	"condition_terms":"",
 	"city":"",
-	"state":"",
-	"first":"",
-	"last":"",
-	"metadata_required":"True"
+	"state":""
 }
