@@ -23,7 +23,7 @@ services:
       - DB_PORT=5432
     build: 
       context: ./backend
-      target: base
+      dockerfile: Dockerfile.dev
     container_name: django
     working_dir: /usr/src/app
     volumes:

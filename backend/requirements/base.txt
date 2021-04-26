@@ -6,6 +6,8 @@
 #
 asgiref==3.3.4
     # via django
+autopep8==1.5.6
+    # via django-silk
 certifi==2020.12.5
     # via
     #   elasticsearch
@@ -13,6 +15,8 @@ certifi==2020.12.5
 chardet==4.0.0
     # via requests
 django-cors-headers==3.7.0
+    # via -r requirements/base.in
+django-debug-toolbar==3.2.1
     # via -r requirements/base.in
 django-elasticsearch-dsl==7.1.4
     # via
@@ -24,13 +28,17 @@ django-health-check==3.16.4
     # via -r requirements/base.in
 django-nine==0.2.4
     # via django-elasticsearch-dsl-drf
+django-silk==4.1.0
+    # via -r requirements/base.in
 django==3.2
     # via
     #   -r requirements/base.in
     #   django-cors-headers
+    #   django-debug-toolbar
     #   django-filter
     #   django-health-check
     #   django-nine
+    #   django-silk
     #   djangorestframework
 django_elasticsearch_dsl_drf==0.21
     # via -r requirements/base.in
@@ -46,26 +54,50 @@ elasticsearch==7.12.0
     # via
     #   django-elasticsearch-dsl-drf
     #   elasticsearch-dsl
+gprof2dot==2021.2.21
+    # via django-silk
 idna==2.10
     # via requests
+jinja2==2.11.3
+    # via django-silk
+markupsafe==1.1.1
+    # via jinja2
 psycopg2-binary==2.8.6
     # via -r requirements/base.in
+pycodestyle==2.7.0
+    # via autopep8
+pygments==2.8.1
+    # via django-silk
 python-dateutil==2.8.1
-    # via elasticsearch-dsl
+    # via
+    #   django-silk
+    #   elasticsearch-dsl
 python-dotenv==0.17.0
     # via -r requirements/base.in
-pytz==2021.1
-    # via django
-requests==2.25.1
+python-memcached==1.59
     # via -r requirements/base.in
+pytz==2021.1
+    # via
+    #   django
+    #   django-silk
+requests==2.25.1
+    # via
+    #   -r requirements/base.in
+    #   django-silk
 six==1.15.0
     # via
     #   django-elasticsearch-dsl
     #   django-elasticsearch-dsl-drf
     #   elasticsearch-dsl
     #   python-dateutil
+    #   python-memcached
 sqlparse==0.4.1
-    # via django
+    # via
+    #   django
+    #   django-debug-toolbar
+    #   django-silk
+toml==0.10.2
+    # via autopep8
 urllib3==1.26.4
     # via
     #   elasticsearch

@@ -29,14 +29,14 @@ USER $USER
 ENV PATH "$PATH:/home/django-user/.local/bin"
 
 # Install GCC (Alpine uses musl but we compile and link dependencies with GCC)
-RUN sudo apk add --no-cache --virtual .build-deps gcc musl-dev \
+RUN sudo apk add --no-cache --virtual .build-deps gcc musl-dev libc-dev \
     && sudo apk add uwsgi-python3 \
     && sudo apk add linux-headers \
     && sudo apk add postgresql-dev \
     && pip install --no-cache-dir pip-tools \
     && pip-compile requirements/base.in \
     && pip install --no-cache-dir -r requirements/base.txt \
-    && sudo apk del .build-deps
+    && sudo apk del .build-deps gcc libc-dev
 
 #CMD ["python", "manage.py" "migrate", "&&", "nginx", "-c", "nginx.conf", "-g", "daemon off;"]
 

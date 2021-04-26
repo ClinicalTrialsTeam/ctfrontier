@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.urls import path, include
 from django.contrib.auth.models import User
+import debug_toolbar
 from rest_framework import routers, serializers, viewsets
 
 
@@ -43,4 +44,6 @@ urlpatterns = [
         "api-auth/", include("rest_framework.urls", namespace="rest_framework")
     ),
     path("ctgov/", include("ctgov.urls")),
+    path("__debug__/", include(debug_toolbar.urls)),
+    path("silk/", include("silk.urls", namespace="silk")),
 ]

@@ -8,3 +8,6 @@ djangorestframework
 django-filter
 django-cors-headers
 django-health-check 
+django-debug-toolbar
+python-memcached
+django-silk

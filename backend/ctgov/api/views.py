@@ -1,3 +1,4 @@
+from django.views.decorators.cache import cache_page
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -65,6 +66,9 @@ class BriefSummariesListApiView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+cache_page(2000)
+
+
 # API to get list of contries where trials are conducted
 # This is for the front-end user interface control to display country drop-down
 class CountriesListApiView(APIView):
@@ -77,6 +81,9 @@ class CountriesListApiView(APIView):
         )
         serializer = CountriesSerializer(countries, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+cache_page(2000)
 
 
 # Define post action for the API call

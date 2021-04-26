@@ -39,12 +39,16 @@ if PROD:
         if network["NetworkMode"] == "awsvpc":
             ALLOWED_HOSTS.extend(network["IPv4Addresses"])
 else:
-    ALLOWED_HOSTS = ["django"]
+    ALLOWED_HOSTS = ["django", "localhost"]
 
 # Elastic Search
 # https://django-elasticsearch-dsl.readthedocs.io/en/latest/quickstart.html
 ELASTICSEARCH_DSL = {
     "default": {"hosts": "elasticsearch:9200"},
+}
+
+DEBUG_TOOLBAR_CONFIG = {
+    "SHOW_TOOLBAR_CALLBACK": lambda request: True,
 }
 
 # Application definition
@@ -62,9 +66,13 @@ INSTALLED_APPS = [
     "health_check",
     "django_elasticsearch_dsl",
     "django_elasticsearch_dsl_drf",
+    "debug_toolbar",
+    "silk",
 ]
 
 MIDDLEWARE = [
+    "silk.middleware.SilkyMiddleware",
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -74,6 +82,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
 
 CORS_ALLOW_CREDENTIALS = True
 
@@ -163,3 +172,11 @@ STATIC_URL = "/static/"
 # New in Django 3.2, customize type of auto-created primary keys
 # https://docs.djangoproject.com/en/3.2/releases/3.2/#customizing-type-of-auto-created-primary-keys
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
+
+INTERNAL_IPS = ["127.0.0.1"]
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+    }
+}
