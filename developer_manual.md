@@ -1,0 +1,283 @@
+# Clinical Trials Frontier Developer Manual
+
+CTFrontier Team Members: Balaji Ragupathi, Bry Power, Elena Arens, Mike Blanchard, Stephen Thompson, Natalie Mona Matthews
+
+## Overview
+
+**Github link:** <https://github.com/ClinicalTrialsTeam/ctfrontier>
+
+There are two options for running the CTFrontier application.
+
+1. The first option is to run CTFrontier locally using docker-compose. While these instructions may change as the project develops, they are expected to be fully functional at this point.
+1. The second option is to run CTFrontier on AWS infrastructure using the `ctf` CLI tool. This implementation is still under development. These instructions are in draft format and are not expected to be fully functional until the work is completed.
+
+## CTFrontier Local Setup
+
+### Setup: Prerequisites
+
+* Docker installed and running
+* Python 3.8
+* Node.js 15.12.0+
+
+
+### Setup: Prepare environment
+
+1. Clone the repo
+1. In the `backend` folder there is a file `example.env`. Copy this into a new `.env` file and fill it in (this .env file be in the "backend/core" folder). `DJANGO_SECRET` should be a value you get from running python `scripts/gen_random_key.py` `DB_PASSWORD` can be whatever you want.
+1. Before building your docker images, it might be a good idea to run `docker system prune -a` to clear some space in case you have any previous docker images laying around.
+1. Build the docker images `docker-compose build` (This may take a little while)
+
+### Setup: Load Data and run setup scripts
+
+**Download the data**
+
+1. Download `.zip` from [https://aact.ctti-clinicaltrials.org/snapshots](https://aact.ctti-clinicaltrials.org/snapshots)
+1. Save this `.zip` file in the project root directory `ctfrontier`. (You should also be in the project root directory in your terminal.)
+1. Unzip into `data` folder (`unzip <filename.zip> -d database/data`)
+
+**Load the data into the database**
+
+1. Start running the postgres container with `docker-compose up pgdb`.
+1. In a new terminal tab/window connect to postgres container. `docker exec -it --user postgres pgdb /bin/bash`
+1. Create the database `createdb aact`
+1. Restore the database from the `.dmp` file. `pg_restore -e -v -O -x -d aact --no-owner database/data/postgres_data.dmp`
+1. Start psql `psql`
+1. You should see the `postgres=#` prompt.
+1. Add ctgov schema to psql search path `alter role postgres in database aact set search_path = ctgov, public;`
+1. Connect to the aact database: `\c aact`
+1. If you run `\dt` you should see something like this...
+
+
+		                  List of relations
+		 Schema |            Name            | Type  |  Owner   
+		--------+----------------------------+-------+----------
+		 ctgov  | baseline_counts            | table | postgres
+		 ctgov  | baseline_measurements      | table | postgres
+		 ctgov  | brief_summaries            | table | postgres
+		 ctgov  | browse_conditions          | table | postgres
+		 ctgov  | browse_interventions       | table | postgres
+		 ctgov  | calculated_values          | table | postgres
+		 ctgov  | categories                 | table | postgres
+		 ctgov  | central_contacts           | table | postgres
+		 ctgov  | conditions                 | table | postgres
+		 ctgov  | countries                  | table | postgres
+
+
+**Run the setup script**
+
+1. Ctrl + D to get out of psql
+1. Run the basic_search.sql script with the command: `psql -d aact -f database/scripts/search_studies.sql`
+1. Connect to the aact database `psql -d aact`
+1. Use the command `\dv` to list the views and verify that basic_search appears in the list of views.
+
+**Exit the container and start the application**
+
+1. Ctrl + D to get out of psql, Ctrl + D again to get out of the postgres container.
+1. Finally, `docker-compose down` to take down the postgres container and `docker-compose up` to start running the whole application.
+
+
+### Usage: Running Elasticsearch
+
+Because Elasticsearch and Kibana are highly resource intensive, `docker-compose up` does not run them by default. To run the application with Elasticsearch run `docker-compose -f elasticsearch.yml up`.
+
+
+### Usage: Where to reach each service
+
+Although each service communicates with each other via a Docker bridge network, each service is bound to a port on localhost. This is the list of services and which ports they are accessible on when the containers are running:
+
+* React <http://localhost:3000>
+* Django REST API framework <http://localhost:8000>
+* Elasticsearch <http://localhost:9200>
+* Kibana <http://localhost:5601>
+
+### Usage: Connect to the containers
+
+**react**  
+`docker exec -it react /bin/sh`
+
+**django**  
+`docker exec -it django /bin/sh`
+
+**pgdb**   
+`docker exec -it pgdb /bin/bash` 
+
+**Note: You can only access the db as the user postges so if you connect this way you may need to switch users or to go straight into psql `docker exec -it pgdb psql -U postgres`**
+
+
+## [DRAFT] CTFrontier Cloud Setup
+
+The AWS Cloud Development Kit (AWS CDK) is an open source software development framework to define AWS cloud application resources using code. This project uses AWS CDK in Python to define project resources.
+
+The project also includes a command line utility for interacting with CDK. This command line utility wraps many of the standard CDK commands and some AWS CLI commands to provide additional functionality.
+
+
+### Setup: Prerequisites
+
+* Docker installed and running
+
+**Domain**
+
+* You must have a domain that you can use to host the website and access to one of the below email addresses:
+
+    * administrator@your\_domain_name
+    * hostmaster@your\_domain_name
+    * postmaster@your\_domain_name
+    * webmaster@your\_domain_name
+    * admin@your\_domain_name
+
+**Python**
+
+* Python 3.8
+* A python virtual environment tool of your preference
+
+**AWS CDK**
+
+* AWS credentials configured
+* AWS CLI 2.1.0+ installed and configured  <https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html>
+* Node.js 15.4.0+
+* The `aws-cdk` Node.js toolkit installed. `npm install -g aws-cdk@1.94.1`. (`npm list -g` to check the current versions of your globally installed node packages)
+
+**AWS Permissions**
+
+Your default AWS user (configured with `aws configure`) or your named aws profile (configured with `aws configure --profile <profile-name>` and specified in `cdk/.env` with `AWS_PROFILE=<profile-name>`) must have the following AWS managed policies or equivalent permissions attached:
+
+* IAMFullAccess
+* AmazonEC2ContainerRegistryFullAccess
+* AmazonS3FullAccess
+* CloudWatchFullAccess
+* AmazonSSMFullAccess
+* AmazonSSNFullAccess
+* AWSCloudFormationFullAccess
+* AWSLambda_FullAccess
+* AmazonEC2ContainerRegistryFullAccess
+* AmazonECS_FullAccess
+ 
+ 
+### Setup: Local environment
+
+1. Create an empty file `.env` in the `cdk` folder
+1. Make sure that you have set up your AWS credentials (set up using `aws configure`, check to see if they exist with `ls ~/.aws/`, you should see the files `config` and `credentials`
+1. If you want to use a named profile, configure a named profile using `aws configure --profile <profile-name>` and define `AWS_PROFILE` in `cdk/.env`.
+
+Set up Python virtual environment. For example, if you were using virtualenv you might: 
+
+1. Install virtualenv `pip install virtualenv`
+1. Create your virtual environment with `virtualenv venv`
+1. Start your virtual environment with `source venv/bin/activate`
+(`deactivate` to turn it off)
+
+Once you have your virtual environment set up and it is active:
+
+1. Python dependencies are handled via `pip-tools`, so you need to install that first: `pip install pip-tools`
+1. From the `ctfrontier/cdk` folder, install the dependencies by running `pip-sync requirements/dev.txt`
+
+
+### The `ctf` command line tool
+
+***Note: Always run the ctf tool from the ctfrontier/cdk folder!***
+
+The `ctf` CLI tool is automatically installed with the dependencies.
+
+After following the above setup instructions, you should be able to run the command `ctf` and see a list of the available command groups. For example:
+
+	Usage: ctf [OPTIONS] COMMAND [ARGS]...
+
+	Options:
+	--help  Show this message and exit.
+
+	Commands:
+	config
+	container
+	docker
+	function
+	stack
+
+Run `ctf [group]` to see the available commands for that group. For example, run the `create` command in the `config` group run `ctf config create`. To see all config commands, run `ctf config`.
+
+`ctf config` - Create, edit, delete and view the config.  
+`ctf container` - Automatically build frontend and backend containers and deploy them to the stack.  
+`ctf docker` - Authenticate docker.  
+`ctf function` - Automatically build and deploy lambdas.  
+`ctf stack` - Create, update, delete and get information about the AWS CloudFormation stack.
+
+
+### Setup: Create the config
+
+CTFrontier uses a config which is stored in AWS SSM Parameter. Using a config stored in the cloud avoids the problem of diverging configurations when multiple people are working on the same AWS infrastructure.
+
+1. Copy the `config-example.json` file to a new json file and update the values of each config variable to appropriate values.
+		
+	`site_domain` - The domain that will host the website  
+	`notification_email` - Your email  
+	`django_secret` - Autogenerate this from `scripts/gen_random_key.py`  
+
+1. Run the command `ctf config create`. You will be prompted to enter an initial config file. Enter the name of your config file.
+
+***Note: Your initial config file is just an initial config file. The actual config is stored in AWS SSM Parameter Store. Editing the local file will not modify the config.***
+		
+1. To view the current config run `ctf config show`. You can also pipe this output to a file to save the current configuration locally.
+
+1. To edit the config, use `ctf config edit` which will automatically open vi or your default text editor and allow you to edit the configuration in the cloud. Alternatively, you could pipe the current config to a file with `ctf config show > some-config-file.json`, edit it there, then load the new config in with `ctf config create`.
+
+
+### Setup: Bootstrapping
+
+Before launching a new AWS CloudFormation stack, there are some resources that must be bootstrapped.
+
+* AWS CDK provided bootstrap resources
+* AWS Elastic Container Registries for storing docker images
+* AWS S3 bucket to store lambda function code, if any
+
+1. Create the bootstrapped resources with `ctf stack bootstrap`
+
+***Note: These resources can be cleaned up after deleting the "ctfrontier" CloudFormation stack with `ctf stack bootstrap.delete`***
+
+### Setup: Create the CloudFormation stack
+
+After setting up AWS credentials, setting up the config, and boostrapping the AWS environment, you should be ready to create the "ctfrontier" CloudFormation stack which will launch the resources needed for the application.
+
+1. Create the stack with: `ctf stack create`
+1. Approve the AWS Certificate Manager approval email which should have been sent to your domain associated email address such as admin@your_domain_name.
+1. Approve the notifications subscription sent to your configured notification email
+1. For subsequent stack changes use `ctf stack update`
+1. To see the "ctfrontier" stack outputs run `ctf stack outputs`
+
+**Check the setup**  
+At this point you should have an AWS ECS cluster running with a backend and a frontend service. The backend service runs django on an EC2 instance and the frontend service runs react on Fargate. There should also be an RDS instance running. If you go to `your_domain_name` you should see the website frontend, however, the website will not be fully functional until the database is set up.
+
+### Connect to the backend EC2 instance running django
+
+At this point you should be able to connect to the container running django. The setup process should have automatically generated a file in the cdk folder `CtfBackendKeyPair.pem`.
+
+Look up the public DNS of the EC2 container running the django task and connect to it using:
+
+`ssh -i CtfBackendKeyPair.pem ec2-user@[ec2-DNS]`
+
+Source: <https://docs.aws.amazon.com/AmazonECS/latest/developerguide/instance-connect.html>  
+
+### Setup: Unfinished setup instructions
+
+**Load data into RDS database**
+
+* Before you load the data temporarily disable backups (set backup retention to 0). This is recommended by AWS to speed up performance.
+* Temporarily allow all TCP from your IP address to the RDS security group.
+* Temporarily allow port 22 from your IP address to the EC2 instance running the django task.
+* Connect to the RDS instance via the django EC2 instance using an SSH tunnel.
+
+The command to create the SSH tunnel is:
+
+	ssh -N -L 5432:[your-db-instance]:5432 -i CtfBackendKeyPair.pem ec2-user@[your-ec2-dns]
+
+In another terminal reach RDS with:
+
+	psql -h localhost -p 5432 -U [your-AWS-user] ctf-postgres-db-instance -W
+
+Source: <https://medium.com/@deepspaceprog/how-to-connect-via-ssh-to-an-amazon-rds-instance-running-postgresql-5e7661cdd37e>
+
+**Additional unfinished steps**
+
+* Run `.sql` scripts on database
+* Configure django server to reach RDS host
+* Configure react server to reach django host
+* Check security group and subnet settings to ensure frontend, backend, and database are able to communicate with each other
+
