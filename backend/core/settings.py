@@ -12,11 +12,15 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 from os import getenv
-
-PROD = True if getenv("MODE") == "prod" else False
+from os.path import join, dirname
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# load dotenv
+dotenv_path = join(dirname(__file__), ".env")
+load_dotenv(dotenv_path)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
@@ -25,13 +29,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = getenv("DJANGO_SECRET")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False if PROD else True
+DEBUG = True
 
-ALLOWED_HOSTS = []
-if PROD:
-    ALLOWED_HOSTS = [getenv("SITE_DOMAIN")]
-else:
-    ALLOWED_HOSTS = ["django"]
+ALLOWED_HOSTS = ["django", "localhost"]
 
 # Elastic Search
 # https://django-elasticsearch-dsl.readthedocs.io/en/latest/quickstart.html
@@ -100,8 +100,8 @@ DATABASES = {
         "NAME": "aact",
         "USER": "postgres",
         "PASSWORD": getenv("DB_PASSWORD"),
-        "HOST": getenv("DB_HOST"),
-        "PORT": getenv("DB_PORT"),
+        "HOST": "pgdb",
+        "PORT": 5432,
     },
 }
 
