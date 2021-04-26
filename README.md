@@ -3,9 +3,9 @@
 # Clinical Trials Project
 
 Set the project up locally or in the cloud:
-[Developer Manual](https://github.com/ClinicalTrialsTeam/ctfrontier/blob/main/developer_manual.md)
+[Developer Manual](developer_manual.md)
 
-Learn about the API endpoints: [API Documentation](https://github.com/ClinicalTrialsTeam/ctfrontier/blob/main/backend/README.md)
+Learn about the API endpoints: [API Documentation](backend/README.md)
 
 
 
