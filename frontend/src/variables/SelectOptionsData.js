@@ -39,7 +39,7 @@ const roa = [
   'Vaginal',
   'Ocular',
   'Intramuscular',
-  'Sublingual',
+  'Inhalation',
 ];
 
 const results = [
