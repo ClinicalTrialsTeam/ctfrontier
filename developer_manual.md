@@ -103,6 +103,22 @@ Although each service communicates with each other via a Docker bridge network, 
 
 **Note: You can only access the db as the user postges so if you connect this way you may need to switch users or to go straight into psql `docker exec -it pgdb psql -U postgres`**
 
+### Changing your Postgres DB password
+
+In order to run your docker containers, `DB_PASSWORD` in `backend/.env` must match the actual postgres database password. If you want to change your postgres database password, you cannot just changed the stored value in `.env`, you must connect to postgres and change the actual postgres database password first.
+
+Steps to take: 
+
+1. Make sure that `DB_PASSWORD` in your `.env` file is the current postgres database password. (The way you know is you can start your django container with no errors.)
+1. Start the docker containers with `docker-compose up`. If you get the error `django.db.utils.OperationalError: FATAL: password authentication failed for user “postgres”`, then the password in your `.env` is incorrect. You need to fix it and start docker again.
+1. Now that your docker cointainers are running. Open a new terminal and connect to the postgres container with: `docker exec -it --user postgres pgdb /bin/bash`
+1. In the same terminal, connect to the database: `psql`
+1. In the same terminal, change your password using the command: `ALTER USER postgres PASSWORD '<new password>';` but replace `<new password>` with your desired password.
+1. Press Ctrl + D twice to exit psql and then exit the postgres container.
+1. Shut down the docker containers with: `docker-compose down`
+1. Update `DB_PASSWORD` in `.env` to have the same password you just set the postgres database to have.
+1. Re-start the docker containers with: `docker-compose up`
+
 
 ## [DRAFT] CTFrontier Cloud Setup
 
