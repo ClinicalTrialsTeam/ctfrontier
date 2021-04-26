@@ -1,6 +1,5 @@
 import React from 'react';
 import { Button } from 'antd';
-// import PropTypes from 'prop-types';
 import image from './icon-json-endpoints.png';
 
 const StatReportDownload = () => {
@@ -11,9 +10,5 @@ const StatReportDownload = () => {
     </>
   );
 };
-
-// StatReportDownload.propTypes = {
-//   data: PropTypes.array.isRequired,
-// };
 
 export default StatReportDownload;
