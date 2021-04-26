@@ -50,6 +50,7 @@ class CtfBackendTaskDefinition(core.Construct):
         scope: core.Construct,
         id: str,
         environment,
+        port,
     ):
 
         super().__init__(scope, id)
@@ -79,5 +80,5 @@ class CtfBackendTaskDefinition(core.Construct):
                 stream_prefix=container_id,
                 log_retention=logs.RetentionDays.ONE_WEEK,
             ),
-            port_mappings=[ecs.PortMapping(container_port=80)],
+            port_mappings=[ecs.PortMapping(container_port=port)],
         )

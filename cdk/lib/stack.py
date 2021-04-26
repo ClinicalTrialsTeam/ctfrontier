@@ -7,9 +7,6 @@ from .database import CtfDatabase
 from . import names, aws
 
 
-DB_PORT = 5432
-
-
 class CtStack(core.Stack):
     def __init__(
         self,
@@ -49,11 +46,10 @@ class CtStack(core.Stack):
             preferred_az,
         )
 
-        frontend_port = 80
         frontend_task = CtfFrontendTaskDefinition(
             self,
             "FrontendTask",
-            frontend_port,
+            port=80,
         )
         frontend_service = CtfFrontendService(
             self,
@@ -62,7 +58,7 @@ class CtStack(core.Stack):
             frontend_task.task,
             site_sg,
             preferred_az,
-            port=frontend_port,
+            port=80,
         )
 
         backend_task = CtfBackendTaskDefinition(
@@ -76,6 +72,7 @@ class CtStack(core.Stack):
                 "DB_PASSWORD": db_password,
                 "SITE_DOMAIN": site_domain,
             },
+            port=80,
         )
         backend_service = CtfBackendService(
             self,
@@ -84,7 +81,7 @@ class CtStack(core.Stack):
             backend_task.task,
             site_sg,
             preferred_az,
-            frontend_service,
+            port=80,
         )
 
         CtfLoadBalancer(
@@ -104,5 +101,5 @@ class CtStack(core.Stack):
             database_sg,
             preferred_az,
             backend_service,
-            DB_PORT,
+            db_port=5432,
         )
