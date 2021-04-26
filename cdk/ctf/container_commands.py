@@ -55,7 +55,6 @@ def __get_image_uri(repository):
 
 
 def __get_image_id(image_uri, running=False):
-    # Get image id
     if running:
         docker_command = "ps"
         filter_by = "ancestor"

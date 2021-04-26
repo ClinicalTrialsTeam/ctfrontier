@@ -18,17 +18,10 @@ BACKEND_SERVICE = "backend-service"
 BACKEND_TASK_FAMILY = "django-task"
 BACKEND_KEY_PAIR = "CtfBackendKeyPair"
 
-ETL_DOWNLOAD_FUNCTION = "etl-download"
-
 FRONTEND_IMAGE = "ctf-frontend"
 
 DATABASE = "aact"
 DATABASE_INSTANCE = "ctf-db-instance"
 
-FUNCTIONS = [ETL_DOWNLOAD_FUNCTION]
-
-RAW_DATA_FILES_BUCKET = "raw-data-files"
-
-LAMBDA_RELEASE_ALIAS = "live"
 METRIC_NAMESPACE = "log-metrics"
 NOTIFICATIONS_TOPIC = "notifications"
