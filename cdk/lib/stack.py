@@ -25,7 +25,7 @@ class CtStack(core.Stack):
         vpc = ec2.Vpc(self, "CtfVPC", max_azs=2)
         site_sg = ec2.SecurityGroup(
             self,
-            "CtfFrontendSecurityGroup",
+            "CtfSiteSecurityGroup",
             allow_all_outbound=True,
             vpc=vpc,
         )

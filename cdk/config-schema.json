@@ -2,9 +2,6 @@
     "site_domain": {
         "type": "String"
     },
-    "notification_email": {
-        "type": "String"
-    },
     "django_secret": {
         "type": "SecureString"
     },

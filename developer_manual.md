@@ -2,17 +2,14 @@
 
 CTFrontier Team Members: Balaji Ragupathi, Bry Power, Elena Arens, Mike Blanchard, Stephen Thompson, Natalie Mona Matthews
 
-* [Local Setup](#ctfrontier-local-setup)
-* [Cloud Setup](#ctfrontier-cloud-setup)
-
 ## Overview
 
 **Github link:** <https://github.com/ClinicalTrialsTeam/ctfrontier>
 
 There are two options for running the CTFrontier application.
 
-1. The first option is to run CTFrontier locally using docker-compose. While these instructions may change as the project develops, they are expected to be fully functional at this point.
-1. The second option is to run CTFrontier on AWS infrastructure using the `ctf` CLI tool. This implementation is still under development. These instructions are in draft format and are not expected to be fully functional until the work is completed.
+1. [Local Setup](#ctfrontier-local-setup) The first option is to run CTFrontier locally using docker-compose. 
+1. [Cloud Setup](#ctfrontier-cloud-setup) The second option is to run CTFrontier on AWS infrastructure using the `ctf` CLI tool.
 
 ## CTFrontier Local Setup
 
@@ -123,7 +120,7 @@ Steps to take:
 1. Re-start the docker containers with: `docker-compose up`
 
 
-## [DRAFT] CTFrontier Cloud Setup
+## CTFrontier Cloud Setup
 
 The AWS Cloud Development Kit (AWS CDK) is an open source software development framework to define AWS cloud application resources using code. This project uses AWS CDK in Python to define project resources.
 
@@ -208,7 +205,6 @@ After following the above setup instructions, you should be able to run the comm
 	config
 	container
 	docker
-	function
 	stack
 
 Run `ctf [group]` to see the available commands for that group. For example, run the `create` command in the `config` group run `ctf config create`. To see all config commands, run `ctf config`.
@@ -225,10 +221,19 @@ Run `ctf [group]` to see the available commands for that group. For example, run
 CTFrontier uses a config which is stored in AWS SSM Parameter. Using a config stored in the cloud avoids the problem of diverging configurations when multiple people are working on the same AWS infrastructure.
 
 1. Copy the `config-example.json` file to a new json file and update the values of each config variable to appropriate values.
+
+		{
+		    "site_domain": "ctfrontier.com",
+		    "django_secret": "generated-django-secret",
+		    "db_host": "db_host",
+		    "db_password": "db_password"
+		}
+
 		
 	`site_domain` - The domain that will host the website  
-	`notification_email` - Your email  
-	`django_secret` - Autogenerate this from `scripts/gen_random_key.py`  
+	`django_secret` - Autogenerate this from `scripts/gen_random_key.py` 
+	`db_host` - Put a placeholder here initially.  
+	`db_password` - Put a placeholder here initially. 
 
 1. Run the command `ctf config create`. You will be prompted to enter an initial config file. Enter the name of your config file.
 
@@ -245,7 +250,6 @@ Before launching a new AWS CloudFormation stack, there are some resources that m
 
 * AWS CDK provided bootstrap resources
 * AWS Elastic Container Registries for storing docker images
-* AWS S3 bucket to store lambda function code, if any
 
 1. Create the bootstrapped resources with `ctf stack bootstrap`
 
@@ -257,46 +261,63 @@ After setting up AWS credentials, setting up the config, and boostrapping the AW
 
 1. Create the stack with: `ctf stack create`
 1. Approve the AWS Certificate Manager approval email which should have been sent to your domain associated email address such as admin@your_domain_name.
-1. Approve the notifications subscription sent to your configured notification email
 1. For subsequent stack changes use `ctf stack update`
 1. To see the "ctfrontier" stack outputs run `ctf stack outputs`
 
 **Check the setup**  
 At this point you should have an AWS ECS cluster running with a backend and a frontend service. The backend service runs django on an EC2 instance and the frontend service runs react on Fargate. There should also be an RDS instance running. If you go to `your_domain_name` you should see the website frontend, however, the website will not be fully functional until the database is set up.
 
-### Connect to the backend EC2 instance running django
+
+**Update the config**
+
+Now that your stack is running you can update the database related config variables.
+
+Use `ctf config edit` to edit. Set `db_host` to your RDS instance endpoint and `db_password` to the database password stored in AWS Secrets Manager.
+
+After the config has been edited. You can use `ctf config show` to confirm the correct values are set.
+
+Finally, run `ctf stack update`, then `ctf container deploy.backend` to make sure the config changes have propagated to the running backend django task.
+
+### Checking: Connect to the backend EC2 instance running django
 
 At this point you should be able to connect to the container running django. The setup process should have automatically generated a file in the cdk folder `CtfBackendKeyPair.pem`.
 
-Look up the public DNS of the EC2 container running the django task and connect to it using:
+First, add a rule to the `Ctfrontier-CtfSiteSecurityGroup` to allow your IP on port 22. Then, check that you can connect successfully. Look up the public DNS of the EC2 container running the django task and connect to it using:
 
 `ssh -i CtfBackendKeyPair.pem ec2-user@[ec2-DNS]`
 
-Source: <https://docs.aws.amazon.com/AmazonECS/latest/developerguide/instance-connect.html>  
-
-### Setup: Unfinished setup instructions
+### Setup: Set up database
 
 **Load data into RDS database**
 
 * Before you load the data temporarily disable backups (set backup retention to 0). This is recommended by AWS to speed up performance.
-* Temporarily allow all TCP from your IP address to the RDS security group.
-* Temporarily allow port 22 from your IP address to the EC2 instance running the django task.
+* Temporarily allow all TCP from your IP address to the RDS security group by adding a rule to the `Ctfrontier-CtfDatabaseSecurityGroup`.
+* Temporarily allow port 22 from your IP address to the EC2 instance running the django task by adding a rule to the `Ctfrontier-CtfSiteSecurityGroup`.
 * Connect to the RDS instance via the django EC2 instance using an SSH tunnel.
+* Find the RDS password in AWS Secrets Manager.
 
-The command to create the SSH tunnel is:
+The command to create the SSH tunnel is, this is expected to not return:
 
-	ssh -N -L 5432:[your-db-instance]:5432 -i CtfBackendKeyPair.pem ec2-user@[your-ec2-dns]
+	ssh -N -L 10101:[your-db-instance]:5432 -i CtfBackendKeyPair.pem ec2-user@[your-ec2-dns]
 
-In another terminal reach RDS with:
+With the SSH tunnel open, in another terminal, load the data from the `.dmp` file (follow data download instructions in local development setup to get the `.dmp` file):
 
-	psql -h localhost -p 5432 -U [your-AWS-user] ctf-postgres-db-instance -W
+`pg_restore -h localhost -p 10101 -U postgres -e -v -O -x -d aact --no-owner /path/to/postgres_data.dmp`
 
-Source: <https://medium.com/@deepspaceprog/how-to-connect-via-ssh-to-an-amazon-rds-instance-running-postgresql-5e7661cdd37e>
+Enter the password for RDS from AWS Secrets Manager. It is expected that the initial data load will take a long time to run.
 
-**Additional unfinished steps**
+**Run `.sql` setup script**
 
-* Run `.sql` scripts on database
-* Configure django server to reach RDS host
-* Configure react server to reach django host
-* Check security group and subnet settings to ensure frontend, backend, and database are able to communicate with each other
+Once the initial data has been loaded, connect to the database in the same terminal using the same SSH tunnel and enter the same password:
+
+`psql -h localhost -p 10101 -U postgres`
+
+Run `alter role postgres in database aact set search_path = ctgov, public;` to add the ctgov schema to your search path.
+
+Finally, disconnect from the RDS instance and run `psql -h localhost -p 10101 -U postgres -d aact -f /path/to/search_studies.sql` to create the database views.
+
+The `search_studies.sql` script can be found in `database/scripts`.
+
+**At this point you should have a working version of ctfrontier in the cloud!**
+
 

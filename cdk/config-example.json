@@ -1,6 +1,5 @@
 {
     "site_domain": "ctfrontier.com",
-    "notification_email": "email@example.com",
     "django_secret": "generated-django-secret",
     "db_host": "db_host",
     "db_password": "db_password"
