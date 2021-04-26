@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import SearchConfigDownload from '../../downloads/SearchConfigDownload/SearchConfigDownload';
 import TrialsCSVDownload from '../../downloads/TrialsCSVDownload/TrialsCSVDownload';
 import TrialsJSONDownload from '../../downloads/TrialsJSONDownload/TrialsJSONDownload';
-import StatReportDownload from '../../downloads/StatReportDownload/StatReportDownload';
+import EndpointsReportDownload from '../../downloads/EndpointsReportDownload/EndpointsReportDownload';
 
 import './DownloadModal.css';
 
@@ -17,6 +17,7 @@ class DownloadModal extends Component {
       handleOk,
       handleCancel,
       data,
+      payload,
     } = this.props;
 
     return (
@@ -29,24 +30,23 @@ class DownloadModal extends Component {
         onCancel={handleCancel}
         width={700}
       >
-        <p>{data}</p>
         <Divider plain orientation="left">Search Results Download Options</Divider>
         <Row key="row-downloads-standard" justify="space-around">
           <Col key="col-downloads-1" span={12}>
-            <TrialsCSVDownload />
+            <TrialsCSVDownload data={data} />
           </Col>
           <Col key="col-downloads-2" span={12}>
-            <TrialsJSONDownload />
+            <TrialsJSONDownload data={data} />
           </Col>
         </Row>
         <br />
         <Divider plain orientation="left">Expanded Download Options</Divider>
         <Row key="row-downloads-expanded" justify="space-around">
           <Col key="col-downloads-3" span={12}>
-            <SearchConfigDownload />
+            <SearchConfigDownload payload={payload} />
           </Col>
           <Col key="col-downloads-4" span={12}>
-            <StatReportDownload />
+            <EndpointsReportDownload />
           </Col>
         </Row>
       </Modal>
@@ -58,7 +58,8 @@ DownloadModal.propTypes = {
   isModalVisible: PropTypes.bool.isRequired,
   handleOk: PropTypes.func.isRequired,
   handleCancel: PropTypes.func.isRequired,
-  data: PropTypes.array.isRequired,
+  data: PropTypes.object.isRequired,
+  payload: PropTypes.object.isRequired,
 };
 
 export default DownloadModal;

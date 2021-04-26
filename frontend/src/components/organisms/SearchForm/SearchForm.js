@@ -99,6 +99,7 @@ class SearchForm extends Component {
       showCityDistance: false,
       recruitment: [],
       isLoading: false,
+      payload: {},
     };
   }
 
@@ -440,6 +441,7 @@ class SearchForm extends Component {
       const response = await ctgov.post('search_studies', payload);
       this.setState({
         searchResults: response.data,
+        payload,
       });
     } catch (err) {
       console.log(err);
@@ -531,7 +533,7 @@ class SearchForm extends Component {
           push
           to={{
             pathname: '/trials',
-            state: { data: this.state.searchResults },
+            state: { data: this.state.searchResults, payload: this.state.payload },
           }}
         />
       );
