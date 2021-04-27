@@ -62,7 +62,7 @@ class TimelineChart extends Component {
         if (phase === 'Phase 2') {
           return '#677DE9';
         }
-        if (phase === 'Phase 2 Phase 3') {
+        if (phase === 'Phase 2/Phase 3') {
           return '#756EED';
         }
         if (phase === 'Phase 3') {
