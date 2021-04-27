@@ -15,7 +15,7 @@ import TimelineModal from '../../molecules/modals/TimelineModal/TimelineModal';
 import DownloadModal from '../../molecules/modals/DownloadModal/DownloadModal';
 
 import {
-  recruitment, access, phases, roa, results,
+  status, access, phases, roa, results,
   types, sex, ageGroup, ethnicities, distance, states,
   funder, documents, submission,
 } from '../../../variables/SelectOptionsData';
@@ -151,7 +151,7 @@ class ListViewTable extends Component {
               <FacetedSearchGroup
                 key="fs-group"
                 access={access}
-                recruitment={recruitment}
+                status={status}
                 phases={phases}
                 roa={roa}
                 results={results}
