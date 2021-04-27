@@ -441,6 +441,7 @@ class SearchForm extends Component {
         searchResults: response.data,
         payload,
       });
+      console.log(response.data);
     } catch (err) {
       console.log(err);
     }

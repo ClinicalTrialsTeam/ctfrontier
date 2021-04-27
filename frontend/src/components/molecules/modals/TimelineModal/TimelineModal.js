@@ -24,8 +24,7 @@ class TimelineModal extends Component {
         onCancel={handleCancel}
         width={700}
       >
-        <p>{data}</p>
-        <TimelineChart />
+        <TimelineChart data={data} />
       </Modal>
     );
   }

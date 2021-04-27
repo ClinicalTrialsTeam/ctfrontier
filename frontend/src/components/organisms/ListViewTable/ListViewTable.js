@@ -217,7 +217,7 @@ class ListViewTable extends Component {
                       />
                       <TimelineModal
                         isModalVisible={this.state.isTimelineModalVisible}
-                        data={dataPlaceholder}
+                        data={this.state.searchData}
                         handleOk={() => {
                           return this.setTimelineModalVisible(false, '');
                         }}
