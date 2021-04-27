@@ -7,6 +7,7 @@ import json
 import click
 import subprocess
 from lib import aws, names, environment
+from .docker_commands import docker_login
 from .common import profile_arg, run_command
 
 
@@ -34,14 +35,18 @@ def build_backend():
 
 
 @container.command("deploy.frontend")
-def deploy_frontend():
+@click.pass_context
+def deploy_frontend(ctx):
+    ctx.invoke(docker_login)
     build_docker_image(names.FRONTEND_REPOSITORY, FRONTEND_PATH)
     push_docker_image(names.FRONTEND_REPOSITORY)
     deploy_docker_image(names.FRONTEND_SERVICE, names.FRONTEND_TASK_FAMILY)
 
 
 @container.command("deploy.backend")
-def deploy_backend():
+@click.pass_context
+def deploy_backend(ctx):
+    ctx.invoke(docker_login)
     build_docker_image(names.BACKEND_REPOSITORY, BACKEND_PATH)
     push_docker_image(names.BACKEND_REPOSITORY)
     deploy_docker_image(names.BACKEND_SERVICE, names.BACKEND_TASK_FAMILY)
@@ -98,11 +103,6 @@ def push_docker_image(repository):
     click.echo(cmd)
     r = subprocess.run(cmd.split())
     if r.returncode != 0:
-        click.secho(
-            "Error pushing docker image. Try `ctf docker login` "
-            "and then retry command?",
-            fg="red",
-        )
         raise click.Abort()
 
 
