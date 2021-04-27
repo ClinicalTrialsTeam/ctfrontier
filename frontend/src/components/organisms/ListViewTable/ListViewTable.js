@@ -43,6 +43,7 @@ class ListViewTable extends Component {
       isDownloadModalVisible: false,
       searchData: this.props.history.location.state.data,
       payload: this.props.history.location.state.payload,
+      dashboardData: {},
     };
   }
 
@@ -86,7 +87,16 @@ class ListViewTable extends Component {
     }
   }
 
-  setDashboardModalVisible(isDashboardModalVisible) {
+  async setDashboardModalVisible(isDashboardModalVisible) {
+    const { payload } = this.state;
+    try {
+      const response = await ctgov.post('trials_dashboard', payload);
+      this.setState({
+        dashboardData: response.data,
+      });
+    } catch (err) {
+      console.log(err);
+    }
     this.setState({
       isDashboardModalVisible,
     });
@@ -99,8 +109,6 @@ class ListViewTable extends Component {
   }
 
   setDownloadModalVisible(isDownloadModalVisible) {
-    console.log(this.state.searchData);
-    console.log(this.state.payload);
     this.setState({
       isDownloadModalVisible,
     });
@@ -121,7 +129,6 @@ class ListViewTable extends Component {
         status: result.status,
       };
     });
-    const dataPlaceholder = [];
 
     return (
       <div>
@@ -207,7 +214,8 @@ class ListViewTable extends Component {
                       </Tooltip>
                       <DashboardModal
                         isModalVisible={this.state.isDashboardModalVisible}
-                        data={dataPlaceholder}
+                        data={this.state.dashboardData}
+                        count={this.state.searchData.metadata[0].results_count}
                         handleOk={() => {
                           return this.setDashboardModalVisible(false, '');
                         }}
