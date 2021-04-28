@@ -25,7 +25,7 @@ def connect_and_execute_psql(dbase, query, data):
         # Connect to an existing database
         connection = psycopg2.connect(
             user="postgres",
-            password=8653,
+            password=,
             host="localhost",
             port=5432,
             database="aact",
