@@ -1,4 +1,5 @@
 import logging
+from collections import OrderedDict
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -17,7 +18,7 @@ from ctgov.models import (
 from .serializers import (
     BriefSummariesSerializer,
     SearchStudiesSerializer,
-    CountriesSerializer,
+    serialize_countries,
     SearchStudiesDocumentSerializer,
     ConditionsSerializer,
     StatesSerializer,
@@ -86,28 +87,28 @@ class BriefSummariesListApiView(APIView):
 # This is for the front-end user interface control to display country drop-down
 class CountriesListApiView(APIView):
     def get(self, request, *args, **kwargs):
-        logger.info("CountriesListApiView: Get countries called.")
-        qs1 = (
+        logger.info("CountriesListApiView: get()")
+        countries = (
             Facilities.objects.all()
             .distinct()
             .values("country")
             .exclude(country="")
-            .exclude(country="United States")
             .order_by("country")
         )
-        qs2 = (
-            Facilities.objects.all()
-            .distinct()
-            .filter(country="United States")
-            .values("country")
-        )
 
-        countries = qs2.union(qs1, all=True)
+        logger.info("CountriesListApiView: Before serialize.")
+        serialized = serialize_countries(countries)
+        logger.info("CountriesListApiView: After serialize")
 
-        logger.info("CountriesListApiView: Serialize.")
-        serializer = CountriesSerializer(countries, many=True)
-        r = Response(serializer.data, status=status.HTTP_200_OK)
-        logger.info("CountriesListApiView: Finished getting countries.")
+        # Insert US first
+        # (serializer.data is immutable so we must create a new object)
+        us = OrderedDict()
+        us["country"] = "United States"
+        data = [us]
+        data.extend(serialized)
+
+        r = Response(data, status=status.HTTP_200_OK)
+        logger.info("CountriesListApiView: Complete")
         return r
 
 
@@ -165,6 +166,7 @@ class StudyDetailApiView(APIView):
 # API to get trial timelines based on comma separated NCT_IDs
 class TrialTimelinesApiView(APIView):
     def post(self, request, *args, **kwargs):
+        logger.info("TrialTimelinesApiView: get()")
         nct_ids = request.data.get("nct_ids")
         ncts = str(nct_ids).split(",")
         nct_list = [str(item).strip(" ") for item in ncts]
@@ -179,8 +181,12 @@ class TrialTimelinesApiView(APIView):
                 "study_phase",
             )
         )
+        logger.info("TrialTimelinesApiView: Before serialize")
         serializer = TrialTimelinesSerializer(trial_timelines, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        logger.info("TrialTimelinesApiView: After serialize")
+        r = Response(serializer.data, status=status.HTTP_200_OK)
+        logger.info("TrialTimelinesApiView: Complete")
+        return r
 
 
 # API to export search results

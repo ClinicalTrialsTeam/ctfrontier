@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from rest_framework import serializers
 from ctgov.models import (
     BriefSummaries,
@@ -16,7 +17,7 @@ class BriefSummariesSerializer(serializers.ModelSerializer):
         fields = ["nct", "description"]
 
 
-# Serializezr to return Search Studies Results dataset
+# Serializer to return Search Studies Results dataset
 class SearchStudiesSerializer(serializers.ModelSerializer):
     class Meta:
         model = SearchStudies
@@ -39,10 +40,13 @@ class SearchStudiesSerializer(serializers.ModelSerializer):
 
 
 # Serializer to return Study Countries list
-class CountriesSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Facilities
-        fields = ["country"]
+def serialize_countries(countries):
+    serialized = []
+    for country in countries:
+        d = OrderedDict()
+        d["country"] = country["country"]
+        serialized.append(d)
+    return serialized
 
 
 # Serializer to return Study States list
