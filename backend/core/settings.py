@@ -62,9 +62,11 @@ INSTALLED_APPS = [
     "health_check",
     "django_elasticsearch_dsl",
     "django_elasticsearch_dsl_drf",
+    "debug_toolbar",
 ]
 
 MIDDLEWARE = [
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -165,7 +167,6 @@ STATIC_URL = "/static/"
 # https://docs.djangoproject.com/en/3.2/releases/3.2/#customizing-type-of-auto-created-primary-keys
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
-
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
@@ -190,4 +191,12 @@ LOGGING = {
             "datefmt": "%Y-%m-%d %H:%M:%S",
         },
     },
+}
+
+
+# Required for django debug toolbar
+INTERNAL_IPS = ["127.0.0.1"]
+
+DEBUG_TOOLBAR_CONFIG = {
+    "SHOW_TOOLBAR_CALLBACK": lambda request: True,
 }
