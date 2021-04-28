@@ -24,7 +24,6 @@ from .serializers import (
     StatesSerializer,
     CitySerializer,
     StudyDetailSerializer,
-    TrialTimelinesSerializer,
 )
 from datetime import datetime
 from django.db.models import Q, Count
@@ -93,6 +92,7 @@ class CountriesListApiView(APIView):
             .distinct()
             .values("country")
             .exclude(country="")
+            .exclude(country="United States")
             .order_by("country")
         )
 
@@ -181,10 +181,7 @@ class TrialTimelinesApiView(APIView):
                 "study_phase",
             )
         )
-        logger.info("TrialTimelinesApiView: Before serialize")
-        serializer = TrialTimelinesSerializer(trial_timelines, many=True)
-        logger.info("TrialTimelinesApiView: After serialize")
-        r = Response(serializer.data, status=status.HTTP_200_OK)
+        r = Response(trial_timelines, status=status.HTTP_200_OK)
         logger.info("TrialTimelinesApiView: Complete")
         return r
 
@@ -362,11 +359,10 @@ class SearchStudiesApiView(APIView):
 
             results_count = "NA"
 
-        serializer = SearchStudiesSerializer(search_results, many=True)
         return Response(
             {
                 "metadata": [{"results_count": str(results_count)}],
-                "search_results": serializer.data,
+                "search_results": search_results,
             },
             status=status.HTTP_200_OK,
         )
