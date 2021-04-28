@@ -8,6 +8,6 @@ Dockerfile
 Dockerfile.prod
 tests
 README.md
-**.log
+*.log
 Dockerfile.dev
 Dockerfile

@@ -1,6 +1,10 @@
+import logging
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+
+# Create a logger for this file
+logger = logging.getLogger(__name__)
 
 from ctgov.models import (
     BriefSummaries,
@@ -82,6 +86,7 @@ class BriefSummariesListApiView(APIView):
 # This is for the front-end user interface control to display country drop-down
 class CountriesListApiView(APIView):
     def get(self, request, *args, **kwargs):
+        logger.info("CountriesListApiView: Get countries called.")
         qs1 = (
             Facilities.objects.all()
             .distinct()
@@ -99,8 +104,11 @@ class CountriesListApiView(APIView):
 
         countries = qs2.union(qs1, all=True)
 
+        logger.info("CountriesListApiView: Serialize.")
         serializer = CountriesSerializer(countries, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        r = Response(serializer.data, status=status.HTTP_200_OK)
+        logger.info("CountriesListApiView: Finished getting countries.")
+        return r
 
 
 # API to get list of conditions
