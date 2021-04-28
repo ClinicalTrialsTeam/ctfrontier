@@ -89,13 +89,15 @@ class ListViewTable extends Component {
 
   async setDashboardModalVisible(isDashboardModalVisible) {
     const { payload } = this.state;
-    try {
-      const response = await ctgov.post('trials_dashboard', payload);
-      this.setState({
-        dashboardData: response.data,
-      });
-    } catch (err) {
-      console.log(err);
+    if (isDashboardModalVisible) {
+      try {
+        const response = await ctgov.post('trials_dashboard', payload);
+        this.setState({
+          dashboardData: response.data,
+        });
+      } catch (err) {
+        console.log(err);
+      }
     }
     this.setState({
       isDashboardModalVisible,
