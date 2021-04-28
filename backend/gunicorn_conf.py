@@ -26,6 +26,7 @@ else:
     web_concurrency = int(default_web_concurrency)
 
 # Gunicorn config variables
+timeout = 90
 loglevel = use_loglevel
 workers = web_concurrency
 bind = use_bind
