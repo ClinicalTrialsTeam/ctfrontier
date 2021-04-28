@@ -16,7 +16,18 @@ class DashboardModal extends Component {
       handleOk,
       handleCancel,
       data,
+      count,
     } = this.props;
+
+    let totalTop = 0;
+
+    if (data.sponsors) {
+      data.sponsors.forEach((element) => {
+        totalTop += element.trials_count;
+      });
+    }
+
+    const percent = Math.round((totalTop / parseInt(count)) * 100);
 
     return (
       <Modal
@@ -28,29 +39,29 @@ class DashboardModal extends Component {
         onCancel={handleCancel}
         width={700}
       >
-        {/* <p>{data}</p> */}
         <Tabs defaultActiveKey="1">
           <TabPane tab="Sponsors" key="tab-sponsors">
             <p>
-              Top 10 study sponsors initiated 15% of selected trials.
-              {data}
+              The top 10 study sponsors initiated
+              {' '}
+              {percent}
+              % of selected trials.
             </p>
-            <DashboardSponsorsChart />
+            <DashboardSponsorsChart data={data.sponsors} />
           </TabPane>
           <TabPane tab="Phases" key="tab-phases">
-            <DashboardPhasesChart />
+            <DashboardPhasesChart data={data.phases} />
           </TabPane>
           <TabPane tab="Interventions" key="tab-interventions">
             <p>
               Since some trials use multiple interventions methods,
-              the sum of trials perintervention type will exceed
+              the sum of trials per intervention type may exceed
               the total of trials.
-              {data}
             </p>
-            <DashboardInterventionsChart />
+            <DashboardInterventionsChart data={data.interventions} />
           </TabPane>
           <TabPane tab="Status" key="tab-recr-status">
-            <DashboardStatusChart />
+            <DashboardStatusChart data={data.status} />
           </TabPane>
           <TabPane tab="Targets" key="tab-targets">
             Content unavailable
@@ -65,7 +76,8 @@ DashboardModal.propTypes = {
   isModalVisible: PropTypes.bool.isRequired,
   handleOk: PropTypes.func.isRequired,
   handleCancel: PropTypes.func.isRequired,
-  data: PropTypes.array.isRequired,
+  data: PropTypes.object.isRequired,
+  count: PropTypes.string.isRequired,
 };
 
 export default DashboardModal;

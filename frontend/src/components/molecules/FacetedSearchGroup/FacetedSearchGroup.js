@@ -16,20 +16,20 @@ import './FacetedSearchGroup.css';
 class FacetedSearchGroup extends Component {
   render() {
     const {
-      recruitment, phases, roa, ageGroup, ethnicities,
+      status, phases, roa, ageGroup, ethnicities,
       funder, documents, submission, results, types, sex, handleInputChange,
     } = this.props;
     const { Panel } = Collapse;
     const { Option } = Select;
 
     // Checkbox groups
-    const recruitmentCheckboxes = [];
+    const statusCheckboxes = [];
     const phasesCheckboxes = [];
     const roaCheckboxes = [];
     const ageGroupCheckboxes = [];
 
     const checkboxArrays = [
-      [recruitment, recruitmentCheckboxes],
+      [status, statusCheckboxes],
       [phases, phasesCheckboxes],
       [roa, roaCheckboxes],
       [ageGroup, ageGroupCheckboxes],
@@ -111,7 +111,7 @@ class FacetedSearchGroup extends Component {
                 name="status"
                 label="Recruitment Status"
                 title="Indicates the current recruitment status"
-                checkboxes={recruitmentCheckboxes}
+                checkboxes={statusCheckboxes}
               />
             </Panel>
             <Panel
@@ -379,7 +379,7 @@ FacetedSearchGroup.propTypes = {
   results: PropTypes.array.isRequired,
   documents: PropTypes.array.isRequired,
   submission: PropTypes.array.isRequired,
-  recruitment: PropTypes.array.isRequired,
+  status: PropTypes.array.isRequired,
   phases: PropTypes.array.isRequired,
   roa: PropTypes.array.isRequired,
   ageGroup: PropTypes.array.isRequired,

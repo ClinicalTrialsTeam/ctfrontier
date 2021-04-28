@@ -24,8 +24,12 @@ class TimelineModal extends Component {
         onCancel={handleCancel}
         width={700}
       >
-        <p>{data}</p>
-        <TimelineChart />
+        <p>
+          Some trials do not have a start or a completion date.
+          In this case, a start date is equated to the earliest start date in the selection;
+          the completion date is equated to the latest completion date in the selection.
+        </p>
+        <TimelineChart data={data} />
       </Modal>
     );
   }

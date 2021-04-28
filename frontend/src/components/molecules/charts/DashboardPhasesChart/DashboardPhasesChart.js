@@ -1,26 +1,33 @@
 import React from 'react';
 import { Column } from '@ant-design/charts';
+import PropTypes from 'prop-types';
 
-const DashboardPhasesChart = () => {
-  // Generating some dummy data
-  const myData = [
-    { phase: 'Early Phase 1', trials: 11 },
-    { phase: 'Phase 1', trials: 133 },
-    { phase: 'Phase 1 Phase 2', trials: 385 },
-    { phase: 'Phase 2', trials: 288 },
-    { phase: 'Phase 2 Phase 3', trials: 433 },
-    { phase: 'Phase 3', trials: 153 },
-    { phase: 'Phase 4', trials: 103 },
-    { phase: 'Not Applicable', trials: 209 },
-  ];
+const DashboardPhasesChart = (props) => {
+  const {
+    data,
+  } = props;
+
+  const na = {
+    study_phase: 'Not Applicable',
+    trials_count: 0,
+  };
+
+  for (let i = data.length - 1; i >= 0; i--) {
+    if (!data[i].study_phase || data[i].study_phase === 'N/A') {
+      na.trials_count += data[i].trials_count;
+      data.splice(i, 1);
+    }
+  }
+
+  data.push(na);
 
   return (
     <>
       <Column
-        data={myData}
+        data={data}
         height={300}
-        xField="phase"
-        yField="trials"
+        xField="study_phase"
+        yField="trials_count"
         maxColumnWidth={40}
         columnStyle={{ radius: [4, 4, 0, 0] }}
         label={{
@@ -40,6 +47,10 @@ const DashboardPhasesChart = () => {
       />
     </>
   );
+};
+
+DashboardPhasesChart.propTypes = {
+  data: PropTypes.object.isRequired,
 };
 
 export default DashboardPhasesChart;
