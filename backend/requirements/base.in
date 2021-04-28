@@ -6,3 +6,8 @@ python-dotenv
 djangorestframework
 django-filter
 django-cors-headers
+<<<<<<< Updated upstream
+=======
+django-health-check
+django-debug-toolbar
+>>>>>>> Stashed changes
