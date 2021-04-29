@@ -14,7 +14,7 @@ import AdvancedSearchGroup from '../../molecules/AdvancedSearchGroup/AdvancedSea
 import './SearchForm.css';
 
 import {
-  recruitment, access, phases, roa, results,
+  status, access, phases, roa, results,
   types, sex, ageGroup, ethnicities, distance, states,
 } from '../../../variables/SelectOptionsData';
 
@@ -24,7 +24,7 @@ class SearchForm extends Component {
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleCountryChange = this.handleCountryChange.bind(this);
     this.handleRoaChange = this.handleRoaChange.bind(this);
-    this.handleRecruitmentChange = this.handleRecruitmentChange.bind(this);
+    this.handleStatusChange = this.handleStatusChange.bind(this);
     this.handlePhaseChange = this.handlePhaseChange.bind(this);
     this.handleResultsChange = this.handleResultsChange.bind(this);
     this.handleTypeChange = this.handleTypeChange.bind(this);
@@ -39,6 +39,7 @@ class SearchForm extends Component {
     this.handleSubmissionChange = this.handleSubmissionChange.bind(this);
     this.handleSearch = this.handleSearch.bind(this);
     this.handleClear = this.handleClear.bind(this);
+    this.handleLoading = this.handleLoading.bind(this);
     this.showAdvancedOptions = this.showAdvancedOptions.bind(this);
     this.showState = this.showState.bind(this);
     this.showCityDistance = this.showCityDistance.bind(this);
@@ -96,7 +97,8 @@ class SearchForm extends Component {
       showAdvancedOptions: false,
       showState: false,
       showCityDistance: false,
-      recruitment: [],
+      isLoading: false,
+      payload: {},
     };
   }
 
@@ -205,15 +207,15 @@ class SearchForm extends Component {
     });
   }
 
-  handleRecruitmentChange(e) {
+  handleStatusChange(e) {
     this.setState({
-      recruitment: e,
+      status: e.join('|'),
     });
   }
 
   handlePhaseChange(e) {
     this.setState({
-      phase: e,
+      phase: e.join(','),
     });
   }
 
@@ -301,6 +303,12 @@ class SearchForm extends Component {
     });
   }
 
+  handleLoading() {
+    this.setState({
+      isLoading: true,
+    });
+  }
+
   handleFunderChange(e) {
     let funderType;
     if (e === 'Other U.S. Federal agency') {
@@ -377,6 +385,7 @@ class SearchForm extends Component {
   }
 
   async handleSearch() {
+    this.handleLoading();
     const payload = {
       status: this.state.status,
       condition: this.state.condition,
@@ -421,7 +430,6 @@ class SearchForm extends Component {
       city: this.state.city,
       distance: this.state.distance,
       subcondition: this.state.subcondition,
-      recruitment: this.state.recruitment,
       first: 0,
       last: 100,
       metadata_required: true,
@@ -431,7 +439,9 @@ class SearchForm extends Component {
       const response = await ctgov.post('search_studies', payload);
       this.setState({
         searchResults: response.data,
+        payload,
       });
+      console.log(response.data);
     } catch (err) {
       console.log(err);
     }
@@ -462,7 +472,7 @@ class SearchForm extends Component {
 
     const countryList = [];
     const roaList = [];
-    const recruitmentList = [];
+    const statusList = [];
     const phaseList = [];
     const resultsList = [];
     const typeList = [];
@@ -472,12 +482,12 @@ class SearchForm extends Component {
     const distanceList = [];
     const statesList = [];
 
-    const recruitmentCheckboxes = [];
+    const statusCheckboxes = [];
     const phasesCheckboxes = [];
 
     const selectArrays = [
       [roa, roaList],
-      [recruitment, recruitmentList],
+      [status, statusList],
       [phases, phaseList],
       [results, resultsList],
       [types, typeList],
@@ -496,8 +506,8 @@ class SearchForm extends Component {
       });
     });
 
-    Array.from(recruitment.entries()).forEach(([index, value]) => {
-      recruitmentCheckboxes.push(
+    Array.from(status.entries()).forEach(([index, value]) => {
+      statusCheckboxes.push(
         <Col key={index} span={12}>
           <Checkbox key={index} value={value} style={{ lineHeight: '32px' }}>
             {value}
@@ -522,7 +532,7 @@ class SearchForm extends Component {
           push
           to={{
             pathname: '/trials',
-            state: { data: this.state.searchResults },
+            state: { data: this.state.searchResults, payload: this.state.payload },
           }}
         />
       );
@@ -539,7 +549,7 @@ class SearchForm extends Component {
       advancedOptions = (
         <AdvancedSearchGroup
           access={access}
-          recruitment={recruitment}
+          status={status}
           handleInputChange={this.handleInputChange}
           handleDatePickers={{
             'range-study-start': this.handleStartDateChange,
@@ -695,13 +705,13 @@ class SearchForm extends Component {
               />
               <SelectField
                 mode="multiple"
-                key="field-recruitment"
+                key="field-status"
                 name="status"
                 label="Recruitment Status"
                 title="Indicates the current recruitment status"
                 placeholder="Select the recruitment status"
-                options={recruitmentList}
-                handleInputChange={this.handleRecruitmentChange}
+                options={statusList}
+                handleInputChange={this.handleStatusChange}
               />
               <SelectField
                 mode="multiple"
@@ -840,6 +850,7 @@ class SearchForm extends Component {
             <Form.Item>
               <Space>
                 <Button
+                  loading={this.state.isLoading}
                   key="btn_search"
                   inputType="primary"
                   text="Search"

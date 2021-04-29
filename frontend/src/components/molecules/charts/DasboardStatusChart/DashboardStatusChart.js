@@ -1,27 +1,19 @@
 import React from 'react';
 import { Column } from '@ant-design/charts';
+import PropTypes from 'prop-types';
 
-const DashboardStatusChart = () => {
-  // Generating some dummy data
-  const myData = [
-    { status: 'Not yet recruiting', trials: 36 },
-    { status: 'Recruiting', trials: 173 },
-    { status: 'Enrolling by invitation', trials: 11 },
-    { status: 'Active, not recruiting', trials: 51 },
-    { status: 'Suspended', trials: 1 },
-    { status: 'Terminated', trials: 57 },
-    { status: 'Completed', trials: 595 },
-    { status: 'Withdrawn', trials: 34 },
-    { status: 'Unknown status', trials: 58 },
-  ];
+const DashboardStatusChart = (props) => {
+  const {
+    data,
+  } = props;
 
   return (
     <>
       <Column
-        data={myData}
+        data={data}
         height={300}
         xField="status"
-        yField="trials"
+        yField="trials_count"
         maxColumnWidth={40}
         columnStyle={{ radius: [4, 4, 0, 0] }}
         label={{
@@ -41,6 +33,10 @@ const DashboardStatusChart = () => {
       />
     </>
   );
+};
+
+DashboardStatusChart.propTypes = {
+  data: PropTypes.object.isRequired,
 };
 
 export default DashboardStatusChart;

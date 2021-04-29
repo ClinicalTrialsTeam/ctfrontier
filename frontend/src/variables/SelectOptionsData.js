@@ -1,4 +1,4 @@
-const recruitment = [
+const status = [
   'Not yet recruiting',
   'Recruiting',
   'Enrolling by invitation',
@@ -39,7 +39,7 @@ const roa = [
   'Vaginal',
   'Ocular',
   'Intramuscular',
-  'Sublingual',
+  'Inhalation',
 ];
 
 const results = [
@@ -161,7 +161,7 @@ const submission = [
 ];
 
 module.exports = {
-  recruitment,
+  status,
   access,
   phases,
   roa,

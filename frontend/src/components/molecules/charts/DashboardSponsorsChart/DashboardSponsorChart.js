@@ -1,28 +1,30 @@
+/* eslint-disable no-param-reassign */
 import React from 'react';
 import { Column } from '@ant-design/charts';
+import PropTypes from 'prop-types';
 
-const DashboardSponsorsChart = () => {
-  // Generating some dummy data
-  const myData = [
-    { sponsor: 'NCI', trials: 123 },
-    { sponsor: 'GlaxoSmithKline', trials: 45 },
-    { sponsor: 'Pfizer', trials: 40 },
-    { sponsor: 'Merck', trials: 38 },
-    { sponsor: 'AstraZeneca', trials: 36 },
-    { sponsor: 'NHLBI', trials: 33 },
-    { sponsor: 'NIAID', trials: 29 },
-    { sponsor: 'Mayo Clinic', trials: 25 },
-    { sponsor: 'M.D. Anderson', trials: 25 },
-    { sponsor: 'Novartis', trials: 24 },
-  ];
+const DashboardSponsorsChart = (props) => {
+  const {
+    data,
+  } = props;
+
+  const contractions = ['NIAID', 'Novartis', 'NHLBI', 'Eli Lilly', 'Regeneron', 'M.D. Anderson', 'Merck', 'Incyte', 'Northwestern Uni', 'NCI'];
+
+  data.forEach((element) => {
+    contractions.forEach((contraction) => {
+      if (element.name.includes(contraction)) {
+        element.name = contraction;
+      }
+    });
+  });
 
   return (
     <>
       <Column
-        data={myData}
+        data={data}
         height={300}
-        xField="sponsor"
-        yField="trials"
+        xField="name"
+        yField="trials_count"
         maxColumnWidth={40}
         columnStyle={{ radius: [4, 4, 0, 0] }}
         label={{
@@ -42,6 +44,10 @@ const DashboardSponsorsChart = () => {
       />
     </>
   );
+};
+
+DashboardSponsorsChart.propTypes = {
+  data: PropTypes.object.isRequired,
 };
 
 export default DashboardSponsorsChart;
