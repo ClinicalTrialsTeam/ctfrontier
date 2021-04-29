@@ -39,7 +39,7 @@ TimelineModal.propTypes = {
   isModalVisible: PropTypes.bool.isRequired,
   handleOk: PropTypes.func.isRequired,
   handleCancel: PropTypes.func.isRequired,
-  data: PropTypes.array.isRequired,
+  data: PropTypes.object.isRequired,
 };
 
 export default TimelineModal;
