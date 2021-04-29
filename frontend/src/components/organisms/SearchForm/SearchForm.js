@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import {
-  Form, Select, Divider, Row, Col, Space, Typography, Checkbox,
+  Form, Select, Divider, Row, Col, Space, Typography, Checkbox, Upload, Button, message,
 } from 'antd';
-import { InfoCircleOutlined } from '@ant-design/icons';
+import { InfoCircleOutlined, UploadOutlined } from '@ant-design/icons';
 import ctgov from '../../../apis/ctgov';
 import TextInputField from '../../atoms/TextInputField/TextInputField';
 import NumberInputField from '../../atoms/NumberInputField/NumberInputField';
 import SelectField from '../../atoms/SelectField/SelectField';
-import Button from '../../atoms/buttons/Button/Button';
+import CTFButton from '../../atoms/buttons/Button/Button';
 import AdvancedSearchGroup from '../../molecules/AdvancedSearchGroup/AdvancedSearchGroup';
 
 import './SearchForm.css';
@@ -384,64 +384,67 @@ class SearchForm extends Component {
     });
   }
 
-  async handleSearch() {
+  async handleSearch(res) {
     this.handleLoading();
-    const payload = {
-      status: this.state.status,
-      condition: this.state.condition,
-      other_terms: this.state.otherTerms,
-      country: this.state.country,
-      intervention: this.state.intervention,
-      target: this.state.target,
-      nct_id: this.state.nct_id,
-      eligibility_criteria: '',
-      modality: this.state.modality,
-      sponsor: this.state.sponsor,
-      phase: this.state.phase,
-      start_date_from: this.state.startDateFrom,
-      start_date_to: this.state.startDateTo,
-      primary_completion_date_from: this.state.primaryCompletionDateFrom,
-      primary_completion_date_to: this.state.primaryCompletionDateTo,
-      first_posted_date_from: this.state.firstPostedDateFrom,
-      first_posted_date_to: this.state.firstPostedDateTo,
-      results_first_posted_date_from: this.state.resultsFirstPostedDateFrom,
-      results_first_posted_date_to: this.state.resultsFirstPostedDateTo,
-      last_update_posted_date_from: this.state.lastUpdatePostedDateFrom,
-      last_update_posted_date_to: this.state.lastUpdatePostedDateTo,
-      study_results: this.state.results,
-      study_type: this.state.type,
-      eligibility_age: this.state.age,
-      eligibility_min_age: this.state.minAge,
-      eligibility_max_age: this.state.maxAge,
-      eligibility_gender: this.state.sex,
-      eligibility_ethnicity: this.state.ethnicity,
-      eligibility_condition: '',
-      eligibility_healthy_volunteer: this.state.healthy === true ? 'Accepts Healthy Volunteers' : '',
-      study_title_acronym: this.state.title,
-      study_outcome_measure: this.state.studyOutcomeMeasure,
-      study_collaborator: this.state.studyCollaborator,
-      study_ids: this.state.studyIds,
-      study_location_terms: this.state.locationTerms,
-      study_funder_type: this.state.studyFunderType,
-      study_document_type: this.state.studyDocumentType,
-      study_results_submitted: this.state.studyResultsSubmitted,
-      study_roa: this.state.roa,
-      state: this.state.state,
-      city: this.state.city,
-      distance: this.state.distance,
-      subcondition: this.state.subcondition,
-      first: 0,
-      last: 100,
-      metadata_required: true,
-    };
-
+    let payload;
+    if (res !== undefined) {
+      payload = res;
+    } else {
+      payload = {
+        status: this.state.status,
+        condition: this.state.condition,
+        other_terms: this.state.otherTerms,
+        country: this.state.country,
+        intervention: this.state.intervention,
+        target: this.state.target,
+        nct_id: this.state.nct_id,
+        eligibility_criteria: '',
+        modality: this.state.modality,
+        sponsor: this.state.sponsor,
+        phase: this.state.phase,
+        start_date_from: this.state.startDateFrom,
+        start_date_to: this.state.startDateTo,
+        primary_completion_date_from: this.state.primaryCompletionDateFrom,
+        primary_completion_date_to: this.state.primaryCompletionDateTo,
+        first_posted_date_from: this.state.firstPostedDateFrom,
+        first_posted_date_to: this.state.firstPostedDateTo,
+        results_first_posted_date_from: this.state.resultsFirstPostedDateFrom,
+        results_first_posted_date_to: this.state.resultsFirstPostedDateTo,
+        last_update_posted_date_from: this.state.lastUpdatePostedDateFrom,
+        last_update_posted_date_to: this.state.lastUpdatePostedDateTo,
+        study_results: this.state.results,
+        study_type: this.state.type,
+        eligibility_age: this.state.age,
+        eligibility_min_age: this.state.minAge,
+        eligibility_max_age: this.state.maxAge,
+        eligibility_gender: this.state.sex,
+        eligibility_ethnicity: this.state.ethnicity,
+        eligibility_condition: '',
+        eligibility_healthy_volunteer: this.state.healthy === true ? 'Accepts Healthy Volunteers' : '',
+        study_title_acronym: this.state.title,
+        study_outcome_measure: this.state.studyOutcomeMeasure,
+        study_collaborator: this.state.studyCollaborator,
+        study_ids: this.state.studyIds,
+        study_location_terms: this.state.locationTerms,
+        study_funder_type: this.state.studyFunderType,
+        study_document_type: this.state.studyDocumentType,
+        study_results_submitted: this.state.studyResultsSubmitted,
+        study_roa: this.state.roa,
+        state: this.state.state,
+        city: this.state.city,
+        distance: this.state.distance,
+        subcondition: this.state.subcondition,
+        first: 0,
+        last: 100,
+        metadata_required: true,
+      };
+    }
     try {
       const response = await ctgov.post('search_studies', payload);
       this.setState({
         searchResults: response.data,
         payload,
       });
-      console.log(response.data);
     } catch (err) {
       console.log(err);
     }
@@ -469,6 +472,25 @@ class SearchForm extends Component {
   render() {
     const { Option } = Select;
     const { Text } = Typography;
+
+    const uploadProps = {
+      beforeUpload: (file) => {
+        if (file.type !== 'application/json') {
+          message.error(`${file.name} is not a JSON file`);
+        }
+        return new Promise(() => {
+          const reader = new FileReader();
+          reader.readAsText(file);
+          reader.onload = () => {
+            const res = JSON.parse(reader.result);
+            this.setState({
+              payload: res,
+            });
+            this.handleSearch(res);
+          };
+        });
+      },
+    };
 
     const countryList = [];
     const roaList = [];
@@ -562,7 +584,6 @@ class SearchForm extends Component {
             handleFunderChange: this.handleFunderChange,
             handleDocumentsChange: this.handleDocumentsChange,
             handleSubmissionChange: this.handleSubmissionChange,
-
           }}
         />
       );
@@ -849,23 +870,30 @@ class SearchForm extends Component {
           <Row key="form_row_buttons" className="form-row-buttons" justify="center">
             <Form.Item>
               <Space>
-                <Button
+                <CTFButton
                   loading={this.state.isLoading}
                   key="btn_search"
                   inputType="primary"
                   text="Search"
                   clickHandler={this.handleSearch}
                 />
-                <Button
+                <CTFButton
                   key="btn_clear"
                   text="Clear"
                   clickHandler={this.handleClear}
                 />
-                <Button
+                <CTFButton
                   key="btn_show"
                   text={this.state.showAdvancedOptions === false ? 'Show expanded options' : 'Hide expanded options'}
                   clickHandler={this.showAdvancedOptions}
                 />
+                <Upload
+                  action="//jsonplaceholder.typicode.com/posts/"
+                  beforeUpload={uploadProps.beforeUpload}
+                  onChange={uploadProps.onChange}
+                >
+                  <Button type="primary" icon={<UploadOutlined />}>Use search configuration (JSON)</Button>
+                </Upload>
               </Space>
             </Form.Item>
           </Row>
