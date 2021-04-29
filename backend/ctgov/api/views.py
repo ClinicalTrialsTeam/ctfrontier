@@ -18,8 +18,8 @@ from ctgov.models import (
 )
 from .serializers import (
     BriefSummariesSerializer,
+    CountriesSerializer,
     SearchStudiesSerializer,
-    serialize_countries,
     SearchStudiesDocumentSerializer,
     ConditionsSerializer,
     StatesSerializer,
@@ -109,7 +109,7 @@ class CountriesListApiView(APIView):
         )
 
         logger.info("CountriesListApiView: Before serialize.")
-        serialized = serialize_countries(countries)
+        serialized = CountriesSerializer(countries)
         logger.info("CountriesListApiView: After serialize")
 
         # Insert US first
@@ -296,7 +296,6 @@ class TrialsDashboardApiView(APIView):
 class SearchStudiesApiView(APIView):
     def post(self, request, *args, **kwargs):
         logger.info("SearchStudiesApiView: post()")
-        logger.warning(f"{type(request)} - {request}")
         first = request.data.get("first")
         last = request.data.get("last")
         metadata_required = request.data.get("metadata_required")
@@ -380,9 +379,6 @@ class SearchStudiesApiView(APIView):
 
         serializer = SearchStudiesSerializer(search_results, many=True)
         logger.info("SearchStudiesApiView: return results")
-        logger.warning(
-            f"SearchStudiesApiView: {results_count} results - {serializer.data}"
-        )
         return Response(
             {
                 "metadata": [{"results_count": str(results_count)}],
