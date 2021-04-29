@@ -24,6 +24,7 @@ from .serializers import (
     StatesSerializer,
     CitySerializer,
     StudyDetailSerializer,
+    TrialTimelinesSerializer,
 )
 from datetime import datetime
 from django.db.models import Q, Count
@@ -181,7 +182,10 @@ class TrialTimelinesApiView(APIView):
                 "study_phase",
             )
         )
-        r = Response(trial_timelines, status=status.HTTP_200_OK)
+        logger.info("TrialTimelinesApiView: Before serialize")
+        serializer = TrialTimelinesSerializer(trial_timelines, many=True)
+        logger.info("TrialTimelinesApiView: After serialize")
+        r = Response(serializer.data, status=status.HTTP_200_OK)
         logger.info("TrialTimelinesApiView: Complete")
         return r
 
@@ -189,6 +193,7 @@ class TrialTimelinesApiView(APIView):
 # API to export search results
 class SearchResultsExportApiView(APIView):
     def post(self, request, *args, **kwargs):
+        logger.info("SearchResultsExportApiView: post()")
         filters = construct_filters(request)
         q_title_acronym = filter_title_acronym(request)
         q_outcome_measure = filter_outcome_measure(request)
@@ -211,6 +216,7 @@ class SearchResultsExportApiView(APIView):
         )
 
         serializer = SearchStudiesSerializer(filter_results, many=True)
+        logger.info("SearchResultsExportApiView: return response")
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -278,6 +284,8 @@ class TrialsDashboardApiView(APIView):
 # Return results along with metadata
 class SearchStudiesApiView(APIView):
     def post(self, request, *args, **kwargs):
+        logger.info("SearchStudiesApiView: post()")
+        logger.warning(f"{type(request)} - {request}")
         first = request.data.get("first")
         last = request.data.get("last")
         metadata_required = request.data.get("metadata_required")
@@ -359,10 +367,15 @@ class SearchStudiesApiView(APIView):
 
             results_count = "NA"
 
+        serializer = SearchStudiesSerializer(search_results, many=True)
+        logger.info("SearchStudiesApiView: return results")
+        logger.warning(
+            f"SearchStudiesApiView: {results_count} results - {serializer.data}"
+        )
         return Response(
             {
                 "metadata": [{"results_count": str(results_count)}],
-                "search_results": search_results,
+                "search_results": serializer.data,
             },
             status=status.HTTP_200_OK,
         )
