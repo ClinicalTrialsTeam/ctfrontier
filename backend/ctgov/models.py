@@ -254,6 +254,15 @@ class Conditions(models.Model):
         db_table = "conditions"
 
 
+class Countries_New(models.Model):
+    name = models.TextField(blank=True, null=True)
+    display_order = models.IntegerField()
+
+    class Meta:
+        managed = False
+        db_table = "countries_new"
+
+
 class Countries(models.Model):
     nct = models.ForeignKey(
         "Studies", models.DO_NOTHING, blank=True, null=True
