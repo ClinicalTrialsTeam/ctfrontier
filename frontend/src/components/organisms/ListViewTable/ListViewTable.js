@@ -119,15 +119,16 @@ class ListViewTable extends Component {
   render() {
     const { data } = this.props.history.location.state;
     const dataCount = parseInt(data.metadata[0].results_count);
+    console.log(data.search_results);
     const parsedResults = data.search_results.map((result) => {
       return {
         key: result.nct_id,
         nct_id: result.nct_id,
         brief_title: result.brief_title,
-        condition_name: result.condition_name
-    !== null ? result.condition_name.split('|').join(', ') : '',
-        intervention_name: result.intervention_name
-    !== null ? result.intervention_name.split('|').join(', ') : '',
+        condition_name: result.condition_name !== null ? result.condition_name.split('|').join(', ') : '',
+        sponsor_name: result.sponsor_name !== null ? result.sponsor_name.split('|').join(', ') : '',
+        study_phase: result.study_phase !== null ? result.study_phase.split('/').join(', ') : '',
+        intervention_name: result.intervention_name !== null ? result.intervention_name.split('|').join(', ') : '',
         status: result.status,
       };
     });
