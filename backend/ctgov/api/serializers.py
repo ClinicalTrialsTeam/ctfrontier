@@ -1,10 +1,10 @@
-from collections import OrderedDict
 from rest_framework import serializers
 from ctgov.models import (
     BriefSummaries,
     SearchStudies,
     Facilities,
     BrowseConditions,
+    Countries_New,
 )
 from django_elasticsearch_dsl_drf.serializers import DocumentSerializer
 from ctgov.documents import ClinicalTrialsSearchStudies
@@ -40,13 +40,17 @@ class SearchStudiesSerializer(serializers.ModelSerializer):
 
 
 # Serializer to return Study Countries list
-def serialize_countries(countries):
-    serialized = []
-    for country in countries:
-        d = OrderedDict()
-        d["country"] = country["country"]
-        serialized.append(d)
-    return serialized
+class CountriesNewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Countries_New
+        fields = ["name"]
+
+
+# Serializer to return Study Countries list
+class CountriesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Facilities
+        fields = ["country"]
 
 
 # Serializer to return Study States list

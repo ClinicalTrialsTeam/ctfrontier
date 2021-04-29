@@ -14,6 +14,7 @@ from ctgov.models import (
     BrowseConditions,
     Interventions,
     Sponsors,
+    Countries_New,
 )
 from .serializers import (
     BriefSummariesSerializer,
@@ -25,6 +26,7 @@ from .serializers import (
     CitySerializer,
     StudyDetailSerializer,
     TrialTimelinesSerializer,
+    CountriesNewSerializer,
 )
 from datetime import datetime
 from django.db.models import Q, Count
@@ -81,6 +83,15 @@ class BriefSummariesListApiView(APIView):
         summaries = BriefSummaries.objects.all()[:10]
         serializer = BriefSummariesSerializer(summaries, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+# Fixed API call to get the list of countries
+# This is for the front-end user interface control to display country drop-down
+class CountriesNewApiView(APIView):
+    def get(self, request, *args, **kwargs):
+        countries = Countries_New.objects.all().order_by("display_order")
+        countries_serialized = CountriesNewSerializer(countries, many=True)
+        return Response(countries_serialized.data, status=status.HTTP_200_OK)
 
 
 # API to get list of contries where trials are conducted
