@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import {
-  Form, Select, Divider, Row, Col, Space, Typography, Checkbox,
+  Form, Select, Divider, Row, Col, Space, Typography, Checkbox, Upload, Button, message,
 } from 'antd';
-import { InfoCircleOutlined } from '@ant-design/icons';
+import { InfoCircleOutlined, UploadOutlined } from '@ant-design/icons';
 import ctgov from '../../../apis/ctgov';
 import TextInputField from '../../atoms/TextInputField/TextInputField';
 import NumberInputField from '../../atoms/NumberInputField/NumberInputField';
 import SelectField from '../../atoms/SelectField/SelectField';
-import Button from '../../atoms/buttons/Button/Button';
+import CTFButton from '../../atoms/buttons/Button/Button';
 import AdvancedSearchGroup from '../../molecules/AdvancedSearchGroup/AdvancedSearchGroup';
 
 import './SearchForm.css';
@@ -384,7 +384,7 @@ class SearchForm extends Component {
     });
   }
 
-  async handleSearch() {
+  async handleSearch(res) {
     this.handleLoading();
     const payload = {
       status: this.state.status,
@@ -434,14 +434,20 @@ class SearchForm extends Component {
       last: 100,
       metadata_required: true,
     };
-
     try {
-      const response = await ctgov.post('search_studies', payload);
-      this.setState({
-        searchResults: response.data,
-        payload,
-      });
-      console.log(response.data);
+      if (!res) {
+        const response = await ctgov.post('search_studies', res);
+        this.setState({
+          searchResults: response.data,
+          payload: res,
+        });
+      } else {
+        const response = await ctgov.post('search_studies', payload);
+        this.setState({
+          searchResults: response.data,
+          payload,
+        });
+      }
     } catch (err) {
       console.log(err);
     }
@@ -469,6 +475,22 @@ class SearchForm extends Component {
   render() {
     const { Option } = Select;
     const { Text } = Typography;
+
+    const uploadProps = {
+      beforeUpload: (file) => {
+        if (file.type !== 'application/json') {
+          message.error(`${file.name} is not a JSON file`);
+        }
+        return new Promise(() => {
+          const reader = new FileReader();
+          reader.readAsText(file);
+          reader.onload = () => {
+            const res = JSON.parse(reader.result);
+            this.handleSearch(res);
+          };
+        });
+      },
+    };
 
     const countryList = [];
     const roaList = [];
@@ -562,7 +584,6 @@ class SearchForm extends Component {
             handleFunderChange: this.handleFunderChange,
             handleDocumentsChange: this.handleDocumentsChange,
             handleSubmissionChange: this.handleSubmissionChange,
-
           }}
         />
       );
@@ -849,23 +870,30 @@ class SearchForm extends Component {
           <Row key="form_row_buttons" className="form-row-buttons" justify="center">
             <Form.Item>
               <Space>
-                <Button
+                <CTFButton
                   loading={this.state.isLoading}
                   key="btn_search"
                   inputType="primary"
                   text="Search"
                   clickHandler={this.handleSearch}
                 />
-                <Button
+                <CTFButton
                   key="btn_clear"
                   text="Clear"
                   clickHandler={this.handleClear}
                 />
-                <Button
+                <CTFButton
                   key="btn_show"
                   text={this.state.showAdvancedOptions === false ? 'Show expanded options' : 'Hide expanded options'}
                   clickHandler={this.showAdvancedOptions}
                 />
+                <Upload
+                  action="//jsonplaceholder.typicode.com/posts/"
+                  beforeUpload={uploadProps.beforeUpload}
+                  onChange={uploadProps.onChange}
+                >
+                  <Button type="primary" icon={<UploadOutlined />}>Use search configuration (JSON)</Button>
+                </Upload>
               </Space>
             </Form.Item>
           </Row>
