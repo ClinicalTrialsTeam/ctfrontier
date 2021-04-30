@@ -1,5 +1,4 @@
 import logging
-from collections import OrderedDict
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -14,7 +13,7 @@ from ctgov.models import (
     BrowseConditions,
     Interventions,
     Sponsors,
-    Countries_New,
+    Countries,
 )
 from .serializers import (
     BriefSummariesSerializer,
@@ -26,7 +25,6 @@ from .serializers import (
     CitySerializer,
     StudyDetailSerializer,
     TrialTimelinesSerializer,
-    CountriesNewSerializer,
 )
 from datetime import datetime
 from django.db.models import Q, Count
@@ -87,41 +85,11 @@ class BriefSummariesListApiView(APIView):
 
 # Fixed API call to get the list of countries
 # This is for the front-end user interface control to display country drop-down
-class CountriesNewApiView(APIView):
-    def get(self, request, *args, **kwargs):
-        countries = Countries_New.objects.all().order_by("display_order")
-        countries_serialized = CountriesNewSerializer(countries, many=True)
-        return Response(countries_serialized.data, status=status.HTTP_200_OK)
-
-
-# API to get list of contries where trials are conducted
-# This is for the front-end user interface control to display country drop-down
 class CountriesListApiView(APIView):
     def get(self, request, *args, **kwargs):
-        logger.info("CountriesListApiView: get()")
-        countries = (
-            Facilities.objects.all()
-            .distinct()
-            .values("country")
-            .exclude(country="")
-            .exclude(country="United States")
-            .order_by("country")
-        )
-
-        logger.info("CountriesListApiView: Before serialize.")
-        serialized = CountriesSerializer(countries)
-        logger.info("CountriesListApiView: After serialize")
-
-        # Insert US first
-        # (serializer.data is immutable so we must create a new object)
-        us = OrderedDict()
-        us["country"] = "United States"
-        data = [us]
-        data.extend(serialized)
-
-        r = Response(data, status=status.HTTP_200_OK)
-        logger.info("CountriesListApiView: Complete")
-        return r
+        countries = Countries.objects.all().order_by("display_order")
+        countries_serialized = CountriesSerializer(countries, many=True)
+        return Response(countries_serialized.data, status=status.HTTP_200_OK)
 
 
 # API to get list of conditions
