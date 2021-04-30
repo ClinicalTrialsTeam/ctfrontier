@@ -483,9 +483,6 @@ class SearchForm extends Component {
           reader.readAsText(file);
           reader.onload = () => {
             const res = JSON.parse(reader.result);
-            this.setState({
-              payload: res,
-            });
             this.handleSearch(res);
           };
         });
