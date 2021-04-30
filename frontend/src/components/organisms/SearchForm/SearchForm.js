@@ -386,65 +386,72 @@ class SearchForm extends Component {
 
   async handleSearch(res) {
     this.handleLoading();
-    let payload;
-    if (res !== undefined) {
-      payload = res;
-    } else {
-      payload = {
-        status: this.state.status,
-        condition: this.state.condition,
-        other_terms: this.state.otherTerms,
-        country: this.state.country,
-        intervention: this.state.intervention,
-        target: this.state.target,
-        nct_id: this.state.nct_id,
-        eligibility_criteria: '',
-        modality: this.state.modality,
-        sponsor: this.state.sponsor,
-        phase: this.state.phase,
-        start_date_from: this.state.startDateFrom,
-        start_date_to: this.state.startDateTo,
-        primary_completion_date_from: this.state.primaryCompletionDateFrom,
-        primary_completion_date_to: this.state.primaryCompletionDateTo,
-        first_posted_date_from: this.state.firstPostedDateFrom,
-        first_posted_date_to: this.state.firstPostedDateTo,
-        results_first_posted_date_from: this.state.resultsFirstPostedDateFrom,
-        results_first_posted_date_to: this.state.resultsFirstPostedDateTo,
-        last_update_posted_date_from: this.state.lastUpdatePostedDateFrom,
-        last_update_posted_date_to: this.state.lastUpdatePostedDateTo,
-        study_results: this.state.results,
-        study_type: this.state.type,
-        eligibility_age: this.state.age,
-        eligibility_min_age: this.state.minAge,
-        eligibility_max_age: this.state.maxAge,
-        eligibility_gender: this.state.sex,
-        eligibility_ethnicity: this.state.ethnicity,
-        eligibility_condition: '',
-        eligibility_healthy_volunteer: this.state.healthy === true ? 'Accepts Healthy Volunteers' : '',
-        study_title_acronym: this.state.title,
-        study_outcome_measure: this.state.studyOutcomeMeasure,
-        study_collaborator: this.state.studyCollaborator,
-        study_ids: this.state.studyIds,
-        study_location_terms: this.state.locationTerms,
-        study_funder_type: this.state.studyFunderType,
-        study_document_type: this.state.studyDocumentType,
-        study_results_submitted: this.state.studyResultsSubmitted,
-        study_roa: this.state.roa,
-        state: this.state.state,
-        city: this.state.city,
-        distance: this.state.distance,
-        subcondition: this.state.subcondition,
-        first: 0,
-        last: 100,
-        metadata_required: true,
-      };
-    }
+    // let payload;
+    // if (res !== undefined) {
+    //   payload = res;
+    // } else {
+    const payload = {
+      status: this.state.status,
+      condition: this.state.condition,
+      other_terms: this.state.otherTerms,
+      country: this.state.country,
+      intervention: this.state.intervention,
+      target: this.state.target,
+      nct_id: this.state.nct_id,
+      eligibility_criteria: '',
+      modality: this.state.modality,
+      sponsor: this.state.sponsor,
+      phase: this.state.phase,
+      start_date_from: this.state.startDateFrom,
+      start_date_to: this.state.startDateTo,
+      primary_completion_date_from: this.state.primaryCompletionDateFrom,
+      primary_completion_date_to: this.state.primaryCompletionDateTo,
+      first_posted_date_from: this.state.firstPostedDateFrom,
+      first_posted_date_to: this.state.firstPostedDateTo,
+      results_first_posted_date_from: this.state.resultsFirstPostedDateFrom,
+      results_first_posted_date_to: this.state.resultsFirstPostedDateTo,
+      last_update_posted_date_from: this.state.lastUpdatePostedDateFrom,
+      last_update_posted_date_to: this.state.lastUpdatePostedDateTo,
+      study_results: this.state.results,
+      study_type: this.state.type,
+      eligibility_age: this.state.age,
+      eligibility_min_age: this.state.minAge,
+      eligibility_max_age: this.state.maxAge,
+      eligibility_gender: this.state.sex,
+      eligibility_ethnicity: this.state.ethnicity,
+      eligibility_condition: '',
+      eligibility_healthy_volunteer: this.state.healthy === true ? 'Accepts Healthy Volunteers' : '',
+      study_title_acronym: this.state.title,
+      study_outcome_measure: this.state.studyOutcomeMeasure,
+      study_collaborator: this.state.studyCollaborator,
+      study_ids: this.state.studyIds,
+      study_location_terms: this.state.locationTerms,
+      study_funder_type: this.state.studyFunderType,
+      study_document_type: this.state.studyDocumentType,
+      study_results_submitted: this.state.studyResultsSubmitted,
+      study_roa: this.state.roa,
+      state: this.state.state,
+      city: this.state.city,
+      distance: this.state.distance,
+      subcondition: this.state.subcondition,
+      first: 0,
+      last: 100,
+      metadata_required: true,
+    };
     try {
-      const response = await ctgov.post('search_studies', payload);
-      this.setState({
-        searchResults: response.data,
-        payload,
-      });
+      if (!res) {
+        const response = await ctgov.post('search_studies', res);
+        this.setState({
+          searchResults: response.data,
+          payload: res,
+        });
+      } else {
+        const response = await ctgov.post('search_studies', payload);
+        this.setState({
+          searchResults: response.data,
+          payload,
+        });
+      }
     } catch (err) {
       console.log(err);
     }
