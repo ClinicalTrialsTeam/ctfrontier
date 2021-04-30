@@ -386,10 +386,6 @@ class SearchForm extends Component {
 
   async handleSearch(res) {
     this.handleLoading();
-    // let payload;
-    // if (res !== undefined) {
-    //   payload = res;
-    // } else {
     const payload = {
       status: this.state.status,
       condition: this.state.condition,
