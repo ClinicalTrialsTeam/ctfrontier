@@ -33,6 +33,7 @@ class ListViewTable extends Component {
     this.handleSearch = this.handleSearch.bind(this);
     this.handleClear = this.handleClear.bind(this);
     this.formRef = React.createRef();
+    this.facetsRef = React.createRef();
     this.state = {
       intervention: '',
       condition: '',
@@ -44,7 +45,14 @@ class ListViewTable extends Component {
       searchData: this.props.history.location.state.data,
       payload: this.props.history.location.state.payload,
       dashboardData: {},
+      facetsHeight: 0,
     };
+  }
+
+  componentDidMount() {
+    const facetsHeight = this.facetsRef.current.offsetHeight;
+    this.setState({ facetsHeight });
+    console.log(this.state.facetsHeight);
   }
 
   handleClear() {
@@ -119,7 +127,6 @@ class ListViewTable extends Component {
   render() {
     const { data } = this.props.history.location.state;
     const dataCount = parseInt(data.metadata[0].results_count);
-    console.log(data.search_results);
     const parsedResults = data.search_results.map((result) => {
       return {
         key: result.nct_id,
@@ -158,23 +165,25 @@ class ListViewTable extends Component {
                   Clear
                 </Button>
               </Space>
-              <FacetedSearchGroup
-                key="fs-group"
-                access={access}
-                status={status}
-                phases={phases}
-                roa={roa}
-                results={results}
-                types={types}
-                sex={sex}
-                ageGroup={ageGroup}
-                ethnicities={ethnicities}
-                states={states}
-                distance={distance}
-                funder={funder}
-                documents={documents}
-                submission={submission}
-              />
+              <div ref={this.facetsRef}>
+                <FacetedSearchGroup
+                  key="fs-group"
+                  access={access}
+                  status={status}
+                  phases={phases}
+                  roa={roa}
+                  results={results}
+                  types={types}
+                  sex={sex}
+                  ageGroup={ageGroup}
+                  ethnicities={ethnicities}
+                  states={states}
+                  distance={distance}
+                  funder={funder}
+                  documents={documents}
+                  submission={submission}
+                />
+              </div>
             </Col>
             <Col key="trails_table-col" className="gutter-row" span={20}>
               <Row key="trials-table-extras">
