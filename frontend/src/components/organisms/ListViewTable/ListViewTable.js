@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import {
-  Table, Space, Button, Row, Col, Card, Tooltip,
+  Table, Space, Button, Row, Col, Card, Tooltip, Pagination,
 } from 'antd';
 import PropTypes from 'prop-types';
 import {
@@ -261,7 +261,8 @@ class ListViewTable extends Component {
                 </Col>
               </Row>
               <Table
-                pagination={{ total: dataCount, pageSize: 20 }}
+                // pagination={{ total: dataCount, pageSize: 20 }}
+                pagination={false}
                 scroll={{ x: '1000', y: 1100 }}
                 className="trials-table"
                 key="trials-table"
@@ -272,6 +273,7 @@ class ListViewTable extends Component {
                 dataSource={parsedResults}
                 size="small"
               />
+              <Pagination onChange={() => {}} pageSize={2} total={50} />
             </Col>
           </Row>
         </Card>
