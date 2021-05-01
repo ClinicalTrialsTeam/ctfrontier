@@ -9,38 +9,31 @@ FRONTEND_PORT = 80
 BACKEND_PORT = 8000
 
 
-class CtfFrontendService(core.Construct):
+class CtfFargateService(core.Construct):
     def __init__(
         self,
         scope: core.Construct,
         id: str,
+        service_name,
+        cloud_map_name,
         cluster,
         task_definition,
         sg,
         preferred_az,
-        port,
     ):
         super().__init__(scope, id)
 
         self.service = ecs.FargateService(
             self,
             id=id,
-            service_name=names.FRONTEND_SERVICE,
+            service_name=service_name,
             security_groups=[sg],
             vpc_subnets=ec2.SubnetSelection(availability_zones=[preferred_az]),
             cluster=cluster,
-            cloud_map_options=ecs.CloudMapOptions(name="frontend"),
+            cloud_map_options=ecs.CloudMapOptions(name=cloud_map_name),
             desired_count=1,
             task_definition=task_definition,
             circuit_breaker=ecs.DeploymentCircuitBreaker(rollback=True),
-        )
-
-        self.service.connections.allow_from_any_ipv4(
-            ec2.Port.tcp(port), "react inbound"
-        )
-
-        self.service.connections.allow_from_any_ipv4(
-            ec2.Port.tcp(443), "react inbound https"
         )
 
         # Export frontend service name
@@ -49,6 +42,17 @@ class CtfFrontendService(core.Construct):
             "CfnFrontendServiceName",
             export_name="frontend-service-name",
             value=self.service.service_name,
+        )
+
+
+class CtfFrontendService(CtfFargateService):
+    def add_connection_rules(self):
+        self.service.connections.allow_from_any_ipv4(
+            ec2.Port.tcp(80), "react inbound"
+        )
+
+        self.service.connections.allow_from_any_ipv4(
+            ec2.Port.tcp(443), "react inbound https"
         )
 
 

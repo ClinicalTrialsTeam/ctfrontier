@@ -64,12 +64,14 @@ class CtStack(core.Stack):
         frontend_service = CtfFrontendService(
             self,
             "CtfFrontendService",
+            names.FRONTEND_SERVICE,
+            "frontend",
             ecs_cluster.cluster,
             frontend_task.task,
             site_sg,
             preferred_az,
-            port=80,
         )
+        frontend_service.add_connection_rules()
 
         backend_task = CtfBackendTaskDefinition(
             self,

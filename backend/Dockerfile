@@ -21,7 +21,6 @@ RUN apk add --no-cache --virtual .build-deps gcc musl-dev libc-dev \
     && pip install meinheld gunicorn \
     && pip-compile requirements/base.in \
     && pip install --no-cache-dir -r requirements/base.txt \
-    && pip install https://s3-us-west-2.amazonaws.com/ai2-s2-scispacy/releases/v0.4.0/en_core_sci_sm-0.4.0.tar.gz \
     && apk del .build-deps gcc libc-dev
 
 COPY ./start.sh /start.sh
