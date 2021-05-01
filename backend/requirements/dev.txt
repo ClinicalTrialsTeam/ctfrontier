@@ -39,6 +39,8 @@ click==7.1.2
     #   typer
 colorama==0.4.4
     # via pytest
+conllu==4.4
+    # via scispacy
 coverage==5.5
     # via pytest-cov
 cymem==2.0.5
@@ -101,6 +103,10 @@ iniconfig==1.1.1
     # via pytest
 jinja2==2.11.3
     # via spacy
+joblib==1.0.1
+    # via
+    #   scikit-learn
+    #   scispacy
 markupsafe==1.1.1
     # via jinja2
 mccabe==0.6.1
@@ -114,6 +120,8 @@ murmurhash==1.0.5
     #   thinc
 mypy-extensions==0.4.3
     # via black
+nmslib==2.1.1
+    # via scispacy
 nodeenv==1.6.0
     # via pre-commit
 numpy==1.20.2
@@ -121,7 +129,11 @@ numpy==1.20.2
     #   -r ./dev.in
     #   -r .\base.in
     #   blis
+    #   nmslib
     #   pandas
+    #   scikit-learn
+    #   scipy
+    #   scispacy
     #   spacy
     #   thinc
 packaging==20.9
@@ -147,13 +159,15 @@ preshed==3.0.5
     #   spacy
     #   thinc
 psutil==5.8.0
-    # via mirakuru
+    # via
+    #   mirakuru
+    #   nmslib
 psycopg2-binary==2.8.6
-    # via -r .\base.in
-psycopg2==2.8.6
     # via -r .\base.in
 py==1.10.0
     # via pytest
+pybind11==2.6.1
+    # via nmslib
 pycodestyle==2.7.0
     # via flake8
 pydantic==1.7.3
@@ -164,6 +178,8 @@ pyflakes==2.3.1
     # via flake8
 pyparsing==2.4.7
     # via packaging
+pysbd==0.3.4
+    # via scispacy
 pytest-cov==2.11.1
     # via -r ./dev.in
 pytest-django==4.2.0
@@ -195,7 +211,15 @@ regex==2021.4.4
 requests==2.25.1
     # via
     #   -r .\base.in
+    #   scispacy
+    #   smart-open
     #   spacy
+scikit-learn==0.24.2
+    # via scispacy
+scipy==1.6.3
+    # via scikit-learn
+scispacy==0.4.0
+    # via -r .\base.in
 six==1.15.0
     # via
     #   django-elasticsearch-dsl
@@ -211,6 +235,7 @@ spacy==3.0.6
     # via
     #   -r ./dev.in
     #   -r .\base.in
+    #   scispacy
 sqlparse==0.4.1
     # via
     #   django
@@ -221,6 +246,8 @@ srsly==2.4.1
     #   thinc
 thinc==8.0.3
     # via spacy
+threadpoolctl==2.1.0
+    # via scikit-learn
 toml==0.10.2
     # via
     #   black
