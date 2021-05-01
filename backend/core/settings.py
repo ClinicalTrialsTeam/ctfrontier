@@ -176,13 +176,13 @@ LOGGING = {
         "django_log_handler": {
             "level": "INFO",
             "class": "logging.FileHandler",
-            "filename": "var/logs/django.log",
+            "filename": "var/log/django.log",
             "formatter": "app",
         },
         "react_log_handler": {
             "level": "INFO",
             "class": "logging.FileHandler",
-            "filename": "var/logs/react.log",
+            "filename": "var/log/react.log",
             "formatter": "app",
         },
     },
