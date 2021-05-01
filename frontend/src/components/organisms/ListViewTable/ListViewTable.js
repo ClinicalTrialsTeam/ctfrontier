@@ -45,7 +45,28 @@ class ListViewTable extends Component {
       searchData: this.props.history.location.state.data,
       payload: this.props.history.location.state.payload,
       dashboardData: {},
+      parsedResults: {},
     };
+
+    const data = this.state.searchData;
+    const parsedResults = data.search_results.map((result) => {
+      return {
+        key: result.nct_id,
+        nct_id: result.nct_id,
+        brief_title: result.brief_title,
+        condition_name: result.condition_name !== null ? result.condition_name.split('|').join(', ') : '',
+        sponsor_name: result.sponsor_name !== null ? result.sponsor_name.split('|').join(', ') : '',
+        study_phase: result.study_phase !== null ? result.study_phase.split('/').join(', ') : '',
+        intervention_name: result.intervention_name !== null ? result.intervention_name.split('|').join(', ') : '',
+        status: result.status,
+      };
+    });
+    this.setState({
+      parsedResults,
+    });
+  }
+
+  componentDidMount() {
   }
 
   handleClear() {
@@ -66,6 +87,21 @@ class ListViewTable extends Component {
     this.setState({
       [name]: value,
     });
+  }
+
+  async handlePagination(page, pageSize) {
+    const newPayload = this.state.payload;
+    newPayload.last = (page * pageSize);
+    newPayload.first = newPayload.first - pageSize + 1;
+    try {
+      const response = await ctgov.post('search_studies', this.state.payload);
+      log.info(response.data);
+      this.setState({
+        payload: newPayload,
+      });
+    } catch (err) {
+      log.err(err);
+    }
   }
 
   async handleSearch() {
@@ -190,18 +226,8 @@ class ListViewTable extends Component {
     ];
     const { data } = this.props.history.location.state;
     const dataCount = parseInt(data.metadata[0].results_count);
-    const parsedResults = data.search_results.map((result) => {
-      return {
-        key: result.nct_id,
-        nct_id: result.nct_id,
-        brief_title: result.brief_title,
-        condition_name: result.condition_name !== null ? result.condition_name.split('|').join(', ') : '',
-        sponsor_name: result.sponsor_name !== null ? result.sponsor_name.split('|').join(', ') : '',
-        study_phase: result.study_phase !== null ? result.study_phase.split('/').join(', ') : '',
-        intervention_name: result.intervention_name !== null ? result.intervention_name.split('|').join(', ') : '',
-        status: result.status,
-      };
-    });
+
+    console.log(this.state);
 
     return (
       <div>
@@ -333,10 +359,10 @@ class ListViewTable extends Component {
                   type: 'checkbox',
                 }}
                 columns={columns}
-                dataSource={parsedResults}
+                dataSource={this.state.parsedResults}
                 size="small"
               />
-              <Pagination onChange={() => {}} pageSize={2} total={50} />
+              <Pagination onChange={() => {}} pageSize={20} total={dataCount} />
             </Col>
           </Row>
         </Card>

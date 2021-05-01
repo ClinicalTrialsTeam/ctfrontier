@@ -390,6 +390,7 @@ class SearchForm extends Component {
 
   async handleSearch(res) {
     this.handleLoading();
+    console.log('HANDLE SEARCH');
     const payload = {
       status: this.state.status,
       condition: this.state.condition,
@@ -435,7 +436,7 @@ class SearchForm extends Component {
       distance: this.state.distance,
       subcondition: this.state.subcondition,
       first: 0,
-      last: 100,
+      last: 20,
       metadata_required: true,
     };
     try {
