@@ -8,7 +8,6 @@ import {
   AlignLeftOutlined, BarChartOutlined, DownloadOutlined,
 } from '@ant-design/icons';
 import log from 'loglevel';
-import remote from 'loglevel-plugin-remote';
 import ctgov from '../../../apis/ctgov';
 
 import FacetedSearchGroup from '../../molecules/FacetedSearchGroup/FacetedSearchGroup';
@@ -24,9 +23,6 @@ import {
 
 import { columns } from './ListViewTableConfig';
 import './ListViewTable.css';
-
-remote.apply(log);
-log.enableAll();
 
 class ListViewTable extends Component {
   constructor(props) {

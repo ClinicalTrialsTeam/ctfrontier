@@ -4,6 +4,8 @@ import {
   Form, Select, Divider, Row, Col, Space, Typography, Checkbox, Upload, Button, message,
 } from 'antd';
 import { InfoCircleOutlined, UploadOutlined } from '@ant-design/icons';
+import log from 'loglevel';
+
 import ctgov from '../../../apis/ctgov';
 import TextInputField from '../../atoms/TextInputField/TextInputField';
 import NumberInputField from '../../atoms/NumberInputField/NumberInputField';
@@ -17,6 +19,8 @@ import {
   status, access, phases, roa, results,
   types, sex, ageGroup, ethnicities, distance, states,
 } from '../../../variables/SelectOptionsData';
+
+const byteSize = str => new Blob([str]).size;
 
 class SearchForm extends Component {
   constructor(props) {
@@ -442,7 +446,9 @@ class SearchForm extends Component {
           payload: res,
         });
       } else {
+        log.info(`ctgov.post("search_studies") - ${JSON.stringify(payload, null, 1)}`);
         const response = await ctgov.post('search_studies', payload);
+        log.info(`Search studies returned response size ${byteSize(JSON.stringify(response.data, null, 1))}`);
         this.setState({
           searchResults: response.data,
           payload,

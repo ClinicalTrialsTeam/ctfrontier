@@ -1,0 +1,8 @@
+{
+    "ctfrontier_api_url": "test",
+    "db_host": "placeholder_db_host",
+    "db_password": "Jb5m6U9ksZBpVssiJP0Ye",
+    "django_secret": "ohxac*f@#mc)9t@2x%qd(*a^!_wh$0_g=tmr=t5b$wpjl-&hhu",
+    "notification_email": "nataliemona@g.harvard.edu",
+    "site_domain": "ctfrontier.com"
+}
