@@ -187,8 +187,7 @@ LOGGING = {
             "format": (
                 "%(asctime)s [%(levelname)-8s] "
                 "(%(module)s.%(funcName)s) %(message)s"
-            ),
-            "datefmt": "%Y-%m-%d %H:%M:%S",
+            )
         },
     },
 }
