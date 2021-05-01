@@ -87,9 +87,12 @@ class BriefSummariesListApiView(APIView):
 # This is for the front-end user interface control to display country drop-down
 class CountriesListApiView(APIView):
     def get(self, request, *args, **kwargs):
+        logger.info("CountriesListApiView: get()")
         countries = Countries.objects.all().order_by("display_order")
         countries_serialized = CountriesSerializer(countries, many=True)
-        return Response(countries_serialized.data, status=status.HTTP_200_OK)
+        r = Response(countries_serialized.data, status=status.HTTP_200_OK)
+        logger.info("CountriesListApiView: return response")
+        return r
 
 
 # API to get list of conditions
@@ -202,6 +205,7 @@ class SearchResultsExportApiView(APIView):
 # API to get Trials Dashboard Metadata
 class TrialsDashboardApiView(APIView):
     def post(self, request, *args, **kwargs):
+        logger.info("TrialsDashboardApiView: post()")
         filters = construct_filters(request)
         q_title_acronym = filter_title_acronym(request)
         q_outcome_measure = filter_outcome_measure(request)
@@ -247,7 +251,7 @@ class TrialsDashboardApiView(APIView):
             .order_by("-trials_count")[:10]
         )
 
-        return Response(
+        r = Response(
             {
                 "sponsors": trials_dashboard_sponsors,
                 "phases": trials_dashboard_phase,
@@ -256,6 +260,8 @@ class TrialsDashboardApiView(APIView):
             },
             status=status.HTTP_200_OK,
         )
+        logger.info("TrialsDashboardApiView: return response")
+        return r
 
 
 # Define post action for the API call
