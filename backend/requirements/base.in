@@ -10,3 +10,4 @@ pandas
 psycopg2
 spacy
 numpy
+os

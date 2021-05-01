@@ -97,7 +97,9 @@ def targets():
 
 
 def target_find():
-
+    # primary function creates tables, performes NER on all studies basic + detailed
+    # descriptions then uses regex patterns to find terms for gene target and modality
+    # from 1-s2.0-S153204641300155X-mmc1.xlsx and ModalityList.xlsx
     connect_and_execute_psql(
         "AACT",
         "CREATE TABLE ctgov.recognized_entities(nct_id TEXT, entity_group TEXT)",
@@ -124,17 +126,23 @@ def target_find():
         None,
     )
 
-    nlp_data = []
-    proteins = targets()
-    modality = modalities()
-    protein_arr = numpy.asarray(proteins)
-    modality_arr = numpy.asarray(modality)
+    nlp_data = []  # array of all named entities recongized by scipacy model
+    proteins = (
+        targets()
+    )  # list of all proteins in 1-s2.0-S153204641300155X-mmc1.xlsx
+    modality = modalities()  # list of all modalities in ModalityList.xlsx
+    protein_arr = numpy.asarray(proteins)  # convert dataframe to array
+    modality_arr = numpy.asarray(modality)  # convert dataframe to array
     print(modality_arr)
     print(protein_arr)
-    protein_pattern = " | ".join(str(v) for v in protein_arr)
+    protein_pattern = " | ".join(
+        str(v) for v in protein_arr
+    )  # generate pattern for regex match
     modality_pattern = " | ".join(str(v) for v in modality_arr)
 
-    for record in study_description_records:
+    for (
+        record
+    ) in study_description_records:  # create tuple of NER data for SQL insert
         nlp_tuple = nlp(record[1])
         nlp_string = ""
         for ent in nlp_tuple.ents:
@@ -148,13 +156,15 @@ def target_find():
             (entry[0], entry[1]),
         )
 
-    study_description_records = connect_and_execute_psql(
+    study_description_records = connect_and_execute_psql(  # open new connection and collect NER data limited to DRUG, BIOLOGICAL, and GENETIC types
         "AACT",
         "SELECT nct_id, entity_group FROM ctgov.recognized_entities WHERE nct_id IN (SELECT nct_id FROM ctgov.interventions WHERE intervention_type = 'Drug' OR intervention_type = 'Genetic' OR intervention_type = 'Biological')",
         None,
     )
 
-    print("Looking for proteins...")
+    print(
+        "Looking for proteins..."
+    )  # find genetic targets in NER data, insert into DB
     for record in study_description_records:
         results = re.findall(protein_pattern, record[1].upper())
         results = list(set(results))
@@ -166,7 +176,15 @@ def target_find():
                 (record[0], list_t),
             )
 
-    print("Looking for modalities...")
+    study_description_records = connect_and_execute_psql(  # open new connection and collect NER data ALL
+        "AACT",
+        "SELECT * FROM ctgov.recognized_entities",
+        None,
+    )
+
+    print(
+        "Looking for modalities..."
+    )  # find modalities in NER data, insert into DB
     for record in study_description_records:
         results = re.findall(modality_pattern, record[1].upper())
         results = list(set(results))
