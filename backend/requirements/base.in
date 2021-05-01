@@ -7,9 +7,9 @@ requests
 djangorestframework
 django-filter
 django-cors-headers
+numpy
 pandas
 spacy
-numpy
 django-health-check
 django-debug-toolbar
 django-debug-toolbar-request-history

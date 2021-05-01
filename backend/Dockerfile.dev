@@ -1,4 +1,4 @@
-FROM python:3.8-alpine3.11
+FROM python:3.8.4-slim-buster
 
 ARG USER=django-user
 
@@ -9,12 +9,11 @@ ENV DB_HOST=$DB_HOST
 ENV DB_PORT=$DB_PORT
 ENV DB_PASSWORD=$DB_PASSWORD
 
-RUN set -ex && apk --no-cache add sudo
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get -y install sudo vim 
 
-# Add user and set up passwordless sudo
-RUN adduser -D $USER \
-    && echo "$USER ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/$USER \
-    && chmod 0440 /etc/sudoers.d/$USER
+# set up passwordless sudo for user
+RUN useradd -m -s /bin/bash $USER && \
+    echo "$USER ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/$USER
 
 WORKDIR /usr/src/app
 
@@ -28,12 +27,7 @@ USER $USER
 # Make sure pip-compile and pip-sync are on PATH
 ENV PATH "$PATH:/home/django-user/.local/bin"
 
-# Install GCC (Alpine uses musl but we compile and link dependencies with GCC)
-RUN sudo apk add --no-cache --virtual .build-deps gcc musl-dev \
-    && sudo apk add uwsgi-python3 \
-    && sudo apk add linux-headers \
-    && sudo apk add postgresql-dev \
-    && pip install --no-cache-dir pip-tools \
-    && pip-compile requirements/base.in \
-    && pip install --no-cache-dir -r requirements/base.txt \
-    && sudo apk del .build-deps
+RUN pip install --no-cache-dir pip-tools \
+      && pip-compile requirements/base.in \
+      && pip install --no-cache-dir -r requirements/base.txt
+
