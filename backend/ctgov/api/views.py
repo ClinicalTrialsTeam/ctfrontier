@@ -1,6 +1,10 @@
+import logging
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+
+# Create a logger for this file
+logger = logging.getLogger(__name__)
 
 from ctgov.models import (
     BriefSummaries,
@@ -9,19 +13,18 @@ from ctgov.models import (
     BrowseConditions,
     Interventions,
     Sponsors,
-    Countries_New,
+    Countries,
 )
 from .serializers import (
     BriefSummariesSerializer,
-    SearchStudiesSerializer,
     CountriesSerializer,
+    SearchStudiesSerializer,
     SearchStudiesDocumentSerializer,
     ConditionsSerializer,
     StatesSerializer,
     CitySerializer,
     StudyDetailSerializer,
     TrialTimelinesSerializer,
-    CountriesNewSerializer,
 )
 from datetime import datetime
 from django.db.models import Q, Count
@@ -82,36 +85,14 @@ class BriefSummariesListApiView(APIView):
 
 # Fixed API call to get the list of countries
 # This is for the front-end user interface control to display country drop-down
-class CountriesNewApiView(APIView):
-    def get(self, request, *args, **kwargs):
-        countries = Countries_New.objects.all().order_by("display_order")
-        countries_serialized = CountriesNewSerializer(countries, many=True)
-        return Response(countries_serialized.data, status=status.HTTP_200_OK)
-
-
-# API to get list of contries where trials are conducted
-# This is for the front-end user interface control to display country drop-down
 class CountriesListApiView(APIView):
     def get(self, request, *args, **kwargs):
-        qs1 = (
-            Facilities.objects.all()
-            .distinct()
-            .values("country")
-            .exclude(country="")
-            .exclude(country="United States")
-            .order_by("country")
-        )
-        qs2 = (
-            Facilities.objects.all()
-            .distinct()
-            .filter(country="United States")
-            .values("country")
-        )
-
-        countries = qs2.union(qs1, all=True)
-
-        serializer = CountriesSerializer(countries, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        logger.info("CountriesListApiView: get()")
+        countries = Countries.objects.all().order_by("display_order")
+        countries_serialized = CountriesSerializer(countries, many=True)
+        r = Response(countries_serialized.data, status=status.HTTP_200_OK)
+        logger.info("CountriesListApiView: return response")
+        return r
 
 
 # API to get list of conditions
@@ -168,6 +149,7 @@ class StudyDetailApiView(APIView):
 # API to get trial timelines based on comma separated NCT_IDs
 class TrialTimelinesApiView(APIView):
     def post(self, request, *args, **kwargs):
+        logger.info("TrialTimelinesApiView: get()")
         nct_ids = request.data.get("nct_ids")
         ncts = str(nct_ids).split(",")
         nct_list = [str(item).strip(" ") for item in ncts]
@@ -182,13 +164,18 @@ class TrialTimelinesApiView(APIView):
                 "study_phase",
             )
         )
+        logger.info("TrialTimelinesApiView: Before serialize")
         serializer = TrialTimelinesSerializer(trial_timelines, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        logger.info("TrialTimelinesApiView: After serialize")
+        r = Response(serializer.data, status=status.HTTP_200_OK)
+        logger.info("TrialTimelinesApiView: Complete")
+        return r
 
 
 # API to export search results
 class SearchResultsExportApiView(APIView):
     def post(self, request, *args, **kwargs):
+        logger.info("SearchResultsExportApiView: post()")
         filters = construct_filters(request)
         q_title_acronym = filter_title_acronym(request)
         q_outcome_measure = filter_outcome_measure(request)
@@ -211,12 +198,14 @@ class SearchResultsExportApiView(APIView):
         )
 
         serializer = SearchStudiesSerializer(filter_results, many=True)
+        logger.info("SearchResultsExportApiView: return response")
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 # API to get Trials Dashboard Metadata
 class TrialsDashboardApiView(APIView):
     def post(self, request, *args, **kwargs):
+        logger.info("TrialsDashboardApiView: post()")
         filters = construct_filters(request)
         q_title_acronym = filter_title_acronym(request)
         q_outcome_measure = filter_outcome_measure(request)
@@ -262,7 +251,7 @@ class TrialsDashboardApiView(APIView):
             .order_by("-trials_count")[:10]
         )
 
-        return Response(
+        r = Response(
             {
                 "sponsors": trials_dashboard_sponsors,
                 "phases": trials_dashboard_phase,
@@ -271,6 +260,8 @@ class TrialsDashboardApiView(APIView):
             },
             status=status.HTTP_200_OK,
         )
+        logger.info("TrialsDashboardApiView: return response")
+        return r
 
 
 # Define post action for the API call
@@ -278,6 +269,7 @@ class TrialsDashboardApiView(APIView):
 # Return results along with metadata
 class SearchStudiesApiView(APIView):
     def post(self, request, *args, **kwargs):
+        logger.info("SearchStudiesApiView: post()")
         first = request.data.get("first")
         last = request.data.get("last")
         metadata_required = request.data.get("metadata_required")
@@ -360,6 +352,7 @@ class SearchStudiesApiView(APIView):
             results_count = "NA"
 
         serializer = SearchStudiesSerializer(search_results, many=True)
+        logger.info("SearchStudiesApiView: return results")
         return Response(
             {
                 "metadata": [{"results_count": str(results_count)}],

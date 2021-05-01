@@ -23,12 +23,12 @@ services:
       - DB_PORT=5432
     build: 
       context: ./backend
-      target: base
+      dockerfile: Dockerfile.dev
     container_name: django
     working_dir: /usr/src/app
     volumes:
       - ./backend:/usr/src/app
-    command: /bin/sh -c "pip-compile --quiet requirements/base.in && pip install -r requirements/base.txt -q && python manage.py migrate && pip list && python manage.py runserver 0.0.0.0:8000"
+    command: /bin/sh -c "pip-compile --quiet requirements/base.in && pip install -r requirements/base.txt -q && pip list && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     ports:
       - 8000:8000
     networks:

@@ -3,7 +3,10 @@ django-elasticsearch-dsl==7.1.4
 django_elasticsearch_dsl_drf==0.21
 psycopg2-binary>=2.8
 python-dotenv
+requests
 djangorestframework
 django-filter
 django-cors-headers
+django-health-check
 django-debug-toolbar
+django-debug-toolbar-request-history

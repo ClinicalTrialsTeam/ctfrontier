@@ -4,6 +4,7 @@ WORKDIR /app/frontend
 COPY package.json /app/frontend
 
 ENV REACT_APP_API_BASE_URL=$REACT_APP_API_BASE_URL
+RUN npm install react-scripts@3.4.1 -g --silent
 
 EXPOSE 3000
-CMD "npm install --legacy-peer-deps && npm start"
+RUN npm install --legacy-peer-deps
