@@ -8,7 +8,6 @@ djangorestframework
 django-filter
 django-cors-headers
 pandas
-psycopg2
 spacy
 numpy
 django-health-check
