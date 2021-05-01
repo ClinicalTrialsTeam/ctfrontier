@@ -140,10 +140,13 @@ class CitiesListApiView(APIView):
 class StudyDetailApiView(APIView):
     def post(self, request, *args, **kwargs):
         nct_id = request.data.get("nct_id")
+        logger.info(f"StudyDetailApiView: get nct_id {nct_id}")
 
         study = SearchStudies.objects.all().filter(nct_id=nct_id)
         serializer = StudyDetailSerializer(study, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        r = Response(serializer.data, status=status.HTTP_200_OK)
+        logger.info("StudyDetailApiView: return response")
+        return r
 
 
 # API to get trial timelines based on comma separated NCT_IDs
