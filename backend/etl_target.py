@@ -1,9 +1,9 @@
 import pandas
 import psycopg2
 import re
-
 import spacy
 import numpy
+import os
 from datetime import datetime
 from dotenv import load_dotenv
 from os.path import join, dirname
@@ -25,9 +25,9 @@ def connect_and_execute_psql(dbase, query, data):
         # Connect to an existing database
         connection = psycopg2.connect(
             user="postgres",
-            password=8653,
-            host="localhost",
-            port=5432,
+            password=os.getenv("DB_PASSWORD"),
+            host=os.getenv("DB_HOST"),
+            port=os.getenv("DB_PORT"),
             database="aact",
         )
 
