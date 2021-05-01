@@ -22,7 +22,18 @@ class CtStack(core.Stack):
 
         super().__init__(scope, id, **kwargs)
 
-        vpc = ec2.Vpc(self, "CtfVPC", max_azs=2)
+        preferred_az = f"{aws.AWS_REGION}a"
+
+        vpc = ec2.Vpc(
+            self,
+            "CtfVPC",
+            max_azs=2,
+            nat_gateways=1,
+            nat_gateway_subnets=ec2.SubnetSelection(
+                availability_zones=[preferred_az],
+                subnet_type=ec2.SubnetType.PUBLIC,
+            ),
+        )
         site_sg = ec2.SecurityGroup(
             self,
             "CtfSiteSecurityGroup",
@@ -35,7 +46,6 @@ class CtStack(core.Stack):
             allow_all_outbound=False,
             vpc=vpc,
         )
-        preferred_az = f"{aws.AWS_REGION}a"
 
         ecs_cluster = CtfCluster(
             self,
