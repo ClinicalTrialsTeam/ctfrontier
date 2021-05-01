@@ -1,10 +1,6 @@
 version: "3.8"
 
 services:
-  react:
-    extends:
-      file: docker-compose.yml
-      service: react
   django:
     extends:
       file: docker-compose.yml
