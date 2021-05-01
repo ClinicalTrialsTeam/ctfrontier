@@ -14,3 +14,4 @@ scispacy
 django-health-check
 django-debug-toolbar
 django-debug-toolbar-request-history
+django-logging-endpoint
