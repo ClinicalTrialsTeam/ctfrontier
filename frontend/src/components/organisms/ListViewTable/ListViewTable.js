@@ -47,12 +47,6 @@ class ListViewTable extends Component {
     };
   }
 
-  componentDidMount() {
-    const facetsHeight = this.facetsRef.current.offsetHeight;
-    this.setState(facetsHeight);
-    console.log(this.state.facetsHeight);
-  }
-
   handleClear() {
     this.setState({
       intervention: '',
@@ -92,20 +86,6 @@ class ListViewTable extends Component {
       console.log(err);
     }
   }
-
-  // async handleTrialQuery(nctId) {
-  //   try {
-  //     const nct = { nct: nctId };
-  //     const response = await ctgov.post('study_detail', nct);
-  //     this.setState({
-  //       nctData: response.data,
-  //       nctId,
-  //     });
-  //     console.log(response.data);
-  //   } catch (err) {
-  //     console.log(err);
-  //   }
-  // }
 
   async setDashboardModalVisible(isDashboardModalVisible) {
     const { payload } = this.state;
