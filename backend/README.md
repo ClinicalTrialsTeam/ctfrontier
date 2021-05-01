@@ -144,25 +144,25 @@ Countries API will return a unique list of countries associated with studies in 
 
 	[
 	    {
-	        "country": "Afghanistan"
+	        "name": "Afghanistan"
 	    },
 	    {
-	        "country": "Albania"
+	        "name": "Albania"
 	    },
 	    {
-	        "country": "Algeria"
+	        "name": "Algeria"
 	    },
 	    {
-	        "country": "American Samoa"
+	        "name": "American Samoa"
 	    },
 	    {
-	        "country": "Andorra"
+	        "name": "Andorra"
 	    },
 	    {
-	        "country": "Angola"
+	        "name": "Angola"
 	    },
 	    {
-	        "country": "Antarctica"
+	        "name": "Antarctica"
 	    }
 	    {
 	        ...
