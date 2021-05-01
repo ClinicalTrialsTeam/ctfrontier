@@ -1,6 +1,6 @@
 from aws_cdk import core, aws_ec2 as ec2
 from .task import CtfFargateTaskDefinition, CtfBackendTaskDefinition
-from .service import CtfBackendService, CtfFrontendService, CtfEtlService
+from .service import CtfBackendService, CtfFrontendService
 from .load_balancer import CtfLoadBalancer
 from .cluster import CtfCluster
 from .database import CtfDatabase
@@ -73,7 +73,6 @@ class CtStack(core.Stack):
             site_sg,
             preferred_az,
         )
-        frontend_service.add_connection_rules()
 
         backend_task = CtfBackendTaskDefinition(
             self,
@@ -98,7 +97,7 @@ class CtStack(core.Stack):
             port=80,
         )
 
-        etl_task = CtfFargateTaskDefinition(
+        CtfFargateTaskDefinition(
             self,
             "EtlTask",
             names.ETL_TASK_FAMILY,
@@ -110,16 +109,6 @@ class CtStack(core.Stack):
                 "DB_PORT": "5432",
                 "DB_PASSWORD": db_password,
             },
-        )
-        CtfEtlService(
-            self,
-            "CtfEtlService",
-            names.ETL_SERVICE,
-            ecs_cluster.cluster,
-            etl_task.task,
-            site_sg,
-            preferred_az,
-            desired_count=0,
         )
 
         CtfLoadBalancer(

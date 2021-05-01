@@ -9,7 +9,7 @@ FRONTEND_PORT = 80
 BACKEND_PORT = 8000
 
 
-class CtfFargateService(core.Construct):
+class CtfFrontendService(core.Construct):
     def __init__(
         self,
         scope: core.Construct,
@@ -35,9 +35,6 @@ class CtfFargateService(core.Construct):
             circuit_breaker=ecs.DeploymentCircuitBreaker(rollback=True),
         )
 
-
-class CtfFrontendService(CtfFargateService):
-    def add_connection_rules(self):
         self.service.connections.allow_from_any_ipv4(
             ec2.Port.tcp(80), "react inbound"
         )
@@ -45,10 +42,6 @@ class CtfFrontendService(CtfFargateService):
         self.service.connections.allow_from_any_ipv4(
             ec2.Port.tcp(443), "react inbound https"
         )
-
-
-class CtfEtlService(CtfFargateService):
-    pass
 
 
 class CtfBackendService(core.Construct):

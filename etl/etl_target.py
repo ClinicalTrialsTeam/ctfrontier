@@ -13,12 +13,6 @@ dotenv_path = join(dirname(__file__), ".env")
 load_dotenv(dotenv_path)
 
 
-def print_current_time():
-    now = datetime.now()
-    dt_string = now.strftime("%H:%M:%S")
-    print("start time", dt_string, flush=True)
-
-
 def connect_and_execute_psql(dbase, query, data):
 
     connection = None
@@ -123,7 +117,7 @@ def target_find():
 
     study_description_records = connect_and_execute_psql(
         "AACT",
-        "SELECT bs.nct_id, CONCAT(bs.description, ' ',  dd.description) FROM ctgov.brief_summaries bs INNER JOIN ctgov.detailed_descriptions dd ON bs.nct_id = dd.nct_id LIMIT 100",
+        "SELECT bs.nct_id, CONCAT(bs.description, ' ',  dd.description) FROM ctgov.brief_summaries bs INNER JOIN ctgov.detailed_descriptions dd ON bs.nct_id = dd.nct_id",
         None,
     )
 
@@ -162,12 +156,14 @@ def target_find():
         "SELECT nct_id, entity_group FROM ctgov.recognized_entities WHERE nct_id IN (SELECT nct_id FROM ctgov.interventions WHERE intervention_type = 'Drug' OR intervention_type = 'Genetic' OR intervention_type = 'Biological')",
         None,
     )
+    n_records = len(study_description_records)
 
     print(
         "Looking for proteins...",
         flush=True,
     )  # find genetic targets in NER data, insert into DB
-    for record in study_description_records:
+    for i, record in enumerate(study_description_records):
+        print(f"Processing record #{i + 1} of {n_records}...", flush=True)
         results = re.findall(protein_pattern, record[1].upper())
         results = list(set(results))
         if results:
@@ -188,7 +184,8 @@ def target_find():
         "Looking for modalities...",
         flush=True,
     )  # find modalities in NER data, insert into DB
-    for record in study_description_records:
+    for i, record in enumerate(study_description_records):
+        print(f"Processing record #{i + 1} of {n_records}...", flush=True)
         results = re.findall(modality_pattern, record[1].upper())
         results = list(set(results))
         if results:
@@ -200,6 +197,10 @@ def target_find():
             )
 
 
-print_current_time()
+def current_time():
+    return datetime.now().strftime("%H:%M:%S")
+
+
+print(f"start time: {current_time()}")
 target_find()
-print_current_time()
+print(f"finish time: {current_time()}")
