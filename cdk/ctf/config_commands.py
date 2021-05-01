@@ -22,6 +22,38 @@ def config():
     pass
 
 
+@config.command("create")
+@click.option(
+    "--config-file",
+    prompt=(
+        "Initial config filename "
+        "(Note: editing config can only be done with 'ctf config-edit')"
+    ),
+    help="Provide and initial config file",
+)
+def config_create(config_file):
+    """
+    Create a new config.
+    """
+    if not config_file.strip():
+        click.echo("Missing config file!")
+        raise click.Abort()
+
+    if not click.confirm(
+        "Creating a new config will overwrite the old config"
+        " if any exists. Create a new config?"
+    ):
+        return
+
+    Config.delete()
+    Config.new(config_file)
+
+
+@config.command("delete")
+def config_delete():
+    Config.delete()
+
+
 @config.command("show")
 def config_show():
     """
@@ -58,15 +90,23 @@ class Config:
         # Read json key, values and create parameters for each
         try:
             for key, val in current_config.items():
-                param_type = environment.ParamTypes.SECURE_STRING.value
                 if key in config_schema:
-                    if config_schema[key]["type"] == "String":
+                    if (
+                        config_schema[key]["type"]
+                        == environment.ParamTypes.STRING.value
+                    ):
                         param_type = environment.ParamTypes.STRING
-                    elif config_schema[key]["type"] == "StringList":
+                    elif (
+                        config_schema[key]["type"]
+                        == environment.ParamTypes.STRING_LIST.value
+                    ):
                         param_type = environment.ParamTypes.STRING_LIST
-                print(f"create param {key}, {val}, {param_type}")
+                    else:
+                        param_type = environment.ParamTypes.SECURE_STRING
                 environment.Param(key).create(val, param_type=param_type)
-                click.echo(f"Created ssm param {key}={val}")
+                click.echo(
+                    f"Created ssm param {key}={val}, type: {param_type.value}"
+                )
         except Exception as e:
             click.secho(f"Error creating ssm parameters: {e}", fg="red")
             raise click.Abort()
@@ -80,8 +120,7 @@ class Config:
         if not self.current_config:
             click.echo("No existing config")
         else:
-            for key, val in self.current_config.items():
-                click.echo(f"{key}={val}")
+            click.echo(json.dumps(self.current_config, indent=4))
 
     def edit(self):
 
@@ -89,7 +128,12 @@ class Config:
             try:
                 edited = click.edit(json.dumps(self.current_config, indent=4))
                 if edited:
-                    new_config = json.loads(edited)
+                    try:
+                        new_config = json.loads(edited)
+                    except json.JSONDecodeError as e:
+                        click.secho(f"Invalid JSON. {e}", fg="red")
+                        if click.confirm("Continue editing?", abort=True):
+                            continue
                     self._validate(new_config)
 
                     self._create = {}
@@ -127,10 +171,9 @@ class Config:
         if not config:
             config = self.current_config
 
-        with open(CONFIG_SCHEMA_FILE, "r") as f:
-            data = json.load(f)
+        schema = self._schema()
 
-        required_params = set(data.keys())
+        required_params = set(schema.keys())
         current_params = set(config.keys())
 
         errors = []
@@ -139,9 +182,15 @@ class Config:
         if errors:
             raise ConfigValidationError(errors=errors)
 
+    def _schema(self):
+        with open(CONFIG_SCHEMA_FILE, "r") as f:
+            return json.load(f)
+
     def _print_diff(self):
+        schema = self._schema()
+
         for key, val in self._create.items():
-            click.echo(f"Create {key}={val}")
+            click.echo(f"Create {key}={val}, type={schema[key]['type']}")
 
         for key, val in self._update.items():
             click.echo(f"Update {key} to {val}")
@@ -155,8 +204,17 @@ class Config:
         """
         Push updates to SSM
         """
+        schema = self._schema()
+
         for key, val in self._create.items():
-            environment.Param(key).create(val)
+            param_type_str = schema[key]["type"]
+            if param_type_str == environment.ParamTypes.STRING.value:
+                param_type = environment.ParamTypes.STRING
+            elif param_type_str == environment.ParamTypes.STRING_LIST.value:
+                param_type = environment.ParamTypes.STRING_LIST
+            else:
+                param_type = environment.ParamTypes.SECURE_STRING
+            environment.Param(key).create(val, param_type=param_type)
             click.echo(f"Added {key}={val}")
 
         for key, val in self._update.items():

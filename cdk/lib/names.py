@@ -1,13 +1,27 @@
 PROJECT_NAME = "ctfrontier"
 
 CDK_BOOTSTRAP_BUCKET = "ctf-bootstrap-bucket"
+LAMBDA_CODE_BUCKET = "ctf-lambda-code-bucket"
 
 LAMBDA_REPOSITORY = "ctf-lambda-repository"
+FRONTEND_REPOSITORY = "ctf-frontend-repository"
+BACKEND_REPOSITORY = "ctf-backend-repository"
 
-RAW_DATA_FILES_BUCKET = "raw-data-files"
-RAW_DATA_DOWNLOAD_FUNCTION = "raw-data-download"
-RAW_DATA_DOWNLOAD_IMAGE = "raw-data-lambda-image"
+REPOSITORIES = [FRONTEND_REPOSITORY, BACKEND_REPOSITORY]
 
-LAMBDA_RELEASE_ALIAS = "live"
+CLUSTER = "ctf-ecs-cluster"
+
+FRONTEND_SERVICE = "frontend"
+FRONTEND_TASK_FAMILY = "react-task"
+
+BACKEND_SERVICE = "backend-service"
+BACKEND_TASK_FAMILY = "django-task"
+BACKEND_KEY_PAIR = "CtfBackendKeyPair"
+
+FRONTEND_IMAGE = "ctf-frontend"
+
+DATABASE = "aact"
+DATABASE_INSTANCE = "ctf-db-instance"
+
 METRIC_NAMESPACE = "log-metrics"
 NOTIFICATIONS_TOPIC = "notifications"

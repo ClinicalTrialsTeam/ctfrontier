@@ -12,9 +12,11 @@ AWS_PROFILE = getenv("AWS_PROFILE")
 AWS_REGION = "us-east-1"
 AWS_ACCOUNT_ID = boto3.client("sts").get_caller_identity()["Account"]
 
-STACK_TAGS = {
-    "Key": "project",
-    "Value": "CTF",
-}
+STACK_TAGS = [
+    {
+        "Key": "project",
+        "Value": "CTF",
+    }
+]
 
 putenv("CDK_NEW_BOOTSTRAP", "1")

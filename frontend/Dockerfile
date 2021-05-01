@@ -2,7 +2,7 @@
 FROM node:15.12.0-alpine3.12 as builder
 WORKDIR /app
 ENV PATH /app/node_modules/.bin:$PATH
-ENV REACT_APP_API_BASE_URL=$REACT_APP_API_BASE_URL
+ENV REACT_APP_API_BASE_URL=""
 COPY package.json ./
 COPY package-lock.json ./
 RUN npm ci --silent

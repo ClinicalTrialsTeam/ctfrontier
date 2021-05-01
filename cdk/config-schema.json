@@ -1,5 +1,14 @@
 {
-    "notification_email": {
+    "site_domain": {
         "type": "String"
+    },
+    "django_secret": {
+        "type": "SecureString"
+    },
+    "db_host": {
+        "type": "String"
+    },
+    "db_password": {
+        "type": "SecureString"
     }
 }

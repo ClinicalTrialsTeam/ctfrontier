@@ -106,7 +106,7 @@ class SearchForm extends Component {
     try {
       const response = await ctgov.get('countries');
       const countries = response.data.map((item) => {
-        return item.country;
+        return item.name;
       });
       this.setState({
         countries,
