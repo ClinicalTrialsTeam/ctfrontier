@@ -1,12 +1,29 @@
 import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
 import {
   Collapse, Typography, Row, Col, Descriptions, Divider,
 } from 'antd';
+import PropTypes from 'prop-types';
 import { fields } from './SingleTrialDisplayConfig';
-
-// import { fields } from './SingleTrialDisplayConfig';
+import ctgov from '../../../apis/ctgov';
 
 class SingleTrialDisplay extends Component {
+  async componentDidMount() {
+    const nctId = this.props.location.pathname.split('/').slice(-1)[0];
+    console.log(nctId);
+    try {
+      const nct = { nct_id: nctId };
+      const response = await ctgov.post('study_detail', nct);
+      // this.setState({
+      //   nctData: response.data,
+      //   nctId,
+      // });
+      console.log(response);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
   render() {
     const { Panel } = Collapse;
     const { Title } = Typography;
@@ -139,4 +156,8 @@ class SingleTrialDisplay extends Component {
   }
 }
 
-export default SingleTrialDisplay;
+SingleTrialDisplay.propTypes = {
+  location: PropTypes.object.isRequired,
+};
+
+export default withRouter(SingleTrialDisplay);
