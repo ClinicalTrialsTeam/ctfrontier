@@ -74,6 +74,17 @@ Not blank
 """
 
 
+def modalities():
+    # Targets
+    # Read in excel file using pandas
+    # combine official symbol with synonyms into big list
+    # Pull
+    xl = pandas.ExcelFile("ModalityList.xlsx")
+    df = xl.parse("Sheet1", parse_cols="B")
+    modality = df["Modality Upper"]
+    return modality
+
+
 def targets():
     # Targets
     # Read in excel file using pandas
@@ -99,19 +110,29 @@ def target_find():
         None,
     )
 
+    connect_and_execute_psql(
+        "AACT",
+        "CREATE TABLE ctgov.modality(nct_id TEXT, modality TEXT)",
+        None,
+    )
+
     nlp = spacy.load("en_core_sci_sm")
 
     study_description_records = connect_and_execute_psql(
         "AACT",
-        "SELECT bs.nct_id, CONCAT(bs.description, ' ',  dd.description) FROM ctgov.brief_summaries bs INNER JOIN ctgov.detailed_descriptions dd ON bs.nct_id = dd.nct_id",
+        "SELECT bs.nct_id, CONCAT(bs.description, ' ',  dd.description) FROM ctgov.brief_summaries bs INNER JOIN ctgov.detailed_descriptions dd ON bs.nct_id = dd.nct_id LIMIT 5000",
         None,
     )
 
     nlp_data = []
     proteins = targets()
+    modality = modalities()
     protein_arr = numpy.asarray(proteins)
+    modality_arr = numpy.asarray(modality)
+    print(modality_arr)
     print(protein_arr)
     protein_pattern = " | ".join(str(v) for v in protein_arr)
+    modality_pattern = " | ".join(str(v) for v in modality_arr)
 
     for record in study_description_records:
         nlp_tuple = nlp(record[1])
@@ -133,16 +154,27 @@ def target_find():
         None,
     )
 
+    print("Looking for proteins...")
     for record in study_description_records:
         results = re.findall(protein_pattern, record[1].upper())
         results = list(set(results))
-        for i in results:
-            print(i)
         if results:
             list_t = ",".join(str(r) for r in results)
             connect_and_execute_psql(
                 "AACT",
                 "INSERT INTO ctgov.target (nct_id, target) VALUES (%s, %s)",
+                (record[0], list_t),
+            )
+
+    print("Looking for modalities...")
+    for record in study_description_records:
+        results = re.findall(modality_pattern, record[1].upper())
+        results = list(set(results))
+        if results:
+            list_t = ",".join(str(r) for r in results)
+            connect_and_execute_psql(
+                "AACT",
+                "INSERT INTO ctgov.modality (nct_id, modality) VALUES (%s, %s)",
                 (record[0], list_t),
             )
 
