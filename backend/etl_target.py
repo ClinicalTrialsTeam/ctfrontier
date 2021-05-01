@@ -122,7 +122,7 @@ def target_find():
 
     study_description_records = connect_and_execute_psql(
         "AACT",
-        "SELECT bs.nct_id, CONCAT(bs.description, ' ',  dd.description) FROM ctgov.brief_summaries bs INNER JOIN ctgov.detailed_descriptions dd ON bs.nct_id = dd.nct_id LIMIT 5000",
+        "SELECT bs.nct_id, CONCAT(bs.description, ' ',  dd.description) FROM ctgov.brief_summaries bs INNER JOIN ctgov.detailed_descriptions dd ON bs.nct_id = dd.nct_id",
         None,
     )
 
