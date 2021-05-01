@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from .views import (
     BriefSummariesListApiView,
     SearchStudiesApiView,
@@ -24,4 +24,5 @@ urlpatterns = [
     path("trials_dashboard", TrialsDashboardApiView.as_view()),
     path("search_results_export", SearchResultsExportApiView.as_view()),
     path("trial_timelines", TrialTimelinesApiView.as_view()),
+    path("healthz", include("health_check.urls")),
 ]

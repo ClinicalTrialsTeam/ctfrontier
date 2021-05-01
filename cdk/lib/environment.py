@@ -43,6 +43,10 @@ class Param:
             raise Exception(f"{param_type} is an invalid ssm parameter type")
         self.type = param_type.value
 
+        if self.exists():
+            self.update(value)
+            return
+
         try:
             ssm.put_parameter(
                 Name=self.path_name,
@@ -51,7 +55,7 @@ class Param:
                 ),
                 Value=value,
                 Type=self.type,
-                Tags=[aws.STACK_TAGS],
+                Tags=aws.STACK_TAGS,
                 Tier="Standard",
             )
         except ClientError as e:
@@ -64,7 +68,7 @@ class Param:
         except ssm.exceptions.ParameterNotFound:
             return False
 
-    def getvalue(self, decrypt=False, required=False):
+    def get_value(self, decrypt=False, required=True):
         try:
             r = ssm.get_parameter(Name=self.path_name, WithDecryption=decrypt)
             return r["Parameter"]["Value"]

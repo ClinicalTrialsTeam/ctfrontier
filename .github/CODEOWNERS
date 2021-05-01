@@ -12,8 +12,8 @@
 # This should make it easy to add new rules without breaking existing ones.
 
 * @ClinicalTrialsTeam/ct-team
-/frontend/ @elarens @bapower
-/backend/ @swt144 @bragu @BlanchardMR @bapower
+/frontend/ @elarens @bapower @nataliemona
+/backend/ @swt144 @bragu @BlanchardMR @bapower @nataliemona
 docker-compose.yml @nataliemona
 Dockerfile @nataliemona
 .eslint.json @nataliemona

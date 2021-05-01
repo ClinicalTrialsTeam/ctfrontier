@@ -30,19 +30,32 @@ cymem==2.0.5
     #   thinc
 django-cors-headers==3.7.0
     # via -r ./base.in
+django-cors-headers==3.7.0
+    # via -r requirements/base.in
+django-debug-toolbar-request-history==0.1.3
+    # via -r requirements/base.in
+django-debug-toolbar==3.2.1
+    # via
+    #   -r requirements/base.in
+    #   django-debug-toolbar-request-history
 django-elasticsearch-dsl==7.1.4
     # via
     #   -r ./base.in
     #   django-elasticsearch-dsl-drf
 django-filter==2.4.0
     # via -r ./base.in
+    # via -r requirements/base.in
+django-health-check==3.16.4
+    # via -r requirements/base.in
 django-nine==0.2.4
     # via django-elasticsearch-dsl-drf
 django==3.2
     # via
     #   -r ./base.in
     #   django-cors-headers
+    #   django-debug-toolbar
     #   django-filter
+    #   django-health-check
     #   django-nine
     #   djangorestframework
 django_elasticsearch_dsl_drf==0.21
@@ -61,6 +74,7 @@ elasticsearch==7.12.0
     #   elasticsearch-dsl
 idna==2.10
     # via requests
+<<<<<<< HEAD
 jinja2==2.11.3
     # via spacy
 markupsafe==1.1.1
@@ -87,6 +101,8 @@ preshed==3.0.5
     # via
     #   spacy
     #   thinc
+=======
+>>>>>>> main
 psycopg2-binary==2.8.6
     # via -r ./base.in
 psycopg2==2.8.6
@@ -104,11 +120,17 @@ python-dateutil==2.8.1
 python-dotenv==0.17.0
     # via -r ./base.in
 pytz==2021.1
+<<<<<<< HEAD
     # via
     #   django
     #   pandas
 requests==2.25.1
     # via spacy
+=======
+    # via django
+requests==2.25.1
+    # via -r requirements/base.in
+>>>>>>> main
 six==1.15.0
     # via
     #   django-elasticsearch-dsl
@@ -122,6 +144,7 @@ spacy-legacy==3.0.5
 spacy==3.0.6
     # via -r ./base.in
 sqlparse==0.4.1
+<<<<<<< HEAD
     # via django
 srsly==2.4.1
     # via
@@ -135,10 +158,16 @@ typer==0.3.2
     # via
     #   pathy
     #   spacy
+=======
+    # via
+    #   django
+    #   django-debug-toolbar
+>>>>>>> main
 urllib3==1.26.4
     # via
     #   elasticsearch
     #   requests
+<<<<<<< HEAD
 wasabi==0.8.2
     # via
     #   spacy
@@ -146,3 +175,5 @@ wasabi==0.8.2
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
+=======
+>>>>>>> main

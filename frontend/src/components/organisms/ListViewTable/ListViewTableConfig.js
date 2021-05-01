@@ -1,3 +1,8 @@
+import React from 'react';
+import Typography from 'antd';
+
+const { Link } = Typography;
+
 const columns = [
   {
     title: 'NCT ID',
@@ -7,16 +12,25 @@ const columns = [
     width: 120,
     sortDirections: ['descend', 'ascend'],
     sorter: (a, b) => { return a.nct_id.localeCompare(b.nct_id); },
+    render: (nctId) => {
+      return (
+        <Link to={'/' + nctId} target="_blank">
+          {nctId}
+        </Link>
+      );
+    },
   },
   {
     title: 'Brief Title',
     dataIndex: 'brief_title',
     key: 'brief_title',
+    width: 250,
   },
   {
     title: 'Condition',
     dataIndex: 'condition_name',
     key: 'condition_name',
+    width: 150,
     sortDirections: ['descend', 'ascend'],
     sorter: (a, b) => {
       return a.condition_name.localeCompare(b.condition_name);
@@ -30,15 +44,29 @@ const columns = [
     width: 200,
   },
   {
+    title: 'Sponsor',
+    dataIndex: 'sponsor_name',
+    key: 'sponsor_name',
+    sortDirections: ['descend', 'ascend'],
+    sorter: (a, b) => { return a.sponsor_name.localeCompare(b.sponsor_name); },
+    width: 150,
+  },
+  {
+    title: 'Phase',
+    dataIndex: 'study_phase',
+    key: 'study_phase',
+    sortDirections: ['descend', 'ascend'],
+    sorter: (a, b) => { return a.study_phase.localeCompare(b.study_phase); },
+    width: 100,
+  },
+  {
     title: 'Status',
     dataIndex: 'status',
     key: 'status',
     sortDirections: ['descend', 'ascend'],
     sorter: (a, b) => { return a.status.localeCompare(b.status); },
-    width: 120,
+    width: 100,
   },
 ];
 
-module.exports = {
-  columns,
-};
+export default columns;
