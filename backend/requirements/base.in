@@ -6,3 +6,4 @@ python-dotenv
 djangorestframework
 django-filter
 django-cors-headers
+django-debug-toolbar

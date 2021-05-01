@@ -10,6 +10,8 @@ certifi==2020.12.5
     # via elasticsearch
 django-cors-headers==3.7.0
     # via -r requirements/base.in
+django-debug-toolbar==3.2.1
+    # via -r requirements/base.in
 django-elasticsearch-dsl==7.1.4
     # via
     #   -r requirements/base.in
@@ -22,6 +24,7 @@ django==3.2
     # via
     #   -r requirements/base.in
     #   django-cors-headers
+    #   django-debug-toolbar
     #   django-filter
     #   django-nine
     #   djangorestframework
@@ -54,6 +57,8 @@ six==1.15.0
     #   elasticsearch-dsl
     #   python-dateutil
 sqlparse==0.4.1
-    # via django
+    # via
+    #   django
+    #   django-debug-toolbar
 urllib3==1.26.4
     # via elasticsearch

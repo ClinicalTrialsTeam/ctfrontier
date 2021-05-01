@@ -26,6 +26,8 @@ distlib==0.3.1
     # via virtualenv
 django-cors-headers==3.7.0
     # via -r backend/requirements/base.in
+django-debug-toolbar==3.2.1
+    # via -r backend/requirements/base.in
 django-elasticsearch-dsl==7.1.4
     # via
     #   -r backend/requirements/base.in
@@ -38,6 +40,7 @@ django==3.2
     # via
     #   -r backend/requirements/base.in
     #   django-cors-headers
+    #   django-debug-toolbar
     #   django-filter
     #   django-nine
     #   djangorestframework
@@ -125,7 +128,9 @@ six==1.15.0
     #   python-dateutil
     #   virtualenv
 sqlparse==0.4.1
-    # via django
+    # via
+    #   django
+    #   django-debug-toolbar
 toml==0.10.2
     # via
     #   black
