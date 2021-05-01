@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     "django_elasticsearch_dsl",
     "django_elasticsearch_dsl_drf",
     "debug_toolbar",
+    "logging_endpoint",
 ]
 
 MIDDLEWARE = [
@@ -170,17 +171,32 @@ DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
-    "root": {"level": "INFO", "handlers": ["file"]},
+    "root": {"level": "INFO", "handlers": ["django_log_handler"]},
     "handlers": {
-        "file": {
+        "django_log_handler": {
             "level": "INFO",
             "class": "logging.FileHandler",
-            "filename": "django.log",
+            "filename": "var/logs/django.log",
+            "formatter": "app",
+        },
+        "react_log_handler": {
+            "level": "INFO",
+            "class": "logging.FileHandler",
+            "filename": "var/logs/react.log",
             "formatter": "app",
         },
     },
     "loggers": {
-        "django": {"handlers": ["file"], "level": "INFO", "propagate": True},
+        "django": {
+            "handlers": ["django_log_handler"],
+            "level": "INFO",
+            "propagate": True,
+        },
+        "react": {
+            "handlers": ["react_log_handler"],
+            "level": "INFO",
+            "propagate": True,
+        },
     },
     "formatters": {
         "app": {
@@ -191,6 +207,9 @@ LOGGING = {
         },
     },
 }
+
+# For frontend logging
+LOGGING_ENDPOINT_LOGGER = "react"
 
 if not PROD:
     # Required for django debug toolbar
