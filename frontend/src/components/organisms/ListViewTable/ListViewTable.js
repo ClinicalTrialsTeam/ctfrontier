@@ -44,16 +44,14 @@ class ListViewTable extends Component {
       searchData: this.props.history.location.state.data,
       payload: this.props.history.location.state.payload,
       dashboardData: {},
-      // nctData: {},
-      // nctId: '',
     };
   }
 
-  // componentDidMount() {
-  //   const facetsHeight = this.facetsRef.current.offsetHeight;
-  //   this.setState({ facetsHeight });
-  //   console.log(this.state.facetsHeight);
-  // }
+  componentDidMount() {
+    const facetsHeight = this.facetsRef.current.offsetHeight;
+    this.setState(facetsHeight);
+    console.log(this.state.facetsHeight);
+  }
 
   handleClear() {
     this.setState({
@@ -155,9 +153,6 @@ class ListViewTable extends Component {
               type="link"
               size="small"
               href={'./trials/' + nctId}
-              // onClick={() => {
-              //   return this.handleTrialQuery(nctId);
-              // }}
             >
               {nctId}
             </Link>
@@ -226,18 +221,6 @@ class ListViewTable extends Component {
         status: result.status,
       };
     });
-
-    // if (this.state.nctData !== {}) {
-    //   return (
-    //     <Redirect
-    //       push
-    //       to={{
-    //         pathname: '/trials/' + this.state.nctId,
-    //         nct: { nctData: this.state.nctData, nctId: this.state.nctId },
-    //       }}
-    //     />
-    //   );
-    // }
 
     return (
       <div>
