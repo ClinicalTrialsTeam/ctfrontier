@@ -33,6 +33,7 @@ class ListViewTable extends Component {
     this.handleSearch = this.handleSearch.bind(this);
     this.handleClear = this.handleClear.bind(this);
     this.formRef = React.createRef();
+    this.facetsRef = React.createRef();
     this.state = {
       intervention: '',
       condition: '',
@@ -44,7 +45,14 @@ class ListViewTable extends Component {
       searchData: this.props.history.location.state.data,
       payload: this.props.history.location.state.payload,
       dashboardData: {},
+      facetsHeight: 0,
     };
+  }
+
+  componentDidMount() {
+    const facetsHeight = this.facetsRef.current.offsetHeight;
+    this.setState({ facetsHeight });
+    console.log(this.state.facetsHeight);
   }
 
   handleClear() {
@@ -89,13 +97,15 @@ class ListViewTable extends Component {
 
   async setDashboardModalVisible(isDashboardModalVisible) {
     const { payload } = this.state;
-    try {
-      const response = await ctgov.post('trials_dashboard', payload);
-      this.setState({
-        dashboardData: response.data,
-      });
-    } catch (err) {
-      console.log(err);
+    if (isDashboardModalVisible) {
+      try {
+        const response = await ctgov.post('trials_dashboard', payload);
+        this.setState({
+          dashboardData: response.data,
+        });
+      } catch (err) {
+        console.log(err);
+      }
     }
     this.setState({
       isDashboardModalVisible,
@@ -122,10 +132,10 @@ class ListViewTable extends Component {
         key: result.nct_id,
         nct_id: result.nct_id,
         brief_title: result.brief_title,
-        condition_name: result.condition_name
-    !== null ? result.condition_name.split('|').join(', ') : '',
-        intervention_name: result.intervention_name
-    !== null ? result.intervention_name.split('|').join(', ') : '',
+        condition_name: result.condition_name !== null ? result.condition_name.split('|').join(', ') : '',
+        sponsor_name: result.sponsor_name !== null ? result.sponsor_name.split('|').join(', ') : '',
+        study_phase: result.study_phase !== null ? result.study_phase.split('/').join(', ') : '',
+        intervention_name: result.intervention_name !== null ? result.intervention_name.split('|').join(', ') : '',
         status: result.status,
       };
     });
@@ -155,23 +165,25 @@ class ListViewTable extends Component {
                   Clear
                 </Button>
               </Space>
-              <FacetedSearchGroup
-                key="fs-group"
-                access={access}
-                status={status}
-                phases={phases}
-                roa={roa}
-                results={results}
-                types={types}
-                sex={sex}
-                ageGroup={ageGroup}
-                ethnicities={ethnicities}
-                states={states}
-                distance={distance}
-                funder={funder}
-                documents={documents}
-                submission={submission}
-              />
+              <div ref={this.facetsRef}>
+                <FacetedSearchGroup
+                  key="fs-group"
+                  access={access}
+                  status={status}
+                  phases={phases}
+                  roa={roa}
+                  results={results}
+                  types={types}
+                  sex={sex}
+                  ageGroup={ageGroup}
+                  ethnicities={ethnicities}
+                  states={states}
+                  distance={distance}
+                  funder={funder}
+                  documents={documents}
+                  submission={submission}
+                />
+              </div>
             </Col>
             <Col key="trails_table-col" className="gutter-row" span={20}>
               <Row key="trials-table-extras">
