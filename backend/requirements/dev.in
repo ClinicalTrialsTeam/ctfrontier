@@ -7,7 +7,6 @@ pre-commit
 black
 flake8
 pandas
-psycopg2
 spacy
 numpy
-os 
+
