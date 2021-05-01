@@ -1,6 +1,7 @@
 venv
 config.json
 dist/
+ignore/
 .env*
 
 *.egg-info
