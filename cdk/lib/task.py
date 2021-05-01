@@ -7,12 +7,17 @@ from aws_cdk import (
 from . import names
 
 
-class CtfFrontendTaskDefinition(core.Construct):
+class CtfFargateTaskDefinition(core.Construct):
     def __init__(
         self,
         scope: core.Construct,
         id: str,
-        port,
+        task_family_name,
+        container_identifier,
+        ecr_repository_identifier,
+        ecr_repository_name,
+        environment={},
+        mapped_port=None,
     ):
 
         super().__init__(scope, id)
@@ -20,28 +25,36 @@ class CtfFrontendTaskDefinition(core.Construct):
         self.task = ecs.FargateTaskDefinition(
             self,
             id,
-            family=names.FRONTEND_TASK_FAMILY,
+            family=task_family_name,
             cpu=256,
             memory_limit_mib=1024,
         )
 
+        port_mappings = None
+        if mapped_port:
+            port_mappings = [ecs.PortMapping(container_port=mapped_port)]
+
         self.task.add_container(
-            "FrontendContainer",
+            container_identifier,
             image=ecs.ContainerImage.from_ecr_repository(
                 repository=ecr.Repository.from_repository_name(
                     self,
-                    "FrontendRepository",
-                    repository_name=names.FRONTEND_REPOSITORY,
+                    ecr_repository_identifier,
+                    repository_name=ecr_repository_name,
                 )
             ),
             essential=True,
-            environment={"LOCALDOMAIN": "service.local"},
+            environment=environment,
             logging=ecs.LogDrivers.aws_logs(
-                stream_prefix="FrontendContainer",
+                stream_prefix=container_identifier,
                 log_retention=logs.RetentionDays.ONE_WEEK,
             ),
-            port_mappings=[ecs.PortMapping(container_port=port)],
+            port_mappings=port_mappings,
         )
+
+
+class CtfFrontendTaskDefinition(CtfFargateTaskDefinition):
+    pass
 
 
 class CtfBackendTaskDefinition(core.Construct):

@@ -1,0 +1,42 @@
+version: "3.8"
+
+services:
+  react:
+    extends:
+      file: docker-compose.yml
+      service: react
+  django:
+    extends:
+      file: docker-compose.yml
+      service: django
+    depends_on:
+      - pgdb
+  pgdb:
+    extends:
+      file: docker-compose.yml
+      service: pgdb
+  etl:
+    command: python etl_target.py
+    container_name: etl
+    build: ./etl
+    env_file:
+      - ./backend/.env
+    environment:
+      - DB_HOST=pgdb
+      - DB_PORT=5432
+      - DB_PASSWORD={DB_PASSWORD}
+    depends_on:
+      - pgdb
+    networks:
+      - ctf
+
+
+volumes:
+  pgdata:
+    driver: local
+  node-modules:
+    driver: local
+
+networks:
+  ctf:
+    driver: bridge

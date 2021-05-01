@@ -1,0 +1,1074 @@
+cdk synth -c CTF_CLI=true --profile personal-user
+Resources:
+  CtfVPC00A7DCC6:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsHostnames: true
+      EnableDnsSupport: true
+      InstanceTenancy: default
+      Tags:
+        - Key: Name
+          Value: ctfrontier/CtfVPC
+    Metadata:
+      aws:cdk:path: ctfrontier/CtfVPC/Resource
+  CtfVPCPublicSubnet1Subnet6E5C9176:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 10.0.0.0/18
+      VpcId:
+        Ref: CtfVPC00A7DCC6
+      AvailabilityZone: us-east-1a
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: aws-cdk:subnet-name
+          Value: Public
+        - Key: aws-cdk:subnet-type
+          Value: Public
+        - Key: Name
+          Value: ctfrontier/CtfVPC/PublicSubnet1
+    Metadata:
+      aws:cdk:path: ctfrontier/CtfVPC/PublicSubnet1/Subnet
+  CtfVPCPublicSubnet1RouteTableFA53998C:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId:
+        Ref: CtfVPC00A7DCC6
+      Tags:
+        - Key: Name
+          Value: ctfrontier/CtfVPC/PublicSubnet1
+    Metadata:
+      aws:cdk:path: ctfrontier/CtfVPC/PublicSubnet1/RouteTable
+  CtfVPCPublicSubnet1RouteTableAssociation8FE675D8:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId:
+        Ref: CtfVPCPublicSubnet1RouteTableFA53998C
+      SubnetId:
+        Ref: CtfVPCPublicSubnet1Subnet6E5C9176
+    Metadata:
+      aws:cdk:path: ctfrontier/CtfVPC/PublicSubnet1/RouteTableAssociation
+  CtfVPCPublicSubnet1DefaultRoute7DB932EB:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId:
+        Ref: CtfVPCPublicSubnet1RouteTableFA53998C
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId:
+        Ref: CtfVPCIGW39E6FADF
+    DependsOn:
+      - CtfVPCVPCGW457BCE52
+    Metadata:
+      aws:cdk:path: ctfrontier/CtfVPC/PublicSubnet1/DefaultRoute
+  CtfVPCPublicSubnet1EIP8DF8EB6C:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+      Tags:
+        - Key: Name
+          Value: ctfrontier/CtfVPC/PublicSubnet1
+    Metadata:
+      aws:cdk:path: ctfrontier/CtfVPC/PublicSubnet1/EIP
+  CtfVPCPublicSubnet1NATGateway000B702E:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId:
+        Fn::GetAtt:
+          - CtfVPCPublicSubnet1EIP8DF8EB6C
+          - AllocationId
+      SubnetId:
+        Ref: CtfVPCPublicSubnet1Subnet6E5C9176
+      Tags:
+        - Key: Name
+          Value: ctfrontier/CtfVPC/PublicSubnet1
+    Metadata:
+      aws:cdk:path: ctfrontier/CtfVPC/PublicSubnet1/NATGateway
+  CtfVPCPublicSubnet2Subnet14722372:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 10.0.64.0/18
+      VpcId:
+        Ref: CtfVPC00A7DCC6
+      AvailabilityZone: us-east-1b
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: aws-cdk:subnet-name
+          Value: Public
+        - Key: aws-cdk:subnet-type
+          Value: Public
+        - Key: Name
+          Value: ctfrontier/CtfVPC/PublicSubnet2
+    Metadata:
+      aws:cdk:path: ctfrontier/CtfVPC/PublicSubnet2/Subnet
+  CtfVPCPublicSubnet2RouteTableDCCAD8D5:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId:
+        Ref: CtfVPC00A7DCC6
+      Tags:
+        - Key: Name
+          Value: ctfrontier/CtfVPC/PublicSubnet2
+    Metadata:
+      aws:cdk:path: ctfrontier/CtfVPC/PublicSubnet2/RouteTable
+  CtfVPCPublicSubnet2RouteTableAssociationD7381496:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId:
+        Ref: CtfVPCPublicSubnet2RouteTableDCCAD8D5
+      SubnetId:
+        Ref: CtfVPCPublicSubnet2Subnet14722372
+    Metadata:
+      aws:cdk:path: ctfrontier/CtfVPC/PublicSubnet2/RouteTableAssociation
+  CtfVPCPublicSubnet2DefaultRouteA28F9114:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId:
+        Ref: CtfVPCPublicSubnet2RouteTableDCCAD8D5
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId:
+        Ref: CtfVPCIGW39E6FADF
+    DependsOn:
+      - CtfVPCVPCGW457BCE52
+    Metadata:
+      aws:cdk:path: ctfrontier/CtfVPC/PublicSubnet2/DefaultRoute
+  CtfVPCPublicSubnet2EIP10597739:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+      Tags:
+        - Key: Name
+          Value: ctfrontier/CtfVPC/PublicSubnet2
+    Metadata:
+      aws:cdk:path: ctfrontier/CtfVPC/PublicSubnet2/EIP
+  CtfVPCPublicSubnet2NATGateway9F6EEFB2:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId:
+        Fn::GetAtt:
+          - CtfVPCPublicSubnet2EIP10597739
+          - AllocationId
+      SubnetId:
+        Ref: CtfVPCPublicSubnet2Subnet14722372
+      Tags:
+        - Key: Name
+          Value: ctfrontier/CtfVPC/PublicSubnet2
+    Metadata:
+      aws:cdk:path: ctfrontier/CtfVPC/PublicSubnet2/NATGateway
+  CtfVPCPrivateSubnet1Subnet59BC9DCF:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 10.0.128.0/18
+      VpcId:
+        Ref: CtfVPC00A7DCC6
+      AvailabilityZone: us-east-1a
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: aws-cdk:subnet-name
+          Value: Private
+        - Key: aws-cdk:subnet-type
+          Value: Private
+        - Key: Name
+          Value: ctfrontier/CtfVPC/PrivateSubnet1
+    Metadata:
+      aws:cdk:path: ctfrontier/CtfVPC/PrivateSubnet1/Subnet
+  CtfVPCPrivateSubnet1RouteTableCB6DD113:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId:
+        Ref: CtfVPC00A7DCC6
+      Tags:
+        - Key: Name
+          Value: ctfrontier/CtfVPC/PrivateSubnet1
+    Metadata:
+      aws:cdk:path: ctfrontier/CtfVPC/PrivateSubnet1/RouteTable
+  CtfVPCPrivateSubnet1RouteTableAssociation2D8800EB:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId:
+        Ref: CtfVPCPrivateSubnet1RouteTableCB6DD113
+      SubnetId:
+        Ref: CtfVPCPrivateSubnet1Subnet59BC9DCF
+    Metadata:
+      aws:cdk:path: ctfrontier/CtfVPC/PrivateSubnet1/RouteTableAssociation
+  CtfVPCPrivateSubnet1DefaultRoute05CD16AA:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId:
+        Ref: CtfVPCPrivateSubnet1RouteTableCB6DD113
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId:
+        Ref: CtfVPCPublicSubnet1NATGateway000B702E
+    Metadata:
+      aws:cdk:path: ctfrontier/CtfVPC/PrivateSubnet1/DefaultRoute
+  CtfVPCPrivateSubnet2Subnet75B03FF4:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 10.0.192.0/18
+      VpcId:
+        Ref: CtfVPC00A7DCC6
+      AvailabilityZone: us-east-1b
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: aws-cdk:subnet-name
+          Value: Private
+        - Key: aws-cdk:subnet-type
+          Value: Private
+        - Key: Name
+          Value: ctfrontier/CtfVPC/PrivateSubnet2
+    Metadata:
+      aws:cdk:path: ctfrontier/CtfVPC/PrivateSubnet2/Subnet
+  CtfVPCPrivateSubnet2RouteTableACA7A1AD:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId:
+        Ref: CtfVPC00A7DCC6
+      Tags:
+        - Key: Name
+          Value: ctfrontier/CtfVPC/PrivateSubnet2
+    Metadata:
+      aws:cdk:path: ctfrontier/CtfVPC/PrivateSubnet2/RouteTable
+  CtfVPCPrivateSubnet2RouteTableAssociationBE3AB8A4:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId:
+        Ref: CtfVPCPrivateSubnet2RouteTableACA7A1AD
+      SubnetId:
+        Ref: CtfVPCPrivateSubnet2Subnet75B03FF4
+    Metadata:
+      aws:cdk:path: ctfrontier/CtfVPC/PrivateSubnet2/RouteTableAssociation
+  CtfVPCPrivateSubnet2DefaultRoute4C91455C:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId:
+        Ref: CtfVPCPrivateSubnet2RouteTableACA7A1AD
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId:
+        Ref: CtfVPCPublicSubnet2NATGateway9F6EEFB2
+    Metadata:
+      aws:cdk:path: ctfrontier/CtfVPC/PrivateSubnet2/DefaultRoute
+  CtfVPCIGW39E6FADF:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: ctfrontier/CtfVPC
+    Metadata:
+      aws:cdk:path: ctfrontier/CtfVPC/IGW
+  CtfVPCVPCGW457BCE52:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId:
+        Ref: CtfVPC00A7DCC6
+      InternetGatewayId:
+        Ref: CtfVPCIGW39E6FADF
+    Metadata:
+      aws:cdk:path: ctfrontier/CtfVPC/VPCGW
+  CtfSiteSecurityGroupF0EA61D3:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: ctfrontier/CtfSiteSecurityGroup
+      SecurityGroupEgress:
+        - CidrIp: 0.0.0.0/0
+          Description: Allow all outbound traffic by default
+          IpProtocol: "-1"
+      SecurityGroupIngress:
+        - CidrIp: 0.0.0.0/0
+          Description: react inbound
+          FromPort: 80
+          IpProtocol: tcp
+          ToPort: 80
+        - CidrIp: 0.0.0.0/0
+          Description: react inbound https
+          FromPort: 443
+          IpProtocol: tcp
+          ToPort: 443
+      VpcId:
+        Ref: CtfVPC00A7DCC6
+    Metadata:
+      aws:cdk:path: ctfrontier/CtfSiteSecurityGroup/Resource
+  CtfSiteSecurityGroupfromctfrontierCtfSiteSecurityGroup4CCB82348050E2B2B8:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      IpProtocol: tcp
+      Description: Load balancer to target
+      FromPort: 80
+      GroupId:
+        Fn::GetAtt:
+          - CtfSiteSecurityGroupF0EA61D3
+          - GroupId
+      SourceSecurityGroupId:
+        Fn::GetAtt:
+          - CtfSiteSecurityGroupF0EA61D3
+          - GroupId
+      ToPort: 80
+    Metadata:
+      aws:cdk:path: ctfrontier/CtfSiteSecurityGroup/from ctfrontierCtfSiteSecurityGroup4CCB8234:80
+  CtfDatabaseSecurityGroupAED6EFB2:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: ctfrontier/CtfDatabaseSecurityGroup
+      SecurityGroupEgress:
+        - CidrIp: 255.255.255.255/32
+          Description: Disallow all traffic
+          FromPort: 252
+          IpProtocol: icmp
+          ToPort: 86
+      VpcId:
+        Ref: CtfVPC00A7DCC6
+    Metadata:
+      aws:cdk:path: ctfrontier/CtfDatabaseSecurityGroup/Resource
+  CtfDatabaseSecurityGroupfromctfrontierCtfSiteSecurityGroup4CCB823454325E41156E:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      IpProtocol: tcp
+      Description: from ctfrontierCtfSiteSecurityGroup4CCB8234:5432
+      FromPort: 5432
+      GroupId:
+        Fn::GetAtt:
+          - CtfDatabaseSecurityGroupAED6EFB2
+          - GroupId
+      SourceSecurityGroupId:
+        Fn::GetAtt:
+          - CtfSiteSecurityGroupF0EA61D3
+          - GroupId
+      ToPort: 5432
+    Metadata:
+      aws:cdk:path: ctfrontier/CtfDatabaseSecurityGroup/from ctfrontierCtfSiteSecurityGroup4CCB8234:5432
+  CtfCluster070C7089:
+    Type: AWS::ECS::Cluster
+    Properties:
+      ClusterName: ctf-ecs-cluster
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
+    Metadata:
+      aws:cdk:path: ctfrontier/CtfCluster/CtfCluster/Resource
+  CtfClusterDefaultServiceDiscoveryNamespaceA2B63A09:
+    Type: AWS::ServiceDiscovery::PrivateDnsNamespace
+    Properties:
+      Name: service.local
+      Vpc:
+        Ref: CtfVPC00A7DCC6
+    Metadata:
+      aws:cdk:path: ctfrontier/CtfCluster/CtfCluster/DefaultServiceDiscoveryNamespace/Resource
+  CtfClusterCtfAutoScalingInstanceSecurityGroup45389B7D:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: ctfrontier/CtfCluster/CtfCluster/CtfAutoScaling/InstanceSecurityGroup
+      SecurityGroupEgress:
+        - CidrIp: 0.0.0.0/0
+          Description: Allow all outbound traffic by default
+          IpProtocol: "-1"
+      Tags:
+        - Key: Name
+          Value: ctfrontier/CtfCluster/CtfCluster/CtfAutoScaling
+      VpcId:
+        Ref: CtfVPC00A7DCC6
+    Metadata:
+      aws:cdk:path: ctfrontier/CtfCluster/CtfCluster/CtfAutoScaling/InstanceSecurityGroup/Resource
+  CtfClusterCtfAutoScalingInstanceRole7A4F38FD:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+        Version: "2012-10-17"
+      Tags:
+        - Key: Name
+          Value: ctfrontier/CtfCluster/CtfCluster/CtfAutoScaling
+    Metadata:
+      aws:cdk:path: ctfrontier/CtfCluster/CtfCluster/CtfAutoScaling/InstanceRole/Resource
+  CtfClusterCtfAutoScalingInstanceRoleDefaultPolicyD0E8E28A:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action:
+              - ecs:DeregisterContainerInstance
+              - ecs:RegisterContainerInstance
+              - ecs:Submit*
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - CtfCluster070C7089
+                - Arn
+          - Action:
+              - ecs:Poll
+              - ecs:StartTelemetrySession
+            Condition:
+              ArnEquals:
+                ecs:cluster:
+                  Fn::GetAtt:
+                    - CtfCluster070C7089
+                    - Arn
+            Effect: Allow
+            Resource: "*"
+          - Action:
+              - ecs:DiscoverPollEndpoint
+              - ecr:GetAuthorizationToken
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+            Effect: Allow
+            Resource: "*"
+        Version: "2012-10-17"
+      PolicyName: CtfClusterCtfAutoScalingInstanceRoleDefaultPolicyD0E8E28A
+      Roles:
+        - Ref: CtfClusterCtfAutoScalingInstanceRole7A4F38FD
+    Metadata:
+      aws:cdk:path: ctfrontier/CtfCluster/CtfCluster/CtfAutoScaling/InstanceRole/DefaultPolicy/Resource
+  CtfClusterCtfAutoScalingInstanceProfileC31A9B87:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles:
+        - Ref: CtfClusterCtfAutoScalingInstanceRole7A4F38FD
+    Metadata:
+      aws:cdk:path: ctfrontier/CtfCluster/CtfCluster/CtfAutoScaling/InstanceProfile
+  CtfClusterCtfAutoScalingLaunchConfigAB35CE11:
+    Type: AWS::AutoScaling::LaunchConfiguration
+    Properties:
+      ImageId:
+        Ref: SsmParameterValueawsserviceecsoptimizedamiamazonlinux2recommendedimageidC96584B6F00A464EAD1953AFF4B05118Parameter
+      InstanceType: t2.micro
+      IamInstanceProfile:
+        Ref: CtfClusterCtfAutoScalingInstanceProfileC31A9B87
+      InstanceMonitoring: false
+      KeyName: CtfBackendKeyPair
+      SecurityGroups:
+        - Fn::GetAtt:
+            - CtfClusterCtfAutoScalingInstanceSecurityGroup45389B7D
+            - GroupId
+        - Fn::GetAtt:
+            - CtfSiteSecurityGroupF0EA61D3
+            - GroupId
+      UserData:
+        Fn::Base64:
+          Fn::Join:
+            - ""
+            - - |-
+                #!/bin/bash
+                echo ECS_CLUSTER=
+              - Ref: CtfCluster070C7089
+              - |-2
+                 >> /etc/ecs/ecs.config
+                sudo iptables --insert FORWARD 1 --in-interface docker+ --destination 169.254.169.254/32 --jump DROP
+                sudo service iptables save
+                echo ECS_AWSVPC_BLOCK_IMDS=true >> /etc/ecs/ecs.config
+    DependsOn:
+      - CtfClusterCtfAutoScalingInstanceRoleDefaultPolicyD0E8E28A
+      - CtfClusterCtfAutoScalingInstanceRole7A4F38FD
+    Metadata:
+      aws:cdk:path: ctfrontier/CtfCluster/CtfCluster/CtfAutoScaling/LaunchConfig
+  CtfClusterCtfAutoScalingASGD370D5D0:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      MaxSize: "1"
+      MinSize: "1"
+      LaunchConfigurationName:
+        Ref: CtfClusterCtfAutoScalingLaunchConfigAB35CE11
+      Tags:
+        - Key: Name
+          PropagateAtLaunch: true
+          Value: ctfrontier/CtfCluster/CtfCluster/CtfAutoScaling
+      VPCZoneIdentifier:
+        - Ref: CtfVPCPublicSubnet1Subnet6E5C9176
+    UpdatePolicy:
+      AutoScalingReplacingUpdate:
+        WillReplace: true
+      AutoScalingScheduledAction:
+        IgnoreUnmodifiedGroupSizeProperties: true
+    Metadata:
+      aws:cdk:path: ctfrontier/CtfCluster/CtfCluster/CtfAutoScaling/ASG
+  FrontendTaskTaskRoleE5A6F143:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+        Version: "2012-10-17"
+    Metadata:
+      aws:cdk:path: ctfrontier/FrontendTask/FrontendTask/TaskRole/Resource
+  FrontendTask8C771FB8:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      ContainerDefinitions:
+        - Environment:
+            - Name: LOCALDOMAIN
+              Value: service.local
+          Essential: true
+          Image:
+            Fn::Join:
+              - ""
+              - - 591882417372.dkr.ecr.us-east-1.
+                - Ref: AWS::URLSuffix
+                - /ctf-frontend-repository:latest
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group:
+                Ref: FrontendTaskFrontendContainerLogGroup955A5D6F
+              awslogs-stream-prefix: FrontendContainer
+              awslogs-region: us-east-1
+          Name: FrontendContainer
+          PortMappings:
+            - ContainerPort: 80
+              Protocol: tcp
+      Cpu: "256"
+      ExecutionRoleArn:
+        Fn::GetAtt:
+          - FrontendTaskExecutionRoleEF5BD841
+          - Arn
+      Family: react-task
+      Memory: "1024"
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+        - FARGATE
+      TaskRoleArn:
+        Fn::GetAtt:
+          - FrontendTaskTaskRoleE5A6F143
+          - Arn
+    Metadata:
+      aws:cdk:path: ctfrontier/FrontendTask/FrontendTask/Resource
+  FrontendTaskFrontendContainerLogGroup955A5D6F:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      RetentionInDays: 7
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Retain
+    Metadata:
+      aws:cdk:path: ctfrontier/FrontendTask/FrontendTask/FrontendContainer/LogGroup/Resource
+  FrontendTaskExecutionRoleEF5BD841:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+        Version: "2012-10-17"
+    Metadata:
+      aws:cdk:path: ctfrontier/FrontendTask/FrontendTask/ExecutionRole/Resource
+  FrontendTaskExecutionRoleDefaultPolicyDA49F222:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action:
+              - ecr:BatchCheckLayerAvailability
+              - ecr:GetDownloadUrlForLayer
+              - ecr:BatchGetImage
+            Effect: Allow
+            Resource:
+              Fn::Join:
+                - ""
+                - - "arn:"
+                  - Ref: AWS::Partition
+                  - :ecr:us-east-1:591882417372:repository/ctf-frontend-repository
+          - Action: ecr:GetAuthorizationToken
+            Effect: Allow
+            Resource: "*"
+          - Action:
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - FrontendTaskFrontendContainerLogGroup955A5D6F
+                - Arn
+        Version: "2012-10-17"
+      PolicyName: FrontendTaskExecutionRoleDefaultPolicyDA49F222
+      Roles:
+        - Ref: FrontendTaskExecutionRoleEF5BD841
+    Metadata:
+      aws:cdk:path: ctfrontier/FrontendTask/FrontendTask/ExecutionRole/DefaultPolicy/Resource
+  CtfFrontendService8871F50A:
+    Type: AWS::ECS::Service
+    Properties:
+      Cluster:
+        Ref: CtfCluster070C7089
+      DeploymentConfiguration:
+        DeploymentCircuitBreaker:
+          Enable: true
+          Rollback: true
+        MaximumPercent: 200
+        MinimumHealthyPercent: 50
+      DeploymentController:
+        Type: ECS
+      DesiredCount: 1
+      EnableECSManagedTags: false
+      HealthCheckGracePeriodSeconds: 60
+      LaunchType: FARGATE
+      LoadBalancers:
+        - ContainerName: FrontendContainer
+          ContainerPort: 80
+          TargetGroupArn:
+            Ref: CtfLoadBalancerFrontendTargetGroup339623D6
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: DISABLED
+          SecurityGroups:
+            - Fn::GetAtt:
+                - CtfSiteSecurityGroupF0EA61D3
+                - GroupId
+          Subnets:
+            - Ref: CtfVPCPrivateSubnet1Subnet59BC9DCF
+      ServiceName: frontend
+      ServiceRegistries:
+        - RegistryArn:
+            Fn::GetAtt:
+              - CtfFrontendServiceCloudmapService60C13DF4
+              - Arn
+      TaskDefinition:
+        Ref: FrontendTask8C771FB8
+    DependsOn:
+      - CtfLoadBalancerCtfNetworkLoadBalancerCtfHttpsListenerCtfApiRuleRule7A44A27F
+      - CtfLoadBalancerCtfNetworkLoadBalancerCtfHttpsListener8C7249BF
+    Metadata:
+      aws:cdk:path: ctfrontier/CtfFrontendService/CtfFrontendService/Service
+  CtfFrontendServiceCloudmapService60C13DF4:
+    Type: AWS::ServiceDiscovery::Service
+    Properties:
+      DnsConfig:
+        DnsRecords:
+          - TTL: 60
+            Type: A
+        NamespaceId:
+          Fn::GetAtt:
+            - CtfClusterDefaultServiceDiscoveryNamespaceA2B63A09
+            - Id
+        RoutingPolicy: MULTIVALUE
+      HealthCheckCustomConfig:
+        FailureThreshold: 1
+      Name: frontend
+      NamespaceId:
+        Fn::GetAtt:
+          - CtfClusterDefaultServiceDiscoveryNamespaceA2B63A09
+          - Id
+    Metadata:
+      aws:cdk:path: ctfrontier/CtfFrontendService/CtfFrontendService/CloudmapService/Resource
+  BackendTaskTaskRoleCAA77D2D:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+        Version: "2012-10-17"
+    Metadata:
+      aws:cdk:path: ctfrontier/BackendTask/BackendTask/TaskRole/Resource
+  BackendTask9ADC3C7F:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      ContainerDefinitions:
+        - Environment:
+            - Name: MODE
+              Value: prod
+            - Name: DJANGO_SECRET
+              Value: 2b7xc+7pqwo54m6+db_2jhf!7ue@e07p2ed)_b)o7i&514)d-p
+            - Name: DB_HOST
+              Value: ctf-db-instance.cwjk3wcpcb5v.us-east-1.rds.amazonaws.com
+            - Name: DB_PORT
+              Value: "5432"
+            - Name: DB_PASSWORD
+              Value: 5xL82vAtktLFeZjKAoI6V
+            - Name: SITE_DOMAIN
+              Value: ctfrontier.com
+            - Name: LOCALDOMAIN
+              Value: service.local
+          Essential: true
+          Image:
+            Fn::Join:
+              - ""
+              - - 591882417372.dkr.ecr.us-east-1.
+                - Ref: AWS::URLSuffix
+                - /ctf-backend-repository:latest
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group:
+                Ref: BackendTaskBackendContainerLogGroupD3A07016
+              awslogs-stream-prefix: BackendContainer
+              awslogs-region: us-east-1
+          MemoryReservation: 512
+          Name: BackendContainer
+          PortMappings:
+            - ContainerPort: 80
+              Protocol: tcp
+      ExecutionRoleArn:
+        Fn::GetAtt:
+          - BackendTaskExecutionRole619C6664
+          - Arn
+      Family: django-task
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+        - EC2
+      TaskRoleArn:
+        Fn::GetAtt:
+          - BackendTaskTaskRoleCAA77D2D
+          - Arn
+    Metadata:
+      aws:cdk:path: ctfrontier/BackendTask/BackendTask/Resource
+  BackendTaskBackendContainerLogGroupD3A07016:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      RetentionInDays: 7
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Retain
+    Metadata:
+      aws:cdk:path: ctfrontier/BackendTask/BackendTask/BackendContainer/LogGroup/Resource
+  BackendTaskExecutionRole619C6664:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+        Version: "2012-10-17"
+    Metadata:
+      aws:cdk:path: ctfrontier/BackendTask/BackendTask/ExecutionRole/Resource
+  BackendTaskExecutionRoleDefaultPolicyE2E4E451:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action:
+              - ecr:BatchCheckLayerAvailability
+              - ecr:GetDownloadUrlForLayer
+              - ecr:BatchGetImage
+            Effect: Allow
+            Resource:
+              Fn::Join:
+                - ""
+                - - "arn:"
+                  - Ref: AWS::Partition
+                  - :ecr:us-east-1:591882417372:repository/ctf-backend-repository
+          - Action: ecr:GetAuthorizationToken
+            Effect: Allow
+            Resource: "*"
+          - Action:
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - BackendTaskBackendContainerLogGroupD3A07016
+                - Arn
+        Version: "2012-10-17"
+      PolicyName: BackendTaskExecutionRoleDefaultPolicyE2E4E451
+      Roles:
+        - Ref: BackendTaskExecutionRole619C6664
+    Metadata:
+      aws:cdk:path: ctfrontier/BackendTask/BackendTask/ExecutionRole/DefaultPolicy/Resource
+  CtfBackendService5DA0F1AE:
+    Type: AWS::ECS::Service
+    Properties:
+      Cluster:
+        Ref: CtfCluster070C7089
+      DeploymentConfiguration:
+        DeploymentCircuitBreaker:
+          Enable: true
+          Rollback: true
+        MaximumPercent: 100
+        MinimumHealthyPercent: 0
+      DeploymentController:
+        Type: ECS
+      EnableECSManagedTags: false
+      HealthCheckGracePeriodSeconds: 60
+      LaunchType: EC2
+      LoadBalancers:
+        - ContainerName: BackendContainer
+          ContainerPort: 80
+          TargetGroupArn:
+            Ref: CtfLoadBalancerBackendTargetGroup9E6B227B
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: DISABLED
+          SecurityGroups:
+            - Fn::GetAtt:
+                - CtfSiteSecurityGroupF0EA61D3
+                - GroupId
+          Subnets:
+            - Ref: CtfVPCPrivateSubnet1Subnet59BC9DCF
+      SchedulingStrategy: DAEMON
+      ServiceName: backend-service
+      ServiceRegistries:
+        - RegistryArn:
+            Fn::GetAtt:
+              - CtfBackendServiceCloudmapService4273C0D0
+              - Arn
+      TaskDefinition:
+        Ref: BackendTask9ADC3C7F
+    DependsOn:
+      - CtfLoadBalancerCtfNetworkLoadBalancerCtfHttpsListenerCtfApiRuleRule7A44A27F
+      - CtfLoadBalancerCtfNetworkLoadBalancerCtfHttpsListener8C7249BF
+    Metadata:
+      aws:cdk:path: ctfrontier/CtfBackendService/CtfBackendService/Service
+  CtfBackendServiceCloudmapService4273C0D0:
+    Type: AWS::ServiceDiscovery::Service
+    Properties:
+      DnsConfig:
+        DnsRecords:
+          - TTL: 60
+            Type: A
+        NamespaceId:
+          Fn::GetAtt:
+            - CtfClusterDefaultServiceDiscoveryNamespaceA2B63A09
+            - Id
+        RoutingPolicy: MULTIVALUE
+      HealthCheckCustomConfig:
+        FailureThreshold: 1
+      Name: backend
+      NamespaceId:
+        Fn::GetAtt:
+          - CtfClusterDefaultServiceDiscoveryNamespaceA2B63A09
+          - Id
+    Metadata:
+      aws:cdk:path: ctfrontier/CtfBackendService/CtfBackendService/CloudmapService/Resource
+  CtfLoadBalancerCtfCertificate48176E24:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: "*.ctfrontier.com"
+      DomainValidationOptions:
+        - DomainName: "*.ctfrontier.com"
+          ValidationDomain: ctfrontier.com
+      ValidationMethod: EMAIL
+    Metadata:
+      aws:cdk:path: ctfrontier/CtfLoadBalancer/CtfCertificate/Resource
+  CtfLoadBalancerCtfNetworkLoadBalancer80724AE5:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      LoadBalancerAttributes:
+        - Key: deletion_protection.enabled
+          Value: "false"
+      Name: ctf-load-balancer
+      Scheme: internet-facing
+      SecurityGroups:
+        - Fn::GetAtt:
+            - CtfSiteSecurityGroupF0EA61D3
+            - GroupId
+      Subnets:
+        - Ref: CtfVPCPublicSubnet1Subnet6E5C9176
+        - Ref: CtfVPCPublicSubnet2Subnet14722372
+      Type: application
+    DependsOn:
+      - CtfVPCPublicSubnet1DefaultRoute7DB932EB
+      - CtfVPCPublicSubnet2DefaultRouteA28F9114
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
+    Metadata:
+      aws:cdk:path: ctfrontier/CtfLoadBalancer/CtfNetworkLoadBalancer/Resource
+  CtfLoadBalancerCtfNetworkLoadBalancerCtfHttpRedirectC6B84C4D:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      DefaultActions:
+        - RedirectConfig:
+            Port: "443"
+            Protocol: HTTPS
+            StatusCode: HTTP_301
+          Type: redirect
+      LoadBalancerArn:
+        Ref: CtfLoadBalancerCtfNetworkLoadBalancer80724AE5
+      Port: 80
+      Protocol: HTTP
+    Metadata:
+      aws:cdk:path: ctfrontier/CtfLoadBalancer/CtfNetworkLoadBalancer/CtfHttpRedirect/Resource
+  CtfLoadBalancerCtfNetworkLoadBalancerCtfHttpsListener8C7249BF:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      DefaultActions:
+        - TargetGroupArn:
+            Ref: CtfLoadBalancerFrontendTargetGroup339623D6
+          Type: forward
+      LoadBalancerArn:
+        Ref: CtfLoadBalancerCtfNetworkLoadBalancer80724AE5
+      Certificates:
+        - CertificateArn:
+            Ref: CtfLoadBalancerCtfCertificate48176E24
+      Port: 443
+      Protocol: HTTPS
+    Metadata:
+      aws:cdk:path: ctfrontier/CtfLoadBalancer/CtfNetworkLoadBalancer/CtfHttpsListener/Resource
+  CtfLoadBalancerCtfNetworkLoadBalancerCtfHttpsListenerCtfApiRuleRule7A44A27F:
+    Type: AWS::ElasticLoadBalancingV2::ListenerRule
+    Properties:
+      Actions:
+        - TargetGroupArn:
+            Ref: CtfLoadBalancerBackendTargetGroup9E6B227B
+          Type: forward
+      Conditions:
+        - Field: path-pattern
+          PathPatternConfig:
+            Values:
+              - /ctgov/api/*
+      ListenerArn:
+        Ref: CtfLoadBalancerCtfNetworkLoadBalancerCtfHttpsListener8C7249BF
+      Priority: 10
+    Metadata:
+      aws:cdk:path: ctfrontier/CtfLoadBalancer/CtfNetworkLoadBalancer/CtfHttpsListener/CtfApiRuleRule/Resource
+  CtfLoadBalancerFrontendTargetGroup339623D6:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Port: 80
+      Protocol: HTTP
+      TargetType: ip
+      VpcId:
+        Ref: CtfVPC00A7DCC6
+    Metadata:
+      aws:cdk:path: ctfrontier/CtfLoadBalancer/FrontendTargetGroup/Resource
+  CtfLoadBalancerBackendTargetGroup9E6B227B:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      HealthCheckPath: /ctgov/api/healthz
+      HealthCheckPort: "80"
+      Port: 80
+      Protocol: HTTP
+      TargetType: ip
+      VpcId:
+        Ref: CtfVPC00A7DCC6
+    Metadata:
+      aws:cdk:path: ctfrontier/CtfLoadBalancer/BackendTargetGroup/Resource
+  PostgresDatabaseSubnetGroupA7B94E9E:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: Subnet group for PostgresDatabase database
+      SubnetIds:
+        - Ref: CtfVPCPrivateSubnet1Subnet59BC9DCF
+        - Ref: CtfVPCPrivateSubnet2Subnet75B03FF4
+    Metadata:
+      aws:cdk:path: ctfrontier/PostgresDatabase/PostgresDatabase/SubnetGroup/Default
+  PostgresDatabaseSecret12D2C322:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Description:
+        Fn::Join:
+          - ""
+          - - "Generated by the CDK for stack: "
+            - Ref: AWS::StackName
+      GenerateSecretString:
+        ExcludeCharacters: " %+~`#$&*()|[]{}:;<>?!'/@\"\\"
+        GenerateStringKey: password
+        PasswordLength: 30
+        SecretStringTemplate: '{"username":"postgres"}'
+    Metadata:
+      aws:cdk:path: ctfrontier/PostgresDatabase/PostgresDatabase/Secret/Resource
+  PostgresDatabaseSecretAttachment3CA54256:
+    Type: AWS::SecretsManager::SecretTargetAttachment
+    Properties:
+      SecretId:
+        Ref: PostgresDatabaseSecret12D2C322
+      TargetId:
+        Ref: PostgresDatabase3679E256
+      TargetType: AWS::RDS::DBInstance
+    Metadata:
+      aws:cdk:path: ctfrontier/PostgresDatabase/PostgresDatabase/Secret/Attachment/Resource
+  PostgresDatabase3679E256:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBInstanceClass: db.t2.micro
+      AllocatedStorage: "30"
+      AvailabilityZone: us-east-1a
+      BackupRetentionPeriod: 1
+      CopyTagsToSnapshot: true
+      DBInstanceIdentifier: ctf-db-instance
+      DBName: aact
+      DBSubnetGroupName:
+        Ref: PostgresDatabaseSubnetGroupA7B94E9E
+      DeleteAutomatedBackups: true
+      Engine: postgres
+      MasterUsername:
+        Fn::Join:
+          - ""
+          - - "{{resolve:secretsmanager:"
+            - Ref: PostgresDatabaseSecret12D2C322
+            - :SecretString:username::}}
+      MasterUserPassword:
+        Fn::Join:
+          - ""
+          - - "{{resolve:secretsmanager:"
+            - Ref: PostgresDatabaseSecret12D2C322
+            - :SecretString:password::}}
+      PubliclyAccessible: false
+      StorageEncrypted: false
+      StorageType: gp2
+      VPCSecurityGroups:
+        - Fn::GetAtt:
+            - CtfDatabaseSecurityGroupAED6EFB2
+            - GroupId
+    UpdateReplacePolicy: Snapshot
+    DeletionPolicy: Snapshot
+    Metadata:
+      aws:cdk:path: ctfrontier/PostgresDatabase/PostgresDatabase/Resource
+  CDKMetadata:
+    Type: AWS::CDK::Metadata
+    Properties:
+      Analytics: v2:deflate64:H4sIAAAAAAAAE31UTW/bMAz9Lbur7tZdttvy0RUBgs5wit4ZhXG4OJJBSSkCw/99lGXHblrspMfHJ4pf9rfs54/s65df8Obu9O5432jLmDUbD/qoCnQ2sEa1sMZ5Dtqrxd78Cb4OHcqB4YQeORqDuFUxVoP6IWteax1dr/lC5WFbkd6ErcHu7ogKGzy+wLbCkR+5mXNWE3iy5iqO4HGVx+MZ/BN4fIOLypnOAsfAKyOpCR4EKZPemnkp8XBC49UGdWDylye2oe5y+C+xMiWjc61C7bJmUQXXd2CAv4FLiOm74xL3ZGhI/paxxgMZ5AnX390gn0mnhvTwUT/c3Bemd7bKJbAjp+0Z+ZI1fTuWxj3LkFwNKdxn9MfXZIjBW6ehIlNmzUyMTTKuPVlDMPogNeypDHwd0K20VQSnrClsGm935lZWoZvHiFayYWA05mz3VEkClS2lvWs7edEOIVFzVmBtHXnLlzk4VBrZ05601HYCAyWyzGbkuvmMpoSowHnSlYXdFip5WRI+y8rO6rqKEilnLb5550vzfWdPdSRjN71mwJ/4i5B68M6e6F5k9rKtQ7kTs1W8k2YswcNWih16pdKuX28s51NiUMvycvoglvPhZlyYyLqxV92WR2E60uuTr+QquPW0bavyiz9Yc/89iz+Tv47ojoPxdMKsSOc/kKtPMGgEAAA=
+    Metadata:
+      aws:cdk:path: ctfrontier/CDKMetadata/Default
+Outputs:
+  CtfClusterCfnECSClusterName81DCC360:
+    Value:
+      Ref: CtfCluster070C7089
+    Export:
+      Name: cfn-ecs-cluster-name
+  CtfFrontendServiceCfnFrontendServiceNameEA114744:
+    Value:
+      Fn::GetAtt:
+        - CtfFrontendService8871F50A
+        - Name
+    Export:
+      Name: frontend-service-name
+  CtfBackendServiceCfnBackendServiceNameC9EE0496:
+    Value:
+      Fn::GetAtt:
+        - CtfBackendService5DA0F1AE
+        - Name
+    Export:
+      Name: backend-service-name
+  PostgresDatabaseCfnDatabaseEndpointCF6F1BCB:
+    Value:
+      Fn::GetAtt:
+        - PostgresDatabase3679E256
+        - Endpoint.Address
+    Export:
+      Name: cfn-database-endpoint
+  PostgresDatabaseCfnDatabasePort47BE60CB:
+    Value:
+      Fn::GetAtt:
+        - PostgresDatabase3679E256
+        - Endpoint.Port
+    Export:
+      Name: cfn-database-port
+  PostgresDatabaseCfnDatabaseInstanceIdentifier183163FD:
+    Value:
+      Ref: PostgresDatabase3679E256
+    Export:
+      Name: cfn-database-identifier
+Parameters:
+  SsmParameterValueawsserviceecsoptimizedamiamazonlinux2recommendedimageidC96584B6F00A464EAD1953AFF4B05118Parameter:
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Default: /aws/service/ecs/optimized-ami/amazon-linux-2/recommended/image_id
+  BootstrapVersion:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /cdk-bootstrap/ctfrontier/version
+    Description: Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store.
+Rules:
+  CheckBootstrapVersion:
+    Assertions:
+      - Assert:
+          Fn::Not:
+            - Fn::Contains:
+                - - "1"
+                  - "2"
+                  - "3"
+                - Ref: BootstrapVersion
+        AssertDescription: CDK bootstrap stack version 4 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI.
+

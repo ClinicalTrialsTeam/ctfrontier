@@ -1,6 +1,6 @@
 from aws_cdk import core, aws_ec2 as ec2
-from .task import CtfFrontendTaskDefinition, CtfBackendTaskDefinition
-from .service import CtfBackendService, CtfFrontendService
+from .task import CtfFargateTaskDefinition, CtfBackendTaskDefinition
+from .service import CtfBackendService, CtfFrontendService, CtfEtlService
 from .load_balancer import CtfLoadBalancer
 from .cluster import CtfCluster
 from .database import CtfDatabase
@@ -13,7 +13,6 @@ class CtStack(core.Stack):
         scope: core.Construct,
         id: str,
         site_domain,
-        notification_email,
         django_secret,
         db_host,
         db_password,
@@ -56,16 +55,19 @@ class CtStack(core.Stack):
             preferred_az,
         )
 
-        frontend_task = CtfFrontendTaskDefinition(
+        frontend_task = CtfFargateTaskDefinition(
             self,
             "FrontendTask",
-            port=80,
+            names.FRONTEND_TASK_FAMILY,
+            "FrontendContainer",
+            "FrontendRespository",
+            names.FRONTEND_REPOSITORY,
+            mapped_port=80,
         )
         frontend_service = CtfFrontendService(
             self,
             "CtfFrontendService",
             names.FRONTEND_SERVICE,
-            "frontend",
             ecs_cluster.cluster,
             frontend_task.task,
             site_sg,
@@ -94,6 +96,30 @@ class CtStack(core.Stack):
             site_sg,
             preferred_az,
             port=80,
+        )
+
+        etl_task = CtfFargateTaskDefinition(
+            self,
+            "EtlTask",
+            names.ETL_TASK_FAMILY,
+            "EtlContainer",
+            "EtlRepository",
+            names.ETL_REPOSITORY,
+            environment={
+                "DB_HOST": db_host,
+                "DB_PORT": "5432",
+                "DB_PASSWORD": db_password,
+            },
+        )
+        CtfEtlService(
+            self,
+            "CtfEtlService",
+            names.ETL_SERVICE,
+            ecs_cluster.cluster,
+            etl_task.task,
+            site_sg,
+            preferred_az,
+            desired_count=0,
         )
 
         CtfLoadBalancer(

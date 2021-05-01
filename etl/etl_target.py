@@ -7,7 +7,7 @@ import os
 from datetime import datetime
 from dotenv import load_dotenv
 from os.path import join, dirname
-from psycopg2 import Error
+
 
 dotenv_path = join(dirname(__file__), ".env")
 load_dotenv(dotenv_path)
@@ -21,6 +21,7 @@ def print_current_time():
 
 def connect_and_execute_psql(dbase, query, data):
 
+    connection = None
     try:
         # Connect to an existing database
         connection = psycopg2.connect(
@@ -53,7 +54,7 @@ def connect_and_execute_psql(dbase, query, data):
                 cursor.execute(query, d)
                 connection.commit()
 
-    except (Exception, Error) as error:
+    except (Exception, psycopg2.Error) as error:
         print("Error while connecting to PostgreSQL", error)
     finally:
         if connection:

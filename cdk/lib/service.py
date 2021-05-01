@@ -15,11 +15,11 @@ class CtfFargateService(core.Construct):
         scope: core.Construct,
         id: str,
         service_name,
-        cloud_map_name,
         cluster,
         task_definition,
         sg,
         preferred_az,
+        desired_count=1,
     ):
         super().__init__(scope, id)
 
@@ -30,18 +30,9 @@ class CtfFargateService(core.Construct):
             security_groups=[sg],
             vpc_subnets=ec2.SubnetSelection(availability_zones=[preferred_az]),
             cluster=cluster,
-            cloud_map_options=ecs.CloudMapOptions(name=cloud_map_name),
-            desired_count=1,
+            desired_count=desired_count,
             task_definition=task_definition,
             circuit_breaker=ecs.DeploymentCircuitBreaker(rollback=True),
-        )
-
-        # Export frontend service name
-        core.CfnOutput(
-            self,
-            "CfnFrontendServiceName",
-            export_name="frontend-service-name",
-            value=self.service.service_name,
         )
 
 
@@ -54,6 +45,10 @@ class CtfFrontendService(CtfFargateService):
         self.service.connections.allow_from_any_ipv4(
             ec2.Port.tcp(443), "react inbound https"
         )
+
+
+class CtfEtlService(CtfFargateService):
+    pass
 
 
 class CtfBackendService(core.Construct):

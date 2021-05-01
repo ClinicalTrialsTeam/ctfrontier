@@ -3,8 +3,6 @@ FROM python:3.8.4-slim-buster
 ARG USER=django-user
 
 ENV PYTHONUNFUFFERED=1
-ENV MODE=$MODE
-ENV DJANGO_SECRET=$DJANGO_SECRET
 ENV DB_HOST=$DB_HOST
 ENV DB_PORT=$DB_PORT
 ENV DB_PASSWORD=$DB_PASSWORD
@@ -28,6 +26,8 @@ USER $USER
 ENV PATH "$PATH:/home/django-user/.local/bin"
 
 RUN pip install --no-cache-dir pip-tools \
-      && pip-compile requirements/base.in \
-      && pip install --no-cache-dir -r requirements/base.txt \
+      && pip-compile requirements.in \
+      && pip install --no-cache-dir -r requirements.txt \
       && pip install https://s3-us-west-2.amazonaws.com/ai2-s2-scispacy/releases/v0.4.0/en_core_sci_sm-0.4.0.tar.gz
+
+CMD python etl_target.py
