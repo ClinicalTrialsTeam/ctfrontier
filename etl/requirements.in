@@ -1,4 +1,5 @@
 python-dotenv
+openpyxl
 numpy
 pandas
 spacy

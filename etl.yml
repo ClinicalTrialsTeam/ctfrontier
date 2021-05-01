@@ -1,12 +1,6 @@
 version: "3.8"
 
 services:
-  django:
-    extends:
-      file: docker-compose.yml
-      service: django
-    depends_on:
-      - pgdb
   pgdb:
     extends:
       file: docker-compose.yml
@@ -15,12 +9,10 @@ services:
     command: python etl_target.py
     container_name: etl
     build: ./etl
-    env_file:
-      - ./backend/.env
     environment:
       - DB_HOST=pgdb
       - DB_PORT=5432
-      - DB_PASSWORD={DB_PASSWORD}
+      - DB_PASSWORD=postgres
     depends_on:
       - pgdb
     networks:
