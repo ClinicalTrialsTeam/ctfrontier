@@ -10,6 +10,7 @@ services:
     container_name: etl
     build: ./etl
     environment:
+      - PYTHONUNFUFFERED=1
       - DB_HOST=pgdb
       - DB_PORT=5432
       - DB_PASSWORD=postgres

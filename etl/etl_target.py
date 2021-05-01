@@ -16,7 +16,7 @@ load_dotenv(dotenv_path)
 def print_current_time():
     now = datetime.now()
     dt_string = now.strftime("%H:%M:%S")
-    print("start time", dt_string)
+    print("start time", dt_string, flush=True)
 
 
 def connect_and_execute_psql(dbase, query, data):
@@ -55,7 +55,7 @@ def connect_and_execute_psql(dbase, query, data):
                 connection.commit()
 
     except (Exception, psycopg2.Error) as error:
-        print("Error while connecting to PostgreSQL", error)
+        print("Error while connecting to PostgreSQL", error, flush=True)
     finally:
         if connection:
             cursor.close()
@@ -66,7 +66,7 @@ def ensure_supporting_infrastructure_exists():
     with open("SqlInfrastructure.sql", "r") as file:
         sql_inf = file.read()
     connect_and_execute_psql("AACT", sql_inf, None)
-    print("Sql Infrastructure Built")
+    print("Sql Infrastructure Built", flush=True)
 
 
 """
@@ -123,7 +123,7 @@ def target_find():
 
     study_description_records = connect_and_execute_psql(
         "AACT",
-        "SELECT bs.nct_id, CONCAT(bs.description, ' ',  dd.description) FROM ctgov.brief_summaries bs INNER JOIN ctgov.detailed_descriptions dd ON bs.nct_id = dd.nct_id",
+        "SELECT bs.nct_id, CONCAT(bs.description, ' ',  dd.description) FROM ctgov.brief_summaries bs INNER JOIN ctgov.detailed_descriptions dd ON bs.nct_id = dd.nct_id LIMIT 100",
         None,
     )
 
@@ -134,8 +134,8 @@ def target_find():
     modality = modalities()  # list of all modalities in ModalityList.xlsx
     protein_arr = numpy.asarray(proteins)  # convert dataframe to array
     modality_arr = numpy.asarray(modality)  # convert dataframe to array
-    print(modality_arr)
-    print(protein_arr)
+    print(modality_arr, flush=True)
+    print(protein_arr, flush=True)
     protein_pattern = " | ".join(
         str(v) for v in protein_arr
     )  # generate pattern for regex match
@@ -164,7 +164,8 @@ def target_find():
     )
 
     print(
-        "Looking for proteins..."
+        "Looking for proteins...",
+        flush=True,
     )  # find genetic targets in NER data, insert into DB
     for record in study_description_records:
         results = re.findall(protein_pattern, record[1].upper())
@@ -184,7 +185,8 @@ def target_find():
     )
 
     print(
-        "Looking for modalities..."
+        "Looking for modalities...",
+        flush=True,
     )  # find modalities in NER data, insert into DB
     for record in study_description_records:
         results = re.findall(modality_pattern, record[1].upper())
