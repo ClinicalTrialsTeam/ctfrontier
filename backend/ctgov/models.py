@@ -255,15 +255,12 @@ class Conditions(models.Model):
 
 
 class Countries(models.Model):
-    nct = models.ForeignKey(
-        "Studies", models.DO_NOTHING, blank=True, null=True
-    )
     name = models.TextField(blank=True, null=True)
-    removed = models.BooleanField(blank=True, null=True)
+    display_order = models.IntegerField()
 
     class Meta:
         managed = False
-        db_table = "countries"
+        db_table = "countries_new"
 
 
 # Unable to inspect table 'covid_study_ids'

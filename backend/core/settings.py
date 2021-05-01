@@ -12,15 +12,12 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 from os import getenv
-from os.path import join, dirname
-from dotenv import load_dotenv
+import requests
+
+PROD = True if getenv("MODE") == "prod" else False
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-# load dotenv
-dotenv_path = join(dirname(__file__), ".env")
-load_dotenv(dotenv_path)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
@@ -29,9 +26,20 @@ load_dotenv(dotenv_path)
 SECRET_KEY = getenv("DJANGO_SECRET")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False if PROD else True
 
-ALLOWED_HOSTS = ["django", "localhost"]
+if PROD:
+    ALLOWED_HOSTS = [f".{getenv('SITE_DOMAIN')}"]
+
+    # Get IP address of load balancer to allow load balancer health checks
+    ecs_metadata_endpoint = getenv("ECS_CONTAINER_METADATA_URI_V4")
+    r = requests.get(ecs_metadata_endpoint)
+    r.raise_for_status
+    for network in r.json()["Networks"]:
+        if network["NetworkMode"] == "awsvpc":
+            ALLOWED_HOSTS.extend(network["IPv4Addresses"])
+else:
+    ALLOWED_HOSTS = ["django", "localhost"]
 
 # Elastic Search
 # https://django-elasticsearch-dsl.readthedocs.io/en/latest/quickstart.html
@@ -51,11 +59,14 @@ INSTALLED_APPS = [
     "rest_framework",
     "ctgov",
     "corsheaders",
+    "health_check",
     "django_elasticsearch_dsl",
     "django_elasticsearch_dsl_drf",
+    "debug_toolbar",
 ]
 
 MIDDLEWARE = [
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -69,9 +80,18 @@ MIDDLEWARE = [
 CORS_ALLOW_CREDENTIALS = True
 
 # Whitelist the dev frontend
-CORS_ORIGIN_WHITELIST = ["http://localhost:3000"]
+if not PROD:
+    CORS_ORIGIN_WHITELIST = ["http://localhost:3000"]
 
 ROOT_URLCONF = "core.urls"
+
+REST_FRAMEWORK = {
+    "DEFAULT_THROTTLE_CLASSES": [
+        "rest_framework.throttling.AnonRateThrottle",
+        "rest_framework.throttling.UserRateThrottle",
+    ],
+    "DEFAULT_THROTTLE_RATES": {"anon": "100/day", "user": "1000/day"},
+}
 
 TEMPLATES = [
     {
@@ -100,8 +120,8 @@ DATABASES = {
         "NAME": "aact",
         "USER": "postgres",
         "PASSWORD": getenv("DB_PASSWORD"),
-        "HOST": "pgdb",
-        "PORT": 5432,
+        "HOST": getenv("DB_HOST"),
+        "PORT": getenv("DB_PORT"),
     },
 }
 
@@ -146,3 +166,53 @@ STATIC_URL = "/static/"
 # New in Django 3.2, customize type of auto-created primary keys
 # https://docs.djangoproject.com/en/3.2/releases/3.2/#customizing-type-of-auto-created-primary-keys
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "root": {"level": "INFO", "handlers": ["file"]},
+    "handlers": {
+        "file": {
+            "level": "INFO",
+            "class": "logging.FileHandler",
+            "filename": "django.log",
+            "formatter": "app",
+        },
+    },
+    "loggers": {
+        "django": {"handlers": ["file"], "level": "INFO", "propagate": True},
+    },
+    "formatters": {
+        "app": {
+            "format": (
+                "%(asctime)s [%(levelname)-8s] "
+                "(%(module)s.%(funcName)s) %(message)s"
+            )
+        },
+    },
+}
+
+if not PROD:
+    # Required for django debug toolbar
+    INTERNAL_IPS = ["127.0.0.1"]
+
+    DEBUG_TOOLBAR_CONFIG = {
+        "SHOW_TOOLBAR_CALLBACK": lambda request: True,
+    }
+
+    DEBUG_TOOLBAR_PANELS = [
+        "ddt_request_history.panels.request_history.RequestHistoryPanel",  # Here it is
+        "debug_toolbar.panels.versions.VersionsPanel",
+        "debug_toolbar.panels.timer.TimerPanel",
+        "debug_toolbar.panels.settings.SettingsPanel",
+        "debug_toolbar.panels.headers.HeadersPanel",
+        "debug_toolbar.panels.request.RequestPanel",
+        "debug_toolbar.panels.sql.SQLPanel",
+        "debug_toolbar.panels.templates.TemplatesPanel",
+        "debug_toolbar.panels.staticfiles.StaticFilesPanel",
+        "debug_toolbar.panels.cache.CachePanel",
+        "debug_toolbar.panels.signals.SignalsPanel",
+        "debug_toolbar.panels.logging.LoggingPanel",
+        "debug_toolbar.panels.redirects.RedirectsPanel",
+        "debug_toolbar.panels.profiling.ProfilingPanel",
+    ]
