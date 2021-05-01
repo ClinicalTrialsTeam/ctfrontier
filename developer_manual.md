@@ -63,10 +63,11 @@ There are two options for running the CTFrontier application.
 		 ctgov  | countries                  | table | postgres
 
 
-**Run the setup script**
+**Run the setup scripts**
 
 1. Ctrl + D to get out of psql
-1. Run the basic_search.sql script with the command: `psql -d aact -f database/scripts/search_studies.sql`
+1. Run the search_stuides.sql script with the command: `psql -d aact -f database/scripts/search_studies.sql`
+1. Create the countries table with the command:`psql -d aact -f database/scripts/New_Countries.sql`
 1. Connect to the aact database `psql -d aact`
 1. Use the command `\dv` to list the views and verify that basic_search appears in the list of views.
 
