@@ -1,11 +1,16 @@
 // Import libraries
 import React from 'react';
 import ReactDOM from 'react-dom';
+import log from 'loglevel';
+import remote from 'loglevel-plugin-remote';
 
 // Import local files
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+
+remote.apply(log);
+log.enableAll();
 
 ReactDOM.render(
   <React.StrictMode>

@@ -46,4 +46,5 @@ urlpatterns = [
     ),
     path("ctgov/", include("ctgov.urls")),
     path("__debug__/", include(debug_toolbar.urls)),
+    path("logger", include("logging_endpoint.urls")),
 ]
