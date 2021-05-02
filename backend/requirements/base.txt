@@ -28,6 +28,8 @@ django-filter==2.4.0
     # via -r requirements/base.in
 django-health-check==3.16.4
     # via -r requirements/base.in
+django-logging-endpoint==1.0.4
+    # via -r requirements/base.in
 django-nine==0.2.4
     # via django-elasticsearch-dsl-drf
 django==3.2
@@ -37,6 +39,7 @@ django==3.2
     #   django-debug-toolbar
     #   django-filter
     #   django-health-check
+    #   django-logging-endpoint
     #   django-nine
     #   djangorestframework
 django_elasticsearch_dsl_drf==0.21
@@ -69,6 +72,7 @@ six==1.15.0
     # via
     #   django-elasticsearch-dsl
     #   django-elasticsearch-dsl-drf
+    #   django-logging-endpoint
     #   elasticsearch-dsl
     #   python-dateutil
 sqlparse==0.4.1
@@ -79,3 +83,6 @@ urllib3==1.26.4
     # via
     #   elasticsearch
     #   requests
+
+# The following packages are considered to be unsafe in a requirements file:
+# setuptools

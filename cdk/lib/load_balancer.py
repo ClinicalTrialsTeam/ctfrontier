@@ -91,7 +91,9 @@ class CtfLoadBalancer(core.Construct):
                 target_groups=[backend_target_group]
             ),
             conditions=[
-                elb.ListenerCondition.path_patterns(values=["/ctgov/api/*"])
+                elb.ListenerCondition.path_patterns(
+                    values=["/ctgov/api/*", "/logger"]
+                )
             ],
         )
 
