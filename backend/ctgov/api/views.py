@@ -645,12 +645,12 @@ def filter_study_roa(request):
         roa_list = str(study_roa).split(",")
         roa_queries = [
             Q(
-                study_brief_desc__iregex="'\y"
+                study_brief_desc__iregex=r"'\y"
                 + roa.strip(" ")
                 .replace("]", "")
                 .replace("[", "")
                 .replace("'", "")
-                + "\y'"
+                + r"\y'"
             )
             for roa in roa_list
         ]
