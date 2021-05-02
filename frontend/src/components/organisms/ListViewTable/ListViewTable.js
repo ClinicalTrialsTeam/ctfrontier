@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import {
   AlignLeftOutlined, BarChartOutlined, DownloadOutlined,
 } from '@ant-design/icons';
+import log from 'loglevel';
 import ctgov from '../../../apis/ctgov';
 
 import FacetedSearchGroup from '../../molecules/FacetedSearchGroup/FacetedSearchGroup';
@@ -81,7 +82,7 @@ class ListViewTable extends Component {
     };
     try {
       const response = await ctgov.post('search_studies', payload);
-      console.log(response.data);
+      log.info(response.data);
     } catch (err) {
       console.log(err);
     }
