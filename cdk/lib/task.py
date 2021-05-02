@@ -16,6 +16,8 @@ class CtfFargateTaskDefinition(core.Construct):
         container_identifier,
         ecr_repository_identifier,
         ecr_repository_name,
+        cpu=256,
+        memory_limit=1024,
         environment={},
         mapped_port=None,
     ):
@@ -26,8 +28,8 @@ class CtfFargateTaskDefinition(core.Construct):
             self,
             id,
             family=task_family_name,
-            cpu=256,
-            memory_limit_mib=1024,
+            cpu=cpu,
+            memory_limit_mib=memory_limit,
         )
 
         port_mappings = None

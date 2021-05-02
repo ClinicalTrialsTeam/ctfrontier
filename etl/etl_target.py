@@ -115,13 +115,16 @@ def target_find():
 
     nlp = spacy.load("en_core_sci_sm")
 
+    sql_command = "SELECT bs.nct_id, CONCAT(bs.description, ' ',  dd.description) FROM ctgov.brief_summaries bs INNER JOIN ctgov.detailed_descriptions dd ON bs.nct_id = dd.nct_id"
+    print(f"Run command: {sql_command}")
     study_description_records = connect_and_execute_psql(
         "AACT",
-        "SELECT bs.nct_id, CONCAT(bs.description, ' ',  dd.description) FROM ctgov.brief_summaries bs INNER JOIN ctgov.detailed_descriptions dd ON bs.nct_id = dd.nct_id",
+        sql_command,
         None,
     )
+    n_records = len(study_description_records)
 
-    nlp_data = []  # array of all named entities recongized by scipacy model
+    nlp_data = []  # array of all named entities recognized by scipacy model
     proteins = (
         targets()
     )  # list of all proteins in 1-s2.0-S153204641300155X-mmc1.xlsx
@@ -135,19 +138,22 @@ def target_find():
     )  # generate pattern for regex match
     modality_pattern = " | ".join(str(v) for v in modality_arr)
 
-    for (
-        record
-    ) in study_description_records:  # create tuple of NER data for SQL insert
+    for (i, record) in enumerate(
+        study_description_records
+    ):  # create tuple of NER data for SQL insert
+        print(f"NLP: Processing record #{i + 1} of {n_records}...", flush=True)
         nlp_tuple = nlp(record[1])
         nlp_string = ""
         for ent in nlp_tuple.ents:
             nlp_string = nlp_string + ent.text + ","
         nlp_data.append((record[0], nlp_string))
 
+    sql_command = "INSERT INTO ctgov.recognized_entities(nct_id, entity_group) VALUES (%s, %s)"
+    print(f"Run command: {sql_command}")
     for entry in nlp_data:
         connect_and_execute_psql(
             "AACT",
-            "INSERT INTO ctgov.recognized_entities(nct_id, entity_group) VALUES (%s, %s)",
+            sql_command,
             (entry[0], entry[1]),
         )
 
@@ -156,14 +162,16 @@ def target_find():
         "SELECT nct_id, entity_group FROM ctgov.recognized_entities WHERE nct_id IN (SELECT nct_id FROM ctgov.interventions WHERE intervention_type = 'Drug' OR intervention_type = 'Genetic' OR intervention_type = 'Biological')",
         None,
     )
-    n_records = len(study_description_records)
 
     print(
         "Looking for proteins...",
         flush=True,
     )  # find genetic targets in NER data, insert into DB
     for i, record in enumerate(study_description_records):
-        print(f"Processing record #{i + 1} of {n_records}...", flush=True)
+        print(
+            f"Protiens: Processing record #{i + 1} of {n_records}...",
+            flush=True,
+        )
         results = re.findall(protein_pattern, record[1].upper())
         results = list(set(results))
         if results:
@@ -185,7 +193,10 @@ def target_find():
         flush=True,
     )  # find modalities in NER data, insert into DB
     for i, record in enumerate(study_description_records):
-        print(f"Processing record #{i + 1} of {n_records}...", flush=True)
+        print(
+            f"Modalities: Processing record #{i + 1} of {n_records}...",
+            flush=True,
+        )
         results = re.findall(modality_pattern, record[1].upper())
         results = list(set(results))
         if results:

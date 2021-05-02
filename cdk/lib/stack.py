@@ -109,6 +109,8 @@ class CtStack(core.Stack):
                 "DB_PORT": "5432",
                 "DB_PASSWORD": db_password,
             },
+            cpu=2048,
+            memory_limit=4096,
         )
 
         CtfLoadBalancer(
