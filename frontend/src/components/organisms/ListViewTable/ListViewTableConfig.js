@@ -1,3 +1,8 @@
+import React from 'react';
+import Typography from 'antd';
+
+const { Link } = Typography;
+
 const columns = [
   {
     title: 'NCT ID',
@@ -7,6 +12,13 @@ const columns = [
     width: 120,
     sortDirections: ['descend', 'ascend'],
     sorter: (a, b) => { return a.nct_id.localeCompare(b.nct_id); },
+    render: (nctId) => {
+      return (
+        <Link to={'/' + nctId} target="_blank">
+          {nctId}
+        </Link>
+      );
+    },
   },
   {
     title: 'Brief Title',
@@ -57,6 +69,4 @@ const columns = [
   },
 ];
 
-module.exports = {
-  columns,
-};
+export default columns;
