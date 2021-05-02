@@ -7,6 +7,8 @@ services:
       dockerfile: Dockerfile.dev
     container_name: react
     command: npm start
+    environment:
+      - CHOKIDAR_USEPOLLING=true
     volumes:
       - ./frontend:/app/frontend
       - node-modules:/app/frontend/node_modules

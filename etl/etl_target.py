@@ -169,7 +169,7 @@ def target_find():
     )  # find genetic targets in NER data, insert into DB
     for i, record in enumerate(study_description_records):
         print(
-            f"Protiens: Processing record #{i + 1} of {n_records}...",
+            f"Proteins: Processing record #{i + 1} of {n_records}...",
             flush=True,
         )
         results = re.findall(protein_pattern, record[1].upper())
