@@ -435,17 +435,17 @@ class SearchForm extends Component {
       metadata_required: true,
     };
     try {
-      if (!res) {
-        const response = await ctgov.post('search_studies', res);
-        this.setState({
-          searchResults: response.data,
-          payload: res,
-        });
-      } else {
+      if (!('condition' in res)) {
         const response = await ctgov.post('search_studies', payload);
         this.setState({
           searchResults: response.data,
           payload,
+        });
+      } else {
+        const response = await ctgov.post('search_studies', res);
+        this.setState({
+          searchResults: response.data,
+          payload: res,
         });
       }
     } catch (err) {
@@ -486,7 +486,11 @@ class SearchForm extends Component {
           reader.readAsText(file);
           reader.onload = () => {
             const res = JSON.parse(reader.result);
-            this.handleSearch(res);
+            if (!('country' in res && 'condition' in res && 'status' in res)) {
+              message.error(`${file.name} is not a valid search configuration`);
+            } else {
+              this.handleSearch(res);
+            }
           };
         });
       },
