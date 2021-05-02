@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import {
-  Table, Space, Button, Row, Col, Card, Tooltip,
+  Table, Space, Button, Row, Col, Card, Tooltip, Typography,
 } from 'antd';
 import PropTypes from 'prop-types';
 import {
   AlignLeftOutlined, BarChartOutlined, DownloadOutlined,
 } from '@ant-design/icons';
+import log from 'loglevel';
 import ctgov from '../../../apis/ctgov';
 
 import FacetedSearchGroup from '../../molecules/FacetedSearchGroup/FacetedSearchGroup';
@@ -20,7 +21,6 @@ import {
   funder, documents, submission,
 } from '../../../variables/SelectOptionsData';
 
-import { columns } from './ListViewTableConfig';
 import './ListViewTable.css';
 
 class ListViewTable extends Component {
@@ -33,6 +33,7 @@ class ListViewTable extends Component {
     this.handleSearch = this.handleSearch.bind(this);
     this.handleClear = this.handleClear.bind(this);
     this.formRef = React.createRef();
+    this.facetsRef = React.createRef();
     this.state = {
       intervention: '',
       condition: '',
@@ -81,7 +82,7 @@ class ListViewTable extends Component {
     };
     try {
       const response = await ctgov.post('search_studies', payload);
-      console.log(response.data);
+      log.info(response.data);
     } catch (err) {
       console.log(err);
     }
@@ -117,6 +118,76 @@ class ListViewTable extends Component {
   }
 
   render() {
+    const { Link } = Typography;
+    const columns = [
+      {
+        title: 'NCT ID',
+        dataIndex: 'nct_id',
+        key: 'nct_id',
+        fixed: 'left',
+        width: 120,
+        sortDirections: ['descend', 'ascend'],
+        sorter: (a, b) => { return a.nct_id.localeCompare(b.nct_id); },
+        render: (nctId) => {
+          return (
+            <Link
+              type="link"
+              size="small"
+              href={'./trials/' + nctId}
+            >
+              {nctId}
+            </Link>
+          );
+        },
+      },
+      {
+        title: 'Brief Title',
+        dataIndex: 'brief_title',
+        key: 'brief_title',
+        width: 250,
+      },
+      {
+        title: 'Condition',
+        dataIndex: 'condition_name',
+        key: 'condition_name',
+        width: 150,
+        sortDirections: ['descend', 'ascend'],
+        sorter: (a, b) => {
+          return a.condition_name.localeCompare(b.condition_name);
+        },
+      },
+      {
+        title: 'Intervention',
+        dataIndex: 'intervention_name',
+        key: 'intervention_name',
+        sorter: true,
+        width: 200,
+      },
+      {
+        title: 'Sponsor',
+        dataIndex: 'sponsor_name',
+        key: 'sponsor_name',
+        sortDirections: ['descend', 'ascend'],
+        sorter: (a, b) => { return a.sponsor_name.localeCompare(b.sponsor_name); },
+        width: 150,
+      },
+      {
+        title: 'Phase',
+        dataIndex: 'study_phase',
+        key: 'study_phase',
+        sortDirections: ['descend', 'ascend'],
+        sorter: (a, b) => { return a.study_phase.localeCompare(b.study_phase); },
+        width: 100,
+      },
+      {
+        title: 'Status',
+        dataIndex: 'status',
+        key: 'status',
+        sortDirections: ['descend', 'ascend'],
+        sorter: (a, b) => { return a.status.localeCompare(b.status); },
+        width: 100,
+      },
+    ];
     const { data } = this.props.history.location.state;
     const dataCount = parseInt(data.metadata[0].results_count);
     const parsedResults = data.search_results.map((result) => {
@@ -124,10 +195,10 @@ class ListViewTable extends Component {
         key: result.nct_id,
         nct_id: result.nct_id,
         brief_title: result.brief_title,
-        condition_name: result.condition_name
-    !== null ? result.condition_name.split('|').join(', ') : '',
-        intervention_name: result.intervention_name
-    !== null ? result.intervention_name.split('|').join(', ') : '',
+        condition_name: result.condition_name !== null ? result.condition_name.split('|').join(', ') : '',
+        sponsor_name: result.sponsor_name !== null ? result.sponsor_name.split('|').join(', ') : '',
+        study_phase: result.study_phase !== null ? result.study_phase.split('/').join(', ') : '',
+        intervention_name: result.intervention_name !== null ? result.intervention_name.split('|').join(', ') : '',
         status: result.status,
       };
     });
@@ -157,23 +228,25 @@ class ListViewTable extends Component {
                   Clear
                 </Button>
               </Space>
-              <FacetedSearchGroup
-                key="fs-group"
-                access={access}
-                status={status}
-                phases={phases}
-                roa={roa}
-                results={results}
-                types={types}
-                sex={sex}
-                ageGroup={ageGroup}
-                ethnicities={ethnicities}
-                states={states}
-                distance={distance}
-                funder={funder}
-                documents={documents}
-                submission={submission}
-              />
+              <div ref={this.facetsRef}>
+                <FacetedSearchGroup
+                  key="fs-group"
+                  access={access}
+                  status={status}
+                  phases={phases}
+                  roa={roa}
+                  results={results}
+                  types={types}
+                  sex={sex}
+                  ageGroup={ageGroup}
+                  ethnicities={ethnicities}
+                  states={states}
+                  distance={distance}
+                  funder={funder}
+                  documents={documents}
+                  submission={submission}
+                />
+              </div>
             </Col>
             <Col key="trails_table-col" className="gutter-row" span={20}>
               <Row key="trials-table-extras">

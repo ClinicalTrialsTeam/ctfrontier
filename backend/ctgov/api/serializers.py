@@ -4,6 +4,7 @@ from ctgov.models import (
     SearchStudies,
     Facilities,
     BrowseConditions,
+    Countries,
 )
 from django_elasticsearch_dsl_drf.serializers import DocumentSerializer
 from ctgov.documents import ClinicalTrialsSearchStudies
@@ -16,7 +17,7 @@ class BriefSummariesSerializer(serializers.ModelSerializer):
         fields = ["nct", "description"]
 
 
-# Serializezr to return Search Studies Results dataset
+# Serializer to return Search Studies Results dataset
 class SearchStudiesSerializer(serializers.ModelSerializer):
     class Meta:
         model = SearchStudies
@@ -41,8 +42,8 @@ class SearchStudiesSerializer(serializers.ModelSerializer):
 # Serializer to return Study Countries list
 class CountriesSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Facilities
-        fields = ["country"]
+        model = Countries
+        fields = ["name"]
 
 
 # Serializer to return Study States list

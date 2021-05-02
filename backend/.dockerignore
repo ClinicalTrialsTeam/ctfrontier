@@ -3,7 +3,9 @@
 .coverage
 .coveragerc
 .env
+**.env
 Dockerfile
-Dockerfile.prod
+Dockerfile.dev
 tests
 README.md
+**.log

@@ -8,7 +8,11 @@ from . import names, aws
 
 
 stack_props = {
-    "notification_email": Param("notification_email").getvalue(decrypt=True)
+    "site_domain": Param("site_domain").get_value(),
+    "notification_email": Param("notification_email").get_value(),
+    "django_secret": Param("django_secret").get_value(decrypt=True),
+    "db_host": Param("db_host").get_value(),
+    "db_password": Param("db_password").get_value(decrypt=True),
 }
 
 app = core.App()
@@ -20,12 +24,14 @@ if app.node.try_get_context("CTF_CLI") != "true":
         fg="yellow",
     )
 
+tags = {d["Key"]: d["Value"] for d in aws.STACK_TAGS}
+
 CtStack(
     app,
     names.PROJECT_NAME,
     **stack_props,
     env=core.Environment(account=aws.AWS_ACCOUNT_ID, region=aws.AWS_REGION),
-    tags=aws.STACK_TAGS,
+    tags=tags,
     synthesizer=core.DefaultStackSynthesizer(
         qualifier=names.PROJECT_NAME,
         file_assets_bucket_name=names.CDK_BOOTSTRAP_BUCKET,

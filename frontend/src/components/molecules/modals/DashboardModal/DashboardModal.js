@@ -63,9 +63,6 @@ class DashboardModal extends Component {
           <TabPane tab="Status" key="tab-recr-status">
             <DashboardStatusChart data={data.status} />
           </TabPane>
-          <TabPane tab="Targets" key="tab-targets">
-            Content unavailable
-          </TabPane>
         </Tabs>
       </Modal>
     );

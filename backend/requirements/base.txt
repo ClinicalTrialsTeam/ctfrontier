@@ -7,14 +7,28 @@
 asgiref==3.3.4
     # via django
 certifi==2020.12.5
-    # via elasticsearch
+    # via
+    #   elasticsearch
+    #   requests
+chardet==4.0.0
+    # via requests
 django-cors-headers==3.7.0
     # via -r requirements/base.in
+django-debug-toolbar-request-history==0.1.3
+    # via -r requirements/base.in
+django-debug-toolbar==3.2.1
+    # via
+    #   -r requirements/base.in
+    #   django-debug-toolbar-request-history
 django-elasticsearch-dsl==7.1.4
     # via
     #   -r requirements/base.in
     #   django-elasticsearch-dsl-drf
 django-filter==2.4.0
+    # via -r requirements/base.in
+django-health-check==3.16.4
+    # via -r requirements/base.in
+django-logging-endpoint==1.0.4
     # via -r requirements/base.in
 django-nine==0.2.4
     # via django-elasticsearch-dsl-drf
@@ -22,7 +36,10 @@ django==3.2
     # via
     #   -r requirements/base.in
     #   django-cors-headers
+    #   django-debug-toolbar
     #   django-filter
+    #   django-health-check
+    #   django-logging-endpoint
     #   django-nine
     #   djangorestframework
 django_elasticsearch_dsl_drf==0.21
@@ -39,6 +56,8 @@ elasticsearch==7.12.0
     # via
     #   django-elasticsearch-dsl-drf
     #   elasticsearch-dsl
+idna==2.10
+    # via requests
 psycopg2-binary==2.8.6
     # via -r requirements/base.in
 python-dateutil==2.8.1
@@ -47,13 +66,23 @@ python-dotenv==0.17.0
     # via -r requirements/base.in
 pytz==2021.1
     # via django
+requests==2.25.1
+    # via -r requirements/base.in
 six==1.15.0
     # via
     #   django-elasticsearch-dsl
     #   django-elasticsearch-dsl-drf
+    #   django-logging-endpoint
     #   elasticsearch-dsl
     #   python-dateutil
 sqlparse==0.4.1
-    # via django
+    # via
+    #   django
+    #   django-debug-toolbar
 urllib3==1.26.4
-    # via elasticsearch
+    # via
+    #   elasticsearch
+    #   requests
+
+# The following packages are considered to be unsafe in a requirements file:
+# setuptools

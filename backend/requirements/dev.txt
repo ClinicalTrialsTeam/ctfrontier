@@ -15,9 +15,13 @@ attrs==20.3.0
 black==20.8b1
     # via -r backend/requirements/dev.in
 certifi==2020.12.5
-    # via elasticsearch
+    # via
+    #   elasticsearch
+    #   requests
 cfgv==3.2.0
     # via pre-commit
+chardet==4.0.0
+    # via requests
 click==7.1.2
     # via black
 coverage==5.5
@@ -26,11 +30,21 @@ distlib==0.3.1
     # via virtualenv
 django-cors-headers==3.7.0
     # via -r backend/requirements/base.in
+django-debug-toolbar-request-history==0.1.3
+    # via -r backend/requirements/base.in
+django-debug-toolbar==3.2.1
+    # via
+    #   -r backend/requirements/base.in
+    #   django-debug-toolbar-request-history
 django-elasticsearch-dsl==7.1.4
     # via
     #   -r backend/requirements/base.in
     #   django-elasticsearch-dsl-drf
 django-filter==2.4.0
+    # via -r backend/requirements/base.in
+django-health-check==3.16.4
+    # via -r backend/requirements/base.in
+django-logging-endpoint==1.0.4
     # via -r backend/requirements/base.in
 django-nine==0.2.4
     # via django-elasticsearch-dsl-drf
@@ -38,7 +52,10 @@ django==3.2
     # via
     #   -r backend/requirements/base.in
     #   django-cors-headers
+    #   django-debug-toolbar
     #   django-filter
+    #   django-health-check
+    #   django-logging-endpoint
     #   django-nine
     #   djangorestframework
 django_elasticsearch_dsl_drf==0.21
@@ -61,6 +78,8 @@ flake8==3.9.1
     # via -r backend/requirements/dev.in
 identify==2.2.4
     # via pre-commit
+idna==2.10
+    # via requests
 iniconfig==1.1.1
     # via pytest
 mccabe==0.6.1
@@ -117,15 +136,20 @@ pyyaml==5.4.1
     # via pre-commit
 regex==2021.4.4
     # via black
+requests==2.25.1
+    # via -r backend/requirements/base.in
 six==1.15.0
     # via
     #   django-elasticsearch-dsl
     #   django-elasticsearch-dsl-drf
+    #   django-logging-endpoint
     #   elasticsearch-dsl
     #   python-dateutil
     #   virtualenv
 sqlparse==0.4.1
-    # via django
+    # via
+    #   django
+    #   django-debug-toolbar
 toml==0.10.2
     # via
     #   black
@@ -136,6 +160,11 @@ typed-ast==1.4.3
 typing-extensions==3.7.4.3
     # via black
 urllib3==1.26.4
-    # via elasticsearch
+    # via
+    #   elasticsearch
+    #   requests
 virtualenv==20.4.4
     # via pre-commit
+
+# The following packages are considered to be unsafe in a requirements file:
+# setuptools
