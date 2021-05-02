@@ -1,0 +1,31 @@
+version: "3.8"
+
+services:
+  pgdb:
+    extends:
+      file: docker-compose.yml
+      service: pgdb
+  etl:
+    command: python etl_target.py
+    container_name: etl
+    build: ./etl
+    environment:
+      - PYTHONUNFUFFERED=1
+      - DB_HOST=pgdb
+      - DB_PORT=5432
+      - DB_PASSWORD=postgres
+    depends_on:
+      - pgdb
+    networks:
+      - ctf
+
+
+volumes:
+  pgdata:
+    driver: local
+  node-modules:
+    driver: local
+
+networks:
+  ctf:
+    driver: bridge

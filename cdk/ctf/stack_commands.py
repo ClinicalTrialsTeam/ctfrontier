@@ -14,6 +14,7 @@ from .common import run_cdk_command, run_command, profile_arg
 from .container_commands import (
     build_frontend,
     build_backend,
+    build_etl,
     push_docker_image,
 )
 
@@ -54,6 +55,8 @@ def stack_create(ctx):
     push_docker_image(names.FRONTEND_REPOSITORY)
     build_backend()
     push_docker_image(names.BACKEND_REPOSITORY)
+    build_etl()
+    push_docker_image(names.ETL_REPOSITORY)
 
     try:
         ctx.invoke(stack_update)

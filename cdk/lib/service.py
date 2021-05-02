@@ -14,41 +14,33 @@ class CtfFrontendService(core.Construct):
         self,
         scope: core.Construct,
         id: str,
+        service_name,
         cluster,
         task_definition,
         sg,
         preferred_az,
-        port,
+        desired_count=1,
     ):
         super().__init__(scope, id)
 
         self.service = ecs.FargateService(
             self,
             id=id,
-            service_name=names.FRONTEND_SERVICE,
+            service_name=service_name,
             security_groups=[sg],
             vpc_subnets=ec2.SubnetSelection(availability_zones=[preferred_az]),
             cluster=cluster,
-            cloud_map_options=ecs.CloudMapOptions(name="frontend"),
-            desired_count=1,
+            desired_count=desired_count,
             task_definition=task_definition,
             circuit_breaker=ecs.DeploymentCircuitBreaker(rollback=True),
         )
 
         self.service.connections.allow_from_any_ipv4(
-            ec2.Port.tcp(port), "react inbound"
+            ec2.Port.tcp(80), "react inbound"
         )
 
         self.service.connections.allow_from_any_ipv4(
             ec2.Port.tcp(443), "react inbound https"
-        )
-
-        # Export frontend service name
-        core.CfnOutput(
-            self,
-            "CfnFrontendServiceName",
-            export_name="frontend-service-name",
-            value=self.service.service_name,
         )
 
 
