@@ -13,7 +13,7 @@ dotenv_path = join(dirname(__file__), ".env")
 load_dotenv(dotenv_path)
 
 
-def connect_and_execute_psql(dbase, query, data):
+def connect_and_execute_psql(query, data):
 
     connection = None
     try:
