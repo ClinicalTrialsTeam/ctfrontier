@@ -23,6 +23,19 @@ import {
 
 import './ListViewTable.css';
 
+const parsedResults = data => data.search_results.map((result) => {
+  return {
+    key: result.nct_id,
+    nct_id: result.nct_id,
+    brief_title: result.brief_title,
+    condition_name: result.condition_name !== null ? result.condition_name.split('|').join(', ') : '',
+    sponsor_name: result.sponsor_name !== null ? result.sponsor_name.split('|').join(', ') : '',
+    study_phase: result.study_phase !== null ? result.study_phase.split('/').join(', ') : '',
+    intervention_name: result.intervention_name !== null ? result.intervention_name.split('|').join(', ') : '',
+    status: result.status,
+  };
+});
+
 class ListViewTable extends Component {
   constructor(props) {
     super(props);
@@ -46,8 +59,11 @@ class ListViewTable extends Component {
       searchData: this.props.history.location.state.data,
       payload: this.props.history.location.state.payload,
       dashboardData: {},
-      parsedResults: {},
+      resultsByPage: {},
     };
+
+    const { data } = this.props.history.location.state;
+    this.state.resultsByPage = { 1: parsedResults(data) };
   }
 
   handleClear() {
@@ -71,19 +87,28 @@ class ListViewTable extends Component {
   }
 
   async handlePagination(page, pageSize) {
-    const newPayload = this.state.payload;
-    newPayload.last = (page * pageSize);
-    newPayload.first = newPayload.last - pageSize + 1;
-    console.log(newPayload);
-    try {
-      const response = await ctgov.post('search_studies', newPayload);
-      log.info(response.data);
+    if (page in this.state.resultsByPage) {
       this.setState({
-        currentPage: page + 1,
-        payload: newPayload,
+        currentPage: page,
       });
-    } catch (err) {
-      log.error(err);
+    } else {
+      try {
+        const newPayload = this.state.payload;
+        newPayload.last = (page * pageSize);
+        newPayload.first = newPayload.last - pageSize + 1;
+        const response = await ctgov.post('search_studies', newPayload);
+        log.info(response.data);
+        this.setState(prevState => ({
+          currentPage: page,
+          payload: newPayload,
+          resultsByPage: {
+            ...prevState.resultsByPage,
+            [page]: parsedResults(response.data),
+          },
+        }));
+      } catch (err) {
+        log.error(err);
+      }
     }
   }
 
@@ -103,7 +128,7 @@ class ListViewTable extends Component {
       const response = await ctgov.post('search_studies', payload);
       log.info(response.data);
     } catch (err) {
-      console.log(err);
+      log.error(err);
     }
   }
 
@@ -116,7 +141,7 @@ class ListViewTable extends Component {
           dashboardData: response.data,
         });
       } catch (err) {
-        console.log(err);
+        log.error(err);
       }
     }
     this.setState({
@@ -134,22 +159,6 @@ class ListViewTable extends Component {
     this.setState({
       isDownloadModalVisible,
     });
-  }
-
-  parseResults(data) {
-    const parsedResults = data.search_results.map((result) => {
-      return {
-        key: result.nct_id,
-        nct_id: result.nct_id,
-        brief_title: result.brief_title,
-        condition_name: result.condition_name !== null ? result.condition_name.split('|').join(', ') : '',
-        sponsor_name: result.sponsor_name !== null ? result.sponsor_name.split('|').join(', ') : '',
-        study_phase: result.study_phase !== null ? result.study_phase.split('/').join(', ') : '',
-        intervention_name: result.intervention_name !== null ? result.intervention_name.split('|').join(', ') : '',
-        status: result.status,
-      };
-    });
-    return parsedResults;
   }
 
   render() {
@@ -225,20 +234,6 @@ class ListViewTable extends Component {
     ];
     const { data } = this.props.history.location.state;
     const dataCount = parseInt(data.metadata[0].results_count);
-    const parsedResults = data.search_results.map((result) => {
-      return {
-        key: result.nct_id,
-        nct_id: result.nct_id,
-        brief_title: result.brief_title,
-        condition_name: result.condition_name !== null ? result.condition_name.split('|').join(', ') : '',
-        sponsor_name: result.sponsor_name !== null ? result.sponsor_name.split('|').join(', ') : '',
-        study_phase: result.study_phase !== null ? result.study_phase.split('/').join(', ') : '',
-        intervention_name: result.intervention_name !== null ? result.intervention_name.split('|').join(', ') : '',
-        status: result.status,
-      };
-    });
-
-    console.log(this.state);
 
     return (
       <div>
@@ -369,7 +364,7 @@ class ListViewTable extends Component {
                   type: 'checkbox',
                 }}
                 columns={columns}
-                dataSource={parsedResults}
+                dataSource={this.state.resultsByPage[this.state.currentPage]}
                 size="small"
               />
               <Pagination

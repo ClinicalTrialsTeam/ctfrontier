@@ -390,7 +390,6 @@ class SearchForm extends Component {
 
   async handleSearch(res) {
     this.handleLoading();
-    console.log('HANDLE SEARCH');
     const payload = {
       status: this.state.status,
       condition: this.state.condition,
