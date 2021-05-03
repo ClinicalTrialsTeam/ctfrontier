@@ -2,24 +2,43 @@ DROP VIEW IF EXISTS basic_search;
 DROP MATERIALIZED VIEW IF EXISTS basic_search_m;
 DROP MATERIALIZED VIEW IF EXISTS search_studies;
 DROP VIEW IF EXISTS all_sponsors_type;
+DROP MATERIALIZED VIEW IF EXISTS all_sponsors_type;
 DROP VIEW IF EXISTS all_documents;
+DROP MATERIALIZED VIEW IF EXISTS all_documents;
 
-CREATE VIEW all_sponsors_type AS
-SELECT 
-	sponsors.nct_id,
-	array_to_string(array_agg(DISTINCT sponsors.agency_class), '|'::text) AS funder_type,                                              
-	array_to_string(array_agg(DISTINCT sponsors.name), '|'::text) AS names
-FROM sponsors                                                          
-GROUP BY sponsors.nct_id;
+CREATE MATERIALIZED VIEW ctgov.all_sponsors_type
+TABLESPACE pg_default
+AS
+ SELECT sponsors.nct_id,
+    array_to_string(array_agg(DISTINCT sponsors.agency_class), '|'::text) AS funder_type,
+    array_to_string(array_agg(DISTINCT sponsors.name), '|'::text) AS names
+   FROM ctgov.sponsors
+  GROUP BY sponsors.nct_id
+WITH DATA;
 
-CREATE VIEW all_documents AS
+ALTER TABLE ctgov.all_sponsors_type
+    OWNER TO postgres;
+
+CREATE INDEX all_sponsors_nct_idx
+    ON ctgov.all_sponsors_type USING btree
+    (nct_id COLLATE pg_catalog."default")
+    TABLESPACE pg_default;
+
+
+CREATE MATERIALIZED VIEW ctgov.all_documents AS
 SELECT
 	documents.nct_id,
 	array_to_string(array_agg(DISTINCT document_type), '|'::text) AS document_types
-FROM documents
+FROM ctgov.documents
 GROUP BY documents.nct_id;
 
-CREATE MATERIALIZED VIEW search_studies AS
+CREATE INDEX all_documents_nct_idx
+    ON ctgov.documents USING btree
+    (nct_id COLLATE pg_catalog."default")
+    TABLESPACE pg_default;
+
+
+CREATE MATERIALIZED VIEW ctgov.search_studies AS
 SELECT 
 	A.overall_status status, 
 	A.brief_title, 
@@ -78,14 +97,14 @@ SELECT
 	O.names city_name,
 	P.names state_name
 FROM 
-	studies A
-LEFT JOIN all_conditions B
+	ctgov.studies A
+LEFT JOIN ctgov.all_conditions B
 	ON A.nct_id = B.nct_id
-LEFT JOIN detailed_descriptions C
+LEFT JOIN ctgov.detailed_descriptions C
 	ON A.nct_id = C.nct_id
-LEFT JOIN all_countries D
+LEFT JOIN ctgov.all_countries D
 	ON A.nct_id = D.nct_id
-LEFT JOIN all_interventions E
+LEFT JOIN ctgov.all_interventions E
 	ON A.nct_id = E.nct_id
 LEFT JOIN all_keywords F
 	ON A.nct_id = F.nct_id
@@ -110,3 +129,11 @@ LEFT JOIN all_cities O
 LEFT JOIN all_states P
 	ON A.nct_id = P.nct_id
 ORDER BY A.start_date;
+
+CREATE INDEX search_studies_optimize_idx
+    ON search_studies USING btree
+	(study_start_date ASC NULLS LAST,
+	 nct_id ASC NULLS LAST
+	)
+INCLUDE (status, brief_title, official_title, nct_id)
+	TABLESPACE pg_default;
