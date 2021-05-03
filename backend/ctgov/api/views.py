@@ -644,7 +644,14 @@ def filter_study_roa(request):
     if study_roa:
         roa_list = str(study_roa).split(",")
         roa_queries = [
-            Q(study_brief_desc__iregex="r(?:\\s|^)" + roa.strip(" ") + "*")
+            Q(
+                study_brief_desc__iregex=r"'\y"
+                + roa.strip(" ")
+                .replace("]", "")
+                .replace("[", "")
+                .replace("'", "")
+                + r"\y'"
+            )
             for roa in roa_list
         ]
         q_study_roa = roa_queries.pop()
