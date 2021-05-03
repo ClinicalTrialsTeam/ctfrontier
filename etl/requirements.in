@@ -1,0 +1,7 @@
+python-dotenv
+openpyxl
+numpy
+pandas
+spacy
+scispacy
+psycopg2-binary

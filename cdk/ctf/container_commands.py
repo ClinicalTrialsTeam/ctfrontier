@@ -13,6 +13,7 @@ from .common import profile_arg, run_command
 
 FRONTEND_PATH = join(dirname(__file__), "../../frontend")
 BACKEND_PATH = join(dirname(__file__), "../../backend")
+ETL_PATH = join(dirname(__file__), "../../etl")
 
 
 @click.group()
@@ -34,6 +35,11 @@ def build_backend():
     build_docker_image(names.BACKEND_REPOSITORY, BACKEND_PATH)
 
 
+@container.command("build.etl")
+def build_etl():
+    build_docker_image(names.ETL_REPOSITORY, ETL_PATH)
+
+
 @container.command("deploy.frontend")
 @click.pass_context
 def deploy_frontend(ctx):
@@ -41,6 +47,15 @@ def deploy_frontend(ctx):
     build_docker_image(names.FRONTEND_REPOSITORY, FRONTEND_PATH)
     push_docker_image(names.FRONTEND_REPOSITORY)
     deploy_docker_image(names.FRONTEND_SERVICE, names.FRONTEND_TASK_FAMILY)
+
+
+@container.command("deploy.etl")
+@click.pass_context
+def deploy_etl(ctx):
+    ctx.invoke(docker_login)
+    build_docker_image(names.ETL_REPOSITORY, ETL_PATH)
+    push_docker_image(names.ETL_REPOSITORY)
+    deploy_docker_image(names.ETL_SERVICE, names.ETL_TASK_FAMILY)
 
 
 @container.command("deploy.backend")
