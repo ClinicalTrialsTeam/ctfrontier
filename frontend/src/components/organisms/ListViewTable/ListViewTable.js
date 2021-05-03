@@ -372,6 +372,7 @@ class ListViewTable extends Component {
                 size="small"
               />
               <Pagination
+                className="trials-pagination"
                 onChange={(page, pageSize) => {
                   return this.handlePagination(page, pageSize);
                 }}

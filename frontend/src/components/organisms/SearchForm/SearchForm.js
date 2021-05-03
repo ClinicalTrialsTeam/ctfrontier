@@ -73,7 +73,7 @@ class SearchForm extends Component {
       minAge: 0,
       maxAge: 100,
       sex: '',
-      ethnicity: [],
+      ethnicity: '',
       country: '',
       state: '',
       city: '',
@@ -140,7 +140,7 @@ class SearchForm extends Component {
       minAge: 0,
       maxAge: 100,
       sex: '',
-      ethnicity: [],
+      ethnicity: '',
       country: '',
       state: '',
       city: '',
@@ -285,7 +285,7 @@ class SearchForm extends Component {
 
   handleEthnicityChange(e) {
     this.setState({
-      ethnicity: e,
+      ethnicity: e.join(','),
     });
   }
 
@@ -307,9 +307,9 @@ class SearchForm extends Component {
     });
   }
 
-  handleLoading() {
+  handleLoading(isLoading) {
     this.setState({
-      isLoading: true,
+      isLoading,
     });
   }
 
@@ -389,7 +389,7 @@ class SearchForm extends Component {
   }
 
   async handleSearch(res) {
-    this.handleLoading();
+    this.handleLoading(true);
     const payload = {
       status: this.state.status,
       condition: this.state.condition,
@@ -441,12 +441,14 @@ class SearchForm extends Component {
     try {
       if (!('condition' in res)) {
         const response = await ctgov.post('search_studies', payload);
+        console.log(payload);
         this.setState({
           searchResults: response.data,
           payload,
         });
       } else {
         log.info(`ctgov.post("search_studies") - ${JSON.stringify(res, null, 1)}`);
+        console.log(res);
         const response = await ctgov.post('search_studies', res);
         log.info(`Search studies returned response size ${byteSize(JSON.stringify(res.data, null, 1))}`);
         this.setState({
@@ -455,6 +457,8 @@ class SearchForm extends Component {
         });
       }
     } catch (err) {
+      this.handleLoading(false);
+      message.error('Data unavailable');
       log.error(err);
     }
   }
@@ -855,7 +859,7 @@ class SearchForm extends Component {
                 White: A person having origins in any of the original peoples of Europe, the Middle East, or North Africa. Hispanic or Latino: A person of Cuban, Mexican, Puerto Rican, South or Central American, or other Spanish culture or origin, regardless of race."
                 placeholder="Select the ethnicity"
                 options={ethnicitiesList}
-                handleInputChange={this.handlePhaseChange}
+                handleInputChange={this.handleEthnicityChange}
               />
               <SelectField
                 key="field-country"
