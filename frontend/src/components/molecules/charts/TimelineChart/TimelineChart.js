@@ -2,12 +2,21 @@ import React, { Component } from 'react';
 import { Bar } from '@ant-design/charts';
 import PropTypes from 'prop-types';
 
-// import {
-//   timelineData,
-// } from '../../../../variables/DummyVizData';
-
 class TimelineChart extends Component {
   render() {
+    function search(nameKey, myArray) {
+      const tempArray = [];
+      for (let i = 0; i < myArray.length; i++) {
+        if (myArray[i].nct_id === nameKey) {
+          tempArray.push(myArray[i].brief_title);
+          tempArray.push(myArray[i].phase);
+          tempArray.push(myArray[i].start_date);
+          tempArray.push(myArray[i].completion_date);
+          tempArray.push(myArray[i].sponsor);
+        }
+      }
+      return tempArray;
+    }
     const {
       data,
     } = this.props;
@@ -44,6 +53,11 @@ class TimelineChart extends Component {
         nct_id: element.nct_id,
         dates: [elementStartDate, elementEndDate],
         phase: element.study_phase,
+        brief_title: element.brief_title,
+        status: element.status,
+        start_date: element.study_start_date,
+        completion_date: element.primary_completion_date,
+        sponsor: element.sponsor_name,
       });
     });
 
@@ -83,7 +97,7 @@ class TimelineChart extends Component {
     return (
       <>
         <Bar
-          data={timelineData.reverse()}
+          data={timelineData}
           color={config.color}
           xField="dates"
           yField="nct_id"
@@ -97,6 +111,42 @@ class TimelineChart extends Component {
             max: config.maxDate,
           }}
           height={300}
+          tooltip={{
+            position: 'bottom',
+            customContent: (title) => {
+              const resultObject = search(title, timelineData);
+              const briefTitle = resultObject[0];
+              const phase = resultObject[1];
+              const startDate = resultObject[2];
+              const completionDate = resultObject[3];
+              const sponsor = resultObject[4];
+              return (
+                <div width="100px">
+                  <br />
+                  <p><b>{title}</b></p>
+                  <p>
+                    <b>Title: </b>
+                    {briefTitle}
+                  </p>
+                  <p>
+                    <b>Phase: </b>
+                    {phase}
+                  </p>
+                  <p>
+                    <b>Dates: </b>
+                    {' from '}
+                    {startDate}
+                    {' to '}
+                    {completionDate}
+                  </p>
+                  <p>
+                    <b>Sponsor: </b>
+                    {sponsor}
+                  </p>
+                </div>
+              );
+            },
+          }}
           isRange
           scrollbar={{
             type: 'vertical',

@@ -37,3 +37,8 @@
     margin-top: 32px;
     margin-bottom: 32px;
 }
+
+.trials-pagination {
+    margin-top: 10px;
+    text-align: right;
+}
