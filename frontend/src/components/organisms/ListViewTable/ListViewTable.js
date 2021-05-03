@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import {
-  Table, Space, Button, Row, Col, Card, Tooltip, Typography,
+  Table, Space, Button, Row, Col, Card, Tooltip, Typography, Pagination,
 } from 'antd';
 import PropTypes from 'prop-types';
 import {
@@ -23,6 +23,21 @@ import {
 
 import './ListViewTable.css';
 
+const parsedResults = (data) => {
+  return data.search_results.map((result) => {
+    return {
+      key: result.nct_id,
+      nct_id: result.nct_id,
+      brief_title: result.brief_title,
+      condition_name: result.condition_name !== null ? result.condition_name.split('|').join(', ') : '',
+      sponsor_name: result.sponsor_name !== null ? result.sponsor_name.split('|').join(', ') : '',
+      study_phase: result.study_phase !== null ? result.study_phase.split('/').join(', ') : '',
+      intervention_name: result.intervention_name !== null ? result.intervention_name.split('|').join(', ') : '',
+      status: result.status,
+    };
+  });
+};
+
 class ListViewTable extends Component {
   constructor(props) {
     super(props);
@@ -35,6 +50,7 @@ class ListViewTable extends Component {
     this.formRef = React.createRef();
     this.facetsRef = React.createRef();
     this.state = {
+      currentPage: 1,
       intervention: '',
       condition: '',
       target: '',
@@ -45,7 +61,11 @@ class ListViewTable extends Component {
       searchData: this.props.history.location.state.data,
       payload: this.props.history.location.state.payload,
       dashboardData: {},
+      resultsByPage: {},
     };
+
+    const { data } = this.props.history.location.state;
+    this.state.resultsByPage = { 1: parsedResults(data) };
   }
 
   handleClear() {
@@ -68,6 +88,34 @@ class ListViewTable extends Component {
     });
   }
 
+  async handlePagination(page, pageSize) {
+    if (page in this.state.resultsByPage) {
+      this.setState({
+        currentPage: page,
+      });
+    } else {
+      try {
+        const newPayload = this.state.payload;
+        newPayload.last = (page * pageSize);
+        newPayload.first = newPayload.last - pageSize + 1;
+        const response = await ctgov.post('search_studies', newPayload);
+        log.info(response.data);
+        this.setState((prevState) => {
+          return ({
+            currentPage: page,
+            payload: newPayload,
+            resultsByPage: {
+              ...prevState.resultsByPage,
+              [page]: parsedResults(response.data),
+            },
+          });
+        });
+      } catch (err) {
+        log.error(err);
+      }
+    }
+  }
+
   async handleSearch() {
     const payload = {
       status: '',
@@ -84,7 +132,7 @@ class ListViewTable extends Component {
       const response = await ctgov.post('search_studies', payload);
       log.info(response.data);
     } catch (err) {
-      console.log(err);
+      log.error(err);
     }
   }
 
@@ -97,7 +145,7 @@ class ListViewTable extends Component {
           dashboardData: response.data,
         });
       } catch (err) {
-        console.log(err);
+        log.error(err);
       }
     }
     this.setState({
@@ -190,18 +238,6 @@ class ListViewTable extends Component {
     ];
     const { data } = this.props.history.location.state;
     const dataCount = parseInt(data.metadata[0].results_count);
-    const parsedResults = data.search_results.map((result) => {
-      return {
-        key: result.nct_id,
-        nct_id: result.nct_id,
-        brief_title: result.brief_title,
-        condition_name: result.condition_name !== null ? result.condition_name.split('|').join(', ') : '',
-        sponsor_name: result.sponsor_name !== null ? result.sponsor_name.split('|').join(', ') : '',
-        study_phase: result.study_phase !== null ? result.study_phase.split('/').join(', ') : '',
-        intervention_name: result.intervention_name !== null ? result.intervention_name.split('|').join(', ') : '',
-        status: result.status,
-      };
-    });
 
     return (
       <div>
@@ -324,7 +360,7 @@ class ListViewTable extends Component {
                 </Col>
               </Row>
               <Table
-                pagination={{ total: dataCount, pageSize: 20 }}
+                pagination={false}
                 scroll={{ x: '1000', y: 1100 }}
                 className="trials-table"
                 key="trials-table"
@@ -332,8 +368,16 @@ class ListViewTable extends Component {
                   type: 'checkbox',
                 }}
                 columns={columns}
-                dataSource={parsedResults}
+                dataSource={this.state.resultsByPage[this.state.currentPage]}
                 size="small"
+              />
+              <Pagination
+                onChange={(page, pageSize) => {
+                  return this.handlePagination(page, pageSize);
+                }}
+                current={this.state.currentPage}
+                pageSize={20}
+                total={dataCount}
               />
             </Col>
           </Row>

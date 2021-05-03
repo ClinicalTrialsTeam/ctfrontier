@@ -20,7 +20,7 @@ import {
   types, sex, ageGroup, ethnicities, distance, states,
 } from '../../../variables/SelectOptionsData';
 
-const byteSize = str => new Blob([str]).size;
+const byteSize = (str) => { return new Blob([str]).size; };
 
 class SearchForm extends Component {
   constructor(props) {
@@ -116,7 +116,7 @@ class SearchForm extends Component {
         countries,
       });
     } catch (err) {
-      console.log(err);
+      log.error(err);
     }
   }
 
@@ -435,7 +435,7 @@ class SearchForm extends Component {
       distance: this.state.distance,
       subcondition: this.state.subcondition,
       first: 0,
-      last: 100,
+      last: 20,
       metadata_required: true,
     };
     try {
@@ -455,7 +455,7 @@ class SearchForm extends Component {
         });
       }
     } catch (err) {
-      console.log(err);
+      log.error(err);
     }
   }
 
