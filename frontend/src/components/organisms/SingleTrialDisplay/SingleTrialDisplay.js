@@ -4,7 +4,6 @@ import { withRouter } from 'react-router-dom';
 import {
   Collapse, Typography, Row, Col, Descriptions, Divider,
 } from 'antd';
-import log from 'loglevel';
 import PropTypes from 'prop-types';
 import ctgov from '../../../apis/ctgov';
 
@@ -61,7 +60,7 @@ class SingleTrialDisplay extends Component {
       );
     } catch (err) {
       // City name is ignored and generates an inconsequential error
-      log.error(err);
+      console.log(err);
     }
   }
 
