@@ -24,7 +24,7 @@ import {
 import './ListViewTable.css';
 
 const parsedResults = (data) => {
-  data.search_results.map((result) => {
+  return data.search_results.map((result) => {
     return {
       key: result.nct_id,
       nct_id: result.nct_id,
