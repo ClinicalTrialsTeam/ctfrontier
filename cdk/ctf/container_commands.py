@@ -3,7 +3,6 @@ from os.path import dirname, join
 
 site.addsitedir(join(dirname(dirname(__file__)), "lib"))
 
-import json
 import click
 import subprocess
 from lib import aws, names, environment
@@ -123,15 +122,7 @@ def push_docker_image(repository):
 
 def deploy_docker_image(ecs_service, ecs_task_family):
     cmd = (
-        f"aws ecs {profile_arg()} list-task-definitions "
-        f"--family-prefix {ecs_task_family}"
-    )
-    r = run_command(cmd, capture_output=True)
-    task_def = json.loads(r.stdout)["taskDefinitionArns"][0].split("/")[-1]
-
-    cmd = (
         f"aws {profile_arg()} ecs update-service --cluster {names.CLUSTER} "
-        f"--service {ecs_service} --task-definition {task_def} "
-        f"--force-new-deployment"
+        f"--service {ecs_service} --force-new-deployment"
     )
     run_command(cmd, capture_output=True)

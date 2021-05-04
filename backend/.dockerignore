@@ -8,4 +8,4 @@ Dockerfile
 Dockerfile.dev
 tests
 README.md
-**.log
+var/log/*
