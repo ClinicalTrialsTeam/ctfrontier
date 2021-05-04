@@ -273,6 +273,7 @@ class TrialsDashboardApiView(APIView):
 class SearchStudiesApiView(APIView):
     def post(self, request, *args, **kwargs):
         logger.info("SearchStudiesApiView: post()")
+        logger.info(f"Request: {dict(request.data.items())}")
         first = request.data.get("first")
         last = request.data.get("last")
         metadata_required = request.data.get("metadata_required")
@@ -282,6 +283,7 @@ class SearchStudiesApiView(APIView):
         if not last:
             last = 100
 
+        logger.info("Construct filters")
         filters = construct_filters(request)
         q_title_acronym = filter_title_acronym(request)
         q_outcome_measure = filter_outcome_measure(request)
@@ -291,78 +293,56 @@ class SearchStudiesApiView(APIView):
         q_study_status = filter_study_status(request)
         q_phase = filter_phase(request)
 
+        search_results_all = (
+            SearchStudies.objects.filter(**filters)
+            .filter(q_title_acronym)
+            .filter(q_outcome_measure)
+            .filter(q_eligibility_age)
+            .filter(q_age_between)
+            .filter(q_study_roa)
+            .filter(q_study_status)
+            .filter(q_phase)
+            .all()
+        )
+
+        search_results = search_results_all.values(
+            "status",
+            "brief_title",
+            "nct_id",
+            "condition_name",
+            "intervention_name",
+            "location_name",
+            "study_phase",
+            "sponsor_name",
+            "location_name",
+            "study_brief_desc",
+            "primary_outcome_measures",
+            "secondary_outcome_measures",
+            "study_start_date",
+            "primary_completion_date",
+        )[first:last]
+
         if metadata_required:
-            search_results_all = (
-                SearchStudies.objects.filter(**filters)
-                .filter(q_title_acronym)
-                .filter(q_outcome_measure)
-                .filter(q_eligibility_age)
-                .filter(q_age_between)
-                .filter(q_study_roa)
-                .filter(q_study_status)
-                .filter(q_phase)
-                .all()
-            )
-
-            search_results = search_results_all.all().values(
-                "status",
-                "brief_title",
-                "nct_id",
-                "condition_name",
-                "intervention_name",
-                "location_name",
-                "study_phase",
-                "sponsor_name",
-                "location_name",
-                "study_brief_desc",
-                "primary_outcome_measures",
-                "secondary_outcome_measures",
-                "study_start_date",
-                "primary_completion_date",
-            )[first:last]
-
+            logger.info("Metadata required, get count")
+            logger.warning(f"{type(search_results_all)}")
             results_count = search_results_all.count()
-
+            logger.info(f"metadata got count {results_count}")
         else:
-            search_results = (
-                SearchStudies.objects.filter(**filters)
-                .filter(q_title_acronym)
-                .filter(q_outcome_measure)
-                .filter(q_eligibility_age)
-                .filter(q_age_between)
-                .filter(q_study_roa)
-                .filter(q_study_status)
-                .filter(q_phase)
-                .all()
-                .values(
-                    "status",
-                    "brief_title",
-                    "nct_id",
-                    "condition_name",
-                    "intervention_name",
-                    "location_name",
-                    "study_phase",
-                    "sponsor_name",
-                    "location_name",
-                    "study_brief_desc",
-                    "primary_outcome_measures",
-                    "secondary_outcome_measures",
-                    "study_start_date",
-                    "primary_completion_date",
-                )[first:last]
-            )
-
+            logger.info("Metadata not required")
             results_count = "NA"
 
+        logger.info("Before serialization")
         serializer = SearchStudiesSerializer(search_results, many=True)
-        logger.info("SearchStudiesApiView: return results")
-        return Response(
+        logger.info("After serialization")
+        r = Response(
             {
                 "metadata": [{"results_count": str(results_count)}],
                 "search_results": serializer.data,
             },
             status=status.HTTP_200_OK,
         )
+        logger.info("SearchStudiesAPIView: return results")
+        return r
 
 
 # Convert passed date parameter to match with db format

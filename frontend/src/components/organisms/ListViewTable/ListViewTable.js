@@ -98,6 +98,7 @@ class ListViewTable extends Component {
         const newPayload = this.state.payload;
         newPayload.last = (page * pageSize);
         newPayload.first = newPayload.last - pageSize + 1;
+        newPayload.metadata_required = false;
         const response = await ctgov.post('search_studies', newPayload);
         log.info(response.data);
         this.setState((prevState) => {
