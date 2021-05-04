@@ -436,7 +436,7 @@ class SearchForm extends Component {
       subcondition: this.state.subcondition,
       first: 0,
       last: 20,
-      metadata_required: true,
+      metadata_required: false,
     };
     try {
       if (!('condition' in res)) {
