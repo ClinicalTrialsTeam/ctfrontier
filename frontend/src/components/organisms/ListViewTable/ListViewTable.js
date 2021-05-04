@@ -58,14 +58,44 @@ class ListViewTable extends Component {
       isDashboardModalVisible: false,
       isTimelineModalVisible: false,
       isDownloadModalVisible: false,
+      isDashboardDisabled: true,
+      isTimelineDisabled: false,
+      isDownloadDisabled: false,
       searchData: this.props.history.location.state.data,
       payload: this.props.history.location.state.payload,
       dashboardData: {},
       resultsByPage: {},
+      studyCount: '...',
     };
 
     const { data } = this.props.history.location.state;
     this.state.resultsByPage = { 1: parsedResults(data) };
+  }
+
+  async componentDidMount() {
+    const { payload } = this.state;
+    payload.metadata_required = true;
+    // Getting metadata (total results count)
+    try {
+      const response = await ctgov.post('search_studies', payload);
+      console.log(response);
+      const studyCount = response.data.metadata[0].results_count;
+      this.setState({
+        studyCount,
+      });
+    } catch (err) {
+      log.error(err);
+    }
+    // Getting dashboard data
+    try {
+      const response = await ctgov.post('trials_dashboard', payload);
+      this.setState({
+        dashboardData: response.data,
+        isDashboardDisabled: false,
+      });
+    } catch (err) {
+      log.error(err);
+    }
   }
 
   handleClear() {
@@ -138,17 +168,6 @@ class ListViewTable extends Component {
   }
 
   async setDashboardModalVisible(isDashboardModalVisible) {
-    const { payload } = this.state;
-    if (isDashboardModalVisible) {
-      try {
-        const response = await ctgov.post('trials_dashboard', payload);
-        this.setState({
-          dashboardData: response.data,
-        });
-      } catch (err) {
-        log.error(err);
-      }
-    }
     this.setState({
       isDashboardModalVisible,
     });
@@ -237,8 +256,7 @@ class ListViewTable extends Component {
         width: 100,
       },
     ];
-    const { data } = this.props.history.location.state;
-    const dataCount = parseInt(data.metadata[0].results_count);
+    const dataCount = parseInt(this.state.studyCount);
 
     return (
       <div>
@@ -291,7 +309,7 @@ class ListViewTable extends Component {
                   <Row id="trials-stat-row" justify="start" align="middle">
                     Total number of trials:
                     {' '}
-                    {dataCount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                    {this.state.studyCount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                   </Row>
                 </Col>
                 <Col key="trials-modal-btn-col" span={16}>
@@ -299,6 +317,7 @@ class ListViewTable extends Component {
                     <Space align="end">
                       <Tooltip title="View dashboard">
                         <Button
+                          disabled={this.state.isDashboardDisabled}
                           key="btn_dashboard"
                           onClick={() => {
                             return this.setDashboardModalVisible(true);
@@ -308,6 +327,7 @@ class ListViewTable extends Component {
                       </Tooltip>
                       <Tooltip title="View timeline">
                         <Button
+                          disabled={this.state.isTimelineDisabled}
                           key="btn_timeline"
                           onClick={() => {
                             return this.setTimelineModalVisible(true);
@@ -317,6 +337,7 @@ class ListViewTable extends Component {
                       </Tooltip>
                       <Tooltip title="Download options">
                         <Button
+                          disabled={this.state.isDownloadDisabled}
                           key="btn_download"
                           onClick={() => {
                             return this.setDownloadModalVisible(true);
@@ -327,7 +348,7 @@ class ListViewTable extends Component {
                       <DashboardModal
                         isModalVisible={this.state.isDashboardModalVisible}
                         data={this.state.dashboardData}
-                        count={this.state.searchData.metadata[0].results_count}
+                        count={this.state.studyCount}
                         handleOk={() => {
                           return this.setDashboardModalVisible(false, '');
                         }}
