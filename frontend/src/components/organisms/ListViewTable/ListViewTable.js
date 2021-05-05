@@ -22,11 +22,13 @@ import {
 } from '../../../variables/SelectOptionsData';
 
 import './ListViewTable.css';
+import CTFButton from '../../atoms/buttons/Button/Button';
 
 class ListViewTable extends Component {
   constructor(props) {
     super(props);
     this.handleInputChange = this.handleInputChange.bind(this);
+    this.handleStatusChange = this.handleStatusChange.bind(this);
     this.setDashboardModalVisible = this.setDashboardModalVisible.bind(this);
     this.setTimelineModalVisible = this.setTimelineModalVisible.bind(this);
     this.setDownloadModalVisible = this.setDownloadModalVisible.bind(this);
@@ -44,7 +46,9 @@ class ListViewTable extends Component {
       isDownloadModalVisible: false,
       searchData: this.props.history.location.state.data,
       payload: this.props.history.location.state.payload,
+      searchParameters: this.props.history.location.state.searchParameters,
       dashboardData: {},
+      applyFilters: false,
     };
   }
 
@@ -60,28 +64,85 @@ class ListViewTable extends Component {
 
   handleInputChange(e) {
     const { target } = e;
-    const value = target.inputType === 'checkbox' ? target.checked : target.value;
+    const value = target.type === 'checkbox' ? target.checked : target.value;
     const { name } = target;
 
+    let {searchParameters} = this.state;
+    searchParameters[name] = value;
+
     this.setState({
-      [name]: value,
+      searchParameters,
+    });
+  }
+
+  handleStatusChange(e) {
+    const { target } = e;
+    const value = target.name;
+
+    let {searchParameters} = this.state;
+    searchParameters.status = value;
+
+    this.setState({
+      searchParameters,
     });
   }
 
   async handleSearch() {
     const payload = {
-      status: '',
-      condition: this.state.condition,
-      other_terms: this.state.otherTerms,
-      intervention: this.state.intervention,
-      target: this.state.target,
-      nct_id: this.state.nct_id,
+      status: this.state.searchParameters.status,
+      condition: this.state.searchParameters.condition,
+      other_terms: this.state.searchParameters.otherTerms,
+      country: this.state.searchParameters.country,
+      intervention: this.state.searchParameters.intervention,
+      target: this.state.searchParameters.target,
+      nct_id: this.state.searchParameters.nct_id,
       eligibility_criteria: '',
-      first: '',
-      last: '',
+      modality: this.state.searchParameters.modality,
+      sponsor: this.state.searchParameters.sponsor,
+      phase: this.state.searchParameters.phase,
+      start_date_from: this.state.searchParameters.startDateFrom,
+      start_date_to: this.state.searchParameters.startDateTo,
+      primary_completion_date_from: this.state.searchParameters.primaryCompletionDateFrom,
+      primary_completion_date_to: this.state.searchParameters.primaryCompletionDateTo,
+      first_posted_date_from: this.state.searchParameters.firstPostedDateFrom,
+      first_posted_date_to: this.state.searchParameters.firstPostedDateTo,
+      results_first_posted_date_from: this.state.searchParameters.resultsFirstPostedDateFrom,
+      results_first_posted_date_to: this.state.searchParameters.resultsFirstPostedDateTo,
+      last_update_posted_date_from: this.state.searchParameters.lastUpdatePostedDateFrom,
+      last_update_posted_date_to: this.state.searchParameters.lastUpdatePostedDateTo,
+      study_results: this.state.searchParameters.results,
+      study_type: this.state.searchParameters.type,
+      eligibility_age: this.state.searchParameters.age,
+      eligibility_min_age: this.state.searchParameters.minAge,
+      eligibility_max_age: this.state.searchParameters.maxAge,
+      eligibility_gender: this.state.searchParameters.sex,
+      eligibility_ethnicity: this.state.searchParameters.ethnicity,
+      eligibility_condition: '',
+      eligibility_healthy_volunteer: this.state.searchParameters.healthy === true ? 'Accepts Healthy Volunteers' : '',
+      study_title_acronym: this.state.searchParameters.title,
+      study_outcome_measure: this.state.searchParameters.studyOutcomeMeasure,
+      study_collaborator: this.state.searchParameters.studyCollaborator,
+      study_ids: this.state.searchParameters.studyIds,
+      study_location_terms: this.state.searchParameters.locationTerms,
+      study_funder_type: this.state.searchParameters.studyFunderType,
+      study_document_type: this.state.searchParameters.studyDocumentType,
+      study_results_submitted: this.state.searchParameters.studyResultsSubmitted,
+      study_roa: this.state.searchParameters.roa,
+      state: this.state.searchParameters.state,
+      city: this.state.searchParameters.city,
+      distance: this.state.searchParameters.distance,
+      subcondition: this.state.searchParameters.subcondition,
+      first: 0,
+      last: 100,
+      metadata_required: true,
     };
     try {
       const response = await ctgov.post('search_studies', payload);
+      this.setState({
+        searchData: response.data,
+        payload,
+        applyFilters: true,
+      });
       log.info(response.data);
     } catch (err) {
       console.log(err);
@@ -217,14 +278,14 @@ class ListViewTable extends Component {
           >
             <Col key="fs-group-col" id="fs-group-col" className="gutter-row" span={4}>
               <Space key="fs-buttons">
-                <Button
-                  type="primary"
-                  key="fs-button-submit"
-                  className="facet-button"
-                >
-                  Apply
-                </Button>
-                <Button key="fs-button-clear" className="facet-button">
+                <CTFButton
+                  loading={this.state.isLoading}
+                  key="btn_search"
+                  inputType="primary"
+                  text="Apply"
+                  clickHandler={this.handleSearch}
+                />
+                <Button key="fs-button-clear" className="facet-button" clickHandler={this.handleClear}>
                   Clear
                 </Button>
               </Space>
@@ -245,6 +306,8 @@ class ListViewTable extends Component {
                   funder={funder}
                   documents={documents}
                   submission={submission}
+                  handleInputChange={this.handleInputChange}
+                  handleStatusChange={this.handleStatusChange}
                 />
               </div>
             </Col>

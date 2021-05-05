@@ -18,6 +18,7 @@ class FacetedSearchGroup extends Component {
     const {
       status, phases, roa, ageGroup, ethnicities,
       funder, documents, submission, results, types, sex, handleInputChange,
+      handleStatusChange,
     } = this.props;
     const { Panel } = Collapse;
     const { Option } = Select;
@@ -38,7 +39,12 @@ class FacetedSearchGroup extends Component {
     checkboxArrays.forEach((element) => {
       Array.from(element[0].entries()).forEach(([index, value]) => {
         element[1].push(
-          <Checkbox key={index} value={value} style={{ lineHeight: '24px' }}>
+          <Checkbox key={index}
+                    value={value}
+                    style={{ lineHeight: '24px' }}
+                    onChange={handleStatusChange}
+                    name={value}
+          >
             {value}
           </Checkbox>
         );
@@ -112,6 +118,7 @@ class FacetedSearchGroup extends Component {
                 label="Recruitment Status"
                 title="Indicates the current recruitment status"
                 checkboxes={statusCheckboxes}
+                handleInputChange={handleInputChange}
               />
             </Panel>
             <Panel
@@ -238,7 +245,7 @@ class FacetedSearchGroup extends Component {
                 label="MOA / Target"
                 title="Mechanism of Action (MOA) is a biochemical interaction that a drug disrupts usually involving a specific protein (target), such as an enzyme or receptor."
                 name="target"
-                handleInputChange={this.handleInputChange}
+                handleInputChange={handleInputChange}
               />
             </Panel>
             <Panel
@@ -252,7 +259,7 @@ class FacetedSearchGroup extends Component {
                 label="Modality"
                 title="A therapeutic approach for drugs, such as small molecules, antibodies, RNAi, CAR T cell, or peptide."
                 name="modality"
-                handleInputChange={this.handleInputChange}
+                handleInputChange={handleInputChange}
               />
             </Panel>
             <Panel
@@ -267,7 +274,7 @@ class FacetedSearchGroup extends Component {
                 label="Minimum subjects"
                 title="The minimum number of subjects participating in the clinical study (inclusive)."
                 name="participants_min"
-                handleInputChange={this.handleInputChange}
+                handleInputChange={handleInputChange}
               />
               <NumberInputField
                 min={1}
@@ -276,7 +283,7 @@ class FacetedSearchGroup extends Component {
                 label="Maximum subjects"
                 title="The maximum number of subjects participating in the clinical study (exclusive)."
                 name="participants_max"
-                handleInputChange={this.handleInputChange}
+                handleInputChange={handleInputChange}
               />
             </Panel>
             <Panel
@@ -290,7 +297,7 @@ class FacetedSearchGroup extends Component {
                 label="Sponsor / Collaborators"
                 title="Sponsor is the organization or person who initiates the study and who has authority and control over the study. Collaborator is an organization other than the sponsor that provides support for a clinical study. This support may include activities related to funding, design, implementation, data analysis, or reporting."
                 name="target"
-                handleInputChange={this.handleInputChange}
+                handleInputChange={handleInputChange}
               />
             </Panel>
             <Panel
@@ -375,6 +382,7 @@ class FacetedSearchGroup extends Component {
 FacetedSearchGroup.propTypes = {
   funder: PropTypes.array.isRequired,
   handleInputChange: PropTypes.func,
+  handleStatusChange: PropTypes.func,
   types: PropTypes.array.isRequired,
   results: PropTypes.array.isRequired,
   documents: PropTypes.array.isRequired,
@@ -385,10 +393,6 @@ FacetedSearchGroup.propTypes = {
   ageGroup: PropTypes.array.isRequired,
   ethnicities: PropTypes.array.isRequired,
   sex: PropTypes.array.isRequired,
-};
-
-FacetedSearchGroup.defaultProps = {
-  handleInputChange: () => {},
 };
 
 export default FacetedSearchGroup;
