@@ -1,0 +1,41 @@
+on:
+  push:
+    branches:
+      - main
+
+name: Push image to ECR and force new ECS deploy
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    environment: AWSDeploy
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag, push to AWS ECR
+        id: build-tag-push-ecr
+        run: |
+          docker build -t ${{ steps.login-ecr.outputs.registry }}/ctf-backend-repository:latest backend
+          docker build -t ${{ steps.login-ecr.outputs.registry }}/ctf-frontend-repository:latest frontend
+          docker push ${{ steps.login-ecr.outputs.registry }}/ctf-backend-repository:latest
+          docker push ${{ steps.login-ecr.outputs.registry }}/ctf-frontend-repository:latest
+        shell: bash
+      - name : Force new AWS ECS deployment
+        id: deploy-ecs
+        run: |
+          aws ecs update-service --cluster ctf-ecs-cluster --service backend-service --force-new-deployment > /dev/null
+          aws ecs update-service --cluster ctf-ecs-cluster --service frontend-service --force-new-deployment > /dev/null
+        shell: bash

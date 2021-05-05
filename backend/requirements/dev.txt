@@ -12,8 +12,17 @@ asgiref==3.3.4
     # via django
 attrs==20.3.0
     # via pytest
-black==20.8b1
+black==21.4b2
     # via -r backend/requirements/dev.in
+blis==0.7.4
+    # via
+    #   spacy
+    #   thinc
+catalogue==2.0.4
+    # via
+    #   spacy
+    #   srsly
+    #   thinc
 certifi==2020.12.5
     # via
     #   elasticsearch
@@ -23,9 +32,16 @@ cfgv==3.2.0
 chardet==4.0.0
     # via requests
 click==7.1.2
-    # via black
+    # via
+    #   black
+    #   typer
 coverage==5.5
     # via pytest-cov
+cymem==2.0.5
+    # via
+    #   preshed
+    #   spacy
+    #   thinc
 distlib==0.3.1
     # via virtualenv
 django-cors-headers==3.7.0
@@ -68,7 +84,7 @@ elasticsearch-dsl==7.3.0
     # via
     #   django-elasticsearch-dsl
     #   django-elasticsearch-dsl-drf
-elasticsearch==7.12.0
+elasticsearch==7.12.1
     # via
     #   django-elasticsearch-dsl-drf
     #   elasticsearch-dsl
@@ -82,24 +98,50 @@ idna==2.10
     # via requests
 iniconfig==1.1.1
     # via pytest
+jinja2==2.11.3
+    # via spacy
+markupsafe==1.1.1
+    # via jinja2
 mccabe==0.6.1
     # via flake8
 mirakuru==2.3.0
     # via pytest-postgresql
+murmurhash==1.0.5
+    # via
+    #   preshed
+    #   spacy
+    #   thinc
 mypy-extensions==0.4.3
     # via black
 nodeenv==1.6.0
     # via pre-commit
+numpy==1.20.2
+    # via
+    #   -r backend/requirements/dev.in
+    #   blis
+    #   pandas
+    #   spacy
+    #   thinc
 packaging==20.9
-    # via pytest
+    # via
+    #   pytest
+    #   spacy
+pandas==1.2.4
+    # via -r backend/requirements/dev.in
 pathspec==0.8.1
     # via black
+pathy==0.5.2
+    # via spacy
 pluggy==0.13.1
     # via pytest
 port-for==0.4
     # via pytest-postgresql
 pre-commit==2.12.1
     # via -r backend/requirements/dev.in
+preshed==3.0.5
+    # via
+    #   spacy
+    #   thinc
 psutil==5.8.0
     # via mirakuru
 psycopg2-binary==2.8.6
@@ -108,6 +150,10 @@ py==1.10.0
     # via pytest
 pycodestyle==2.7.0
     # via flake8
+pydantic==1.7.3
+    # via
+    #   spacy
+    #   thinc
 pyflakes==2.3.1
     # via flake8
 pyparsing==2.4.7
@@ -127,17 +173,23 @@ pytest==6.2.3
     #   pytest-env
     #   pytest-postgresql
 python-dateutil==2.8.1
-    # via elasticsearch-dsl
-python-dotenv==0.17.0
+    # via
+    #   elasticsearch-dsl
+    #   pandas
+python-dotenv==0.17.1
     # via -r backend/requirements/base.in
 pytz==2021.1
-    # via django
+    # via
+    #   django
+    #   pandas
 pyyaml==5.4.1
     # via pre-commit
 regex==2021.4.4
     # via black
 requests==2.25.1
-    # via -r backend/requirements/base.in
+    # via
+    #   -r backend/requirements/base.in
+    #   spacy
 six==1.15.0
     # via
     #   django-elasticsearch-dsl
@@ -146,25 +198,43 @@ six==1.15.0
     #   elasticsearch-dsl
     #   python-dateutil
     #   virtualenv
+smart-open==3.0.0
+    # via pathy
+spacy-legacy==3.0.5
+    # via spacy
+spacy==3.0.6
+    # via -r backend/requirements/dev.in
 sqlparse==0.4.1
     # via
     #   django
     #   django-debug-toolbar
+srsly==2.4.1
+    # via
+    #   spacy
+    #   thinc
+thinc==8.0.3
+    # via spacy
 toml==0.10.2
     # via
     #   black
     #   pre-commit
     #   pytest
-typed-ast==1.4.3
-    # via black
-typing-extensions==3.7.4.3
-    # via black
+tqdm==4.60.0
+    # via spacy
+typer==0.3.2
+    # via
+    #   pathy
+    #   spacy
 urllib3==1.26.4
     # via
     #   elasticsearch
     #   requests
 virtualenv==20.4.4
     # via pre-commit
+wasabi==0.8.2
+    # via
+    #   spacy
+    #   thinc
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools

@@ -6,3 +6,7 @@ pytest-postgresql
 pre-commit
 black
 flake8
+pandas
+spacy
+numpy
+

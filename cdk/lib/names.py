@@ -6,17 +6,21 @@ LAMBDA_CODE_BUCKET = "ctf-lambda-code-bucket"
 LAMBDA_REPOSITORY = "ctf-lambda-repository"
 FRONTEND_REPOSITORY = "ctf-frontend-repository"
 BACKEND_REPOSITORY = "ctf-backend-repository"
+ETL_REPOSITORY = "ctf-etl-repository"
 
-REPOSITORIES = [FRONTEND_REPOSITORY, BACKEND_REPOSITORY]
+REPOSITORIES = [FRONTEND_REPOSITORY, BACKEND_REPOSITORY, ETL_REPOSITORY]
 
 CLUSTER = "ctf-ecs-cluster"
 
-FRONTEND_SERVICE = "frontend"
+FRONTEND_SERVICE = "frontend-service"
 FRONTEND_TASK_FAMILY = "react-task"
 
 BACKEND_SERVICE = "backend-service"
 BACKEND_TASK_FAMILY = "django-task"
 BACKEND_KEY_PAIR = "CtfBackendKeyPair"
+
+ETL_SERVICE = "etl-service"
+ETL_TASK_FAMILY = "etl-task"
 
 FRONTEND_IMAGE = "ctf-frontend"
 

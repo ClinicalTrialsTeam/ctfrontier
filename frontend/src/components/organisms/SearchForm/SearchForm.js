@@ -20,7 +20,7 @@ import {
   types, sex, ageGroup, ethnicities, distance, states,
 } from '../../../variables/SelectOptionsData';
 
-const byteSize = str => new Blob([str]).size;
+const byteSize = (str) => { return new Blob([str]).size; };
 
 class SearchForm extends Component {
   constructor(props) {
@@ -73,7 +73,7 @@ class SearchForm extends Component {
       minAge: 0,
       maxAge: 100,
       sex: '',
-      ethnicity: [],
+      ethnicity: '',
       country: '',
       state: '',
       city: '',
@@ -116,7 +116,7 @@ class SearchForm extends Component {
         countries,
       });
     } catch (err) {
-      console.log(err);
+      log.error(err);
     }
   }
 
@@ -140,7 +140,7 @@ class SearchForm extends Component {
       minAge: 0,
       maxAge: 100,
       sex: '',
-      ethnicity: [],
+      ethnicity: '',
       country: '',
       state: '',
       city: '',
@@ -285,7 +285,7 @@ class SearchForm extends Component {
 
   handleEthnicityChange(e) {
     this.setState({
-      ethnicity: e,
+      ethnicity: e.join(','),
     });
   }
 
@@ -307,9 +307,9 @@ class SearchForm extends Component {
     });
   }
 
-  handleLoading() {
+  handleLoading(isLoading) {
     this.setState({
-      isLoading: true,
+      isLoading,
     });
   }
 
@@ -389,7 +389,7 @@ class SearchForm extends Component {
   }
 
   async handleSearch(res) {
-    this.handleLoading();
+    this.handleLoading(true);
     const payload = {
       status: this.state.status,
       condition: this.state.condition,
@@ -435,27 +435,31 @@ class SearchForm extends Component {
       distance: this.state.distance,
       subcondition: this.state.subcondition,
       first: 0,
-      last: 100,
-      metadata_required: true,
+      last: 20,
+      metadata_required: false,
     };
     try {
-      if (!res) {
-        const response = await ctgov.post('search_studies', res);
-        this.setState({
-          searchResults: response.data,
-          payload: res,
-        });
-      } else {
-        log.info(`ctgov.post("search_studies") - ${JSON.stringify(payload, null, 1)}`);
+      if (!('condition' in res)) {
         const response = await ctgov.post('search_studies', payload);
-        log.info(`Search studies returned response size ${byteSize(JSON.stringify(response.data, null, 1))}`);
+        console.log(payload);
         this.setState({
           searchResults: response.data,
           payload,
         });
+      } else {
+        log.info(`ctgov.post("search_studies") - ${JSON.stringify(res, null, 1)}`);
+        console.log(res);
+        const response = await ctgov.post('search_studies', res);
+        log.info(`Search studies returned response size ${byteSize(JSON.stringify(res.data, null, 1))}`);
+        this.setState({
+          searchResults: response.data,
+          payload: res,
+        });
       }
     } catch (err) {
-      console.log(err);
+      this.handleLoading(false);
+      message.error('Data unavailable');
+      log.error(err);
     }
   }
 
@@ -492,7 +496,11 @@ class SearchForm extends Component {
           reader.readAsText(file);
           reader.onload = () => {
             const res = JSON.parse(reader.result);
-            this.handleSearch(res);
+            if (!('country' in res && 'condition' in res && 'status' in res)) {
+              message.error(`${file.name} is not a valid search configuration`);
+            } else {
+              this.handleSearch(res);
+            }
           };
         });
       },
@@ -851,7 +859,7 @@ class SearchForm extends Component {
                 White: A person having origins in any of the original peoples of Europe, the Middle East, or North Africa. Hispanic or Latino: A person of Cuban, Mexican, Puerto Rican, South or Central American, or other Spanish culture or origin, regardless of race."
                 placeholder="Select the ethnicity"
                 options={ethnicitiesList}
-                handleInputChange={this.handlePhaseChange}
+                handleInputChange={this.handleEthnicityChange}
               />
               <SelectField
                 key="field-country"

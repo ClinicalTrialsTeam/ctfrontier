@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import {
-  Table, Space, Button, Row, Col, Card, Tooltip, Typography,
+  Table, Space, Button, Row, Col, Card, Tooltip, Typography, Pagination,
 } from 'antd';
 import PropTypes from 'prop-types';
 import {
@@ -23,6 +23,21 @@ import {
 
 import './ListViewTable.css';
 
+const parsedResults = (data) => {
+  return data.search_results.map((result) => {
+    return {
+      key: result.nct_id,
+      nct_id: result.nct_id,
+      brief_title: result.brief_title,
+      condition_name: result.condition_name !== null ? result.condition_name.split('|').join(', ') : '',
+      sponsor_name: result.sponsor_name !== null ? result.sponsor_name.split('|').join(', ') : '',
+      study_phase: result.study_phase !== null ? result.study_phase.split('/').join(', ') : '',
+      intervention_name: result.intervention_name !== null ? result.intervention_name.split('|').join(', ') : '',
+      status: result.status,
+    };
+  });
+};
+
 class ListViewTable extends Component {
   constructor(props) {
     super(props);
@@ -35,6 +50,7 @@ class ListViewTable extends Component {
     this.formRef = React.createRef();
     this.facetsRef = React.createRef();
     this.state = {
+      currentPage: 1,
       intervention: '',
       condition: '',
       target: '',
@@ -42,10 +58,44 @@ class ListViewTable extends Component {
       isDashboardModalVisible: false,
       isTimelineModalVisible: false,
       isDownloadModalVisible: false,
-      searchData: this.props.history.location.state.data,
+      isDashboardDisabled: true,
+      isTimelineDisabled: false,
+      isDownloadDisabled: false,
       payload: this.props.history.location.state.payload,
+      searchData: this.props.history.location.state.data,
       dashboardData: {},
+      resultsByPage: {},
+      studyCount: '...',
     };
+
+    const { data } = this.props.history.location.state;
+    this.state.resultsByPage = { 1: parsedResults(data) };
+  }
+
+  async componentDidMount() {
+    const { payload } = this.state;
+    payload.metadata_required = true;
+    // Getting metadata (total results count)
+    try {
+      const response = await ctgov.post('search_studies', payload);
+      console.log(response);
+      const studyCount = response.data.metadata[0].results_count;
+      this.setState({
+        studyCount,
+      });
+    } catch (err) {
+      log.error(err);
+    }
+    // Getting dashboard data
+    try {
+      const response = await ctgov.post('trials_dashboard', payload);
+      this.setState({
+        dashboardData: response.data,
+        isDashboardDisabled: false,
+      });
+    } catch (err) {
+      log.error(err);
+    }
   }
 
   handleClear() {
@@ -68,6 +118,35 @@ class ListViewTable extends Component {
     });
   }
 
+  async handlePagination(page, pageSize) {
+    if (page in this.state.resultsByPage) {
+      this.setState({
+        currentPage: page,
+      });
+    } else {
+      try {
+        const newPayload = this.state.payload;
+        newPayload.last = (page * pageSize);
+        newPayload.first = newPayload.last - pageSize + 1;
+        newPayload.metadata_required = false;
+        const response = await ctgov.post('search_studies', newPayload);
+        log.info(response.data);
+        this.setState((prevState) => {
+          return ({
+            currentPage: page,
+            payload: newPayload,
+            resultsByPage: {
+              ...prevState.resultsByPage,
+              [page]: parsedResults(response.data),
+            },
+          });
+        });
+      } catch (err) {
+        log.error(err);
+      }
+    }
+  }
+
   async handleSearch() {
     const payload = {
       status: '',
@@ -84,22 +163,11 @@ class ListViewTable extends Component {
       const response = await ctgov.post('search_studies', payload);
       log.info(response.data);
     } catch (err) {
-      console.log(err);
+      log.error(err);
     }
   }
 
   async setDashboardModalVisible(isDashboardModalVisible) {
-    const { payload } = this.state;
-    if (isDashboardModalVisible) {
-      try {
-        const response = await ctgov.post('trials_dashboard', payload);
-        this.setState({
-          dashboardData: response.data,
-        });
-      } catch (err) {
-        console.log(err);
-      }
-    }
     this.setState({
       isDashboardModalVisible,
     });
@@ -188,20 +256,7 @@ class ListViewTable extends Component {
         width: 100,
       },
     ];
-    const { data } = this.props.history.location.state;
-    const dataCount = parseInt(data.metadata[0].results_count);
-    const parsedResults = data.search_results.map((result) => {
-      return {
-        key: result.nct_id,
-        nct_id: result.nct_id,
-        brief_title: result.brief_title,
-        condition_name: result.condition_name !== null ? result.condition_name.split('|').join(', ') : '',
-        sponsor_name: result.sponsor_name !== null ? result.sponsor_name.split('|').join(', ') : '',
-        study_phase: result.study_phase !== null ? result.study_phase.split('/').join(', ') : '',
-        intervention_name: result.intervention_name !== null ? result.intervention_name.split('|').join(', ') : '',
-        status: result.status,
-      };
-    });
+    const dataCount = parseInt(this.state.studyCount);
 
     return (
       <div>
@@ -254,7 +309,7 @@ class ListViewTable extends Component {
                   <Row id="trials-stat-row" justify="start" align="middle">
                     Total number of trials:
                     {' '}
-                    {dataCount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                    {this.state.studyCount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                   </Row>
                 </Col>
                 <Col key="trials-modal-btn-col" span={16}>
@@ -262,6 +317,7 @@ class ListViewTable extends Component {
                     <Space align="end">
                       <Tooltip title="View dashboard">
                         <Button
+                          disabled={this.state.isDashboardDisabled}
                           key="btn_dashboard"
                           onClick={() => {
                             return this.setDashboardModalVisible(true);
@@ -271,6 +327,7 @@ class ListViewTable extends Component {
                       </Tooltip>
                       <Tooltip title="View timeline">
                         <Button
+                          disabled={this.state.isTimelineDisabled}
                           key="btn_timeline"
                           onClick={() => {
                             return this.setTimelineModalVisible(true);
@@ -280,6 +337,7 @@ class ListViewTable extends Component {
                       </Tooltip>
                       <Tooltip title="Download options">
                         <Button
+                          disabled={this.state.isDownloadDisabled}
                           key="btn_download"
                           onClick={() => {
                             return this.setDownloadModalVisible(true);
@@ -290,7 +348,7 @@ class ListViewTable extends Component {
                       <DashboardModal
                         isModalVisible={this.state.isDashboardModalVisible}
                         data={this.state.dashboardData}
-                        count={this.state.searchData.metadata[0].results_count}
+                        count={this.state.studyCount}
                         handleOk={() => {
                           return this.setDashboardModalVisible(false, '');
                         }}
@@ -324,7 +382,7 @@ class ListViewTable extends Component {
                 </Col>
               </Row>
               <Table
-                pagination={{ total: dataCount, pageSize: 20 }}
+                pagination={false}
                 scroll={{ x: '1000', y: 1100 }}
                 className="trials-table"
                 key="trials-table"
@@ -332,8 +390,17 @@ class ListViewTable extends Component {
                   type: 'checkbox',
                 }}
                 columns={columns}
-                dataSource={parsedResults}
+                dataSource={this.state.resultsByPage[this.state.currentPage]}
                 size="small"
+              />
+              <Pagination
+                className="trials-pagination"
+                onChange={(page, pageSize) => {
+                  return this.handlePagination(page, pageSize);
+                }}
+                current={this.state.currentPage}
+                pageSize={20}
+                total={dataCount}
               />
             </Col>
           </Row>

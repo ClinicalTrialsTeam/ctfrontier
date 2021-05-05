@@ -52,7 +52,7 @@ elasticsearch-dsl==7.3.0
     # via
     #   django-elasticsearch-dsl
     #   django-elasticsearch-dsl-drf
-elasticsearch==7.12.0
+elasticsearch==7.12.1
     # via
     #   django-elasticsearch-dsl-drf
     #   elasticsearch-dsl
@@ -62,7 +62,7 @@ psycopg2-binary==2.8.6
     # via -r requirements/base.in
 python-dateutil==2.8.1
     # via elasticsearch-dsl
-python-dotenv==0.17.0
+python-dotenv==0.17.1
     # via -r requirements/base.in
 pytz==2021.1
     # via django
