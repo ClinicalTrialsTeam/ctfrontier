@@ -324,7 +324,6 @@ class SearchStudiesApiView(APIView):
 
         if metadata_required:
             logger.info("Metadata required, get count")
-            logger.warning(f"{type(search_results_all)}")
             results_count = search_results_all.count()
             logger.info(f"metadata got count {results_count}")
         else:
@@ -333,7 +332,7 @@ class SearchStudiesApiView(APIView):
 
         logger.info("Before serialization")
         serializer = SearchStudiesSerializer(search_results, many=True)
-        logger.info("After serialization")
+        logger.info(f"After serialization: {len(serializer.data)}")
         r = Response(
             {
                 "metadata": [{"results_count": str(results_count)}],
@@ -622,22 +621,16 @@ def filter_study_roa(request):
 
     q_study_roa = Q()
     if study_roa:
-        roa_list = str(study_roa).split(",")
         roa_queries = [
-            Q(
-                study_brief_desc__iregex=r"'\y"
-                + roa.strip(" ")
-                .replace("]", "")
-                .replace("[", "")
-                .replace("'", "")
-                + r"\y'"
-            )
-            for roa in roa_list
+            Q(study_brief_desc__iregex=fr"\y{roa.strip()}\y")
+            for roa in study_roa
         ]
+
         q_study_roa = roa_queries.pop()
         for item in roa_queries:
             q_study_roa |= item
 
+    logger.info(f"Roa filter: {q_study_roa}")
     return q_study_roa
 
 
