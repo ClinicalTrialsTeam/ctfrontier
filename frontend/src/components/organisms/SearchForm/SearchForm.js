@@ -59,13 +59,13 @@ class SearchForm extends Component {
       otherTerms: '',
       subcondition: '',
       intervention: '',
-      roa: '',
+      roa: [],
       modality: '',
       target: '',
       nct_id: '',
       title: '',
-      status: '',
-      phase: '',
+      status: [],
+      phase: [],
       sponsor: '',
       results: '',
       type: '',
@@ -73,7 +73,7 @@ class SearchForm extends Component {
       minAge: 0,
       maxAge: 100,
       sex: '',
-      ethnicity: '',
+      ethnicity: [],
       country: '',
       state: '',
       city: '',
@@ -131,8 +131,8 @@ class SearchForm extends Component {
       target: '',
       nct_id: '',
       title: '',
-      status: '',
-      phase: '',
+      status: [],
+      phase: [],
       sponsor: '',
       results: '',
       type: '',
@@ -140,7 +140,7 @@ class SearchForm extends Component {
       minAge: 0,
       maxAge: 100,
       sex: '',
-      ethnicity: '',
+      ethnicity: [],
       country: '',
       state: '',
       city: '',
@@ -207,19 +207,19 @@ class SearchForm extends Component {
 
   handleRoaChange(e) {
     this.setState({
-      roa: e.join(','),
+      roa: e,
     });
   }
 
   handleStatusChange(e) {
     this.setState({
-      status: e.join('|'),
+      status: e,
     });
   }
 
   handlePhaseChange(e) {
     this.setState({
-      phase: e.join(','),
+      phase: e,
     });
   }
 
@@ -285,7 +285,7 @@ class SearchForm extends Component {
 
   handleEthnicityChange(e) {
     this.setState({
-      ethnicity: e.join(','),
+      ethnicity: e,
     });
   }
 
@@ -442,6 +442,7 @@ class SearchForm extends Component {
       if (!('condition' in res)) {
         const response = await ctgov.post('search_studies', payload);
         console.log(payload);
+        console.log(response.data);
         this.setState({
           searchResults: response.data,
           payload,
