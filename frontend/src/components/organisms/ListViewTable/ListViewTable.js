@@ -78,13 +78,15 @@ class ListViewTable extends Component {
     // Getting metadata (total results count)
     try {
       const response = await ctgov.post('search_studies', payload);
-      console.log(response);
       const studyCount = response.data.metadata[0].results_count;
       this.setState({
         studyCount,
       });
     } catch (err) {
       log.error(err);
+      this.setState({
+        studyCount: '0',
+      });
     }
     // Getting dashboard data
     try {
