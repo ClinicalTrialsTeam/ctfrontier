@@ -15,3 +15,4 @@ aws-cdk.aws_ecs_patterns
 aws-cdk.aws_sns
 aws-cdk.aws_sns_subscriptions
 aws-cdk.aws_cloudwatch_actions
+aws-cdk.aws_elasticsearch
