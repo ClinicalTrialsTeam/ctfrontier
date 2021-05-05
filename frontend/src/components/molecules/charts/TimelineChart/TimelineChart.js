@@ -21,6 +21,8 @@ class TimelineChart extends Component {
       data,
     } = this.props;
 
+    console.log(data);
+
     let minDate = '2040-01-01';
     let maxDate = '1970-01-01';
     const timelineData = [];
@@ -49,14 +51,16 @@ class TimelineChart extends Component {
       } else {
         elementEndDate = element.primary_completion_date;
       }
+      console.log(element.study_start_date);
+      console.log(element.primary_completion_date);
       timelineData.push({
         nct_id: element.nct_id,
         dates: [elementStartDate, elementEndDate],
         phase: element.study_phase,
         brief_title: element.brief_title,
         status: element.status,
-        start_date: element.study_start_date,
-        completion_date: element.primary_completion_date,
+        start_date: (!element.study_start_date) ? 'unknown' : element.study_start_date,
+        completion_date: (!element.primary_completion_date) ? 'unknown' : element.primary_completion_date,
         sponsor: element.sponsor_name,
       });
     });
