@@ -20,7 +20,7 @@ import {
   types, sex, ageGroup, ethnicities, distance, states,
 } from '../../../variables/SelectOptionsData';
 
-const byteSize = str => new Blob([str]).size;
+const byteSize = (str) => {return new Blob([str]).size};
 
 class SearchForm extends Component {
   constructor(props) {
@@ -55,47 +55,49 @@ class SearchForm extends Component {
     this.formRef = React.createRef();
 
     this.state = {
-      condition: '',
-      otherTerms: '',
-      subcondition: '',
-      intervention: '',
-      roa: [],
-      modality: '',
-      target: '',
-      nct_id: '',
-      title: '',
-      status: '',
-      phase: '',
-      sponsor: '',
-      results: '',
-      type: '',
-      age: '',
-      minAge: 0,
-      maxAge: 100,
-      sex: '',
-      ethnicity: [],
-      country: '',
-      state: '',
-      city: '',
-      distance: '',
-      healthy: false,
-      locationTerms: '',
-      studyCollaborator: '',
-      studyOutcomeMeasure: '',
-      studyIds: '',
-      studyFunderType: '',
-      studyDocumentType: '',
-      studyResultsSubmitted: '',
-      startDateFrom: '',
-      startDateTo: '',
-      primaryCompletionDateFrom: '',
-      primaryCompletionDateTo: '',
-      firstPostedDateFrom: '',
-      firstPostedDateTo: '',
-      resultsFirstPostedDateFrom: '',
-      resultsFirstPostedDateTo: '',
-      lastUpdatePostedDateFrom: '',
-      lastUpdatePostedDateTo: '',
+      searchParameters: {
+        condition: '',
+        otherTerms: '',
+        subcondition: '',
+        intervention: '',
+        roa: [],
+        modality: '',
+        target: '',
+        nct_id: '',
+        title: '',
+        status: '',
+        phase: [],
+        sponsor: '',
+        results: '',
+        type: '',
+        age: '',
+        minAge: 0,
+        maxAge: 100,
+        sex: '',
+        ethnicity: [],
+        country: '',
+        state: '',
+        city: '',
+        distance: '',
+        healthy: false,
+        locationTerms: '',
+        studyCollaborator: '',
+        studyOutcomeMeasure: '',
+        studyIds: '',
+        studyFunderType: '',
+        studyDocumentType: '',
+        studyResultsSubmitted: '',
+        startDateFrom: '',
+        startDateTo: '',
+        primaryCompletionDateFrom: '',
+        primaryCompletionDateTo: '',
+        firstPostedDateFrom: '',
+        firstPostedDateTo: '',
+        resultsFirstPostedDateFrom: '',
+        resultsFirstPostedDateTo: '',
+        lastUpdatePostedDateFrom: '',
+        lastUpdatePostedDateTo: '',
+      },
       countries: [],
       searchResults: '',
       showAdvancedOptions: false,
@@ -122,47 +124,49 @@ class SearchForm extends Component {
 
   handleClear() {
     this.setState({
-      condition: '',
-      otherTerms: '',
-      subcondition: '',
-      intervention: '',
-      roa: [],
-      modality: '',
-      target: '',
-      nct_id: '',
-      title: '',
-      status: '',
-      phase: '',
-      sponsor: '',
-      results: '',
-      type: '',
-      age: '',
-      minAge: 0,
-      maxAge: 100,
-      sex: '',
-      ethnicity: [],
-      country: '',
-      state: '',
-      city: '',
-      distance: '',
-      healthy: false,
-      locationTerms: '',
-      studyCollaborator: '',
-      studyOutcomeMeasure: '',
-      studyIds: '',
-      studyFunderType: '',
-      studyDocumentType: '',
-      studyResultsSubmitted: '',
-      startDateFrom: '',
-      startDateTo: '',
-      primaryCompletionDateFrom: '',
-      primaryCompletionDateTo: '',
-      firstPostedDateFrom: '',
-      firstPostedDateTo: '',
-      resultsFirstPostedDateFrom: '',
-      resultsFirstPostedDateTo: '',
-      lastUpdatePostedDateFrom: '',
-      lastUpdatePostedDateTo: '',
+      searchParameters: {
+        condition: '',
+        otherTerms: '',
+        subcondition: '',
+        intervention: '',
+        roa: [],
+        modality: '',
+        target: '',
+        nct_id: '',
+        title: '',
+        status: '',
+        phase: [],
+        sponsor: '',
+        results: '',
+        type: '',
+        age: '',
+        minAge: 0,
+        maxAge: 100,
+        sex: '',
+        ethnicity: [],
+        country: '',
+        state: '',
+        city: '',
+        distance: '',
+        healthy: false,
+        locationTerms: '',
+        studyCollaborator: '',
+        studyOutcomeMeasure: '',
+        studyIds: '',
+        studyFunderType: '',
+        studyDocumentType: '',
+        studyResultsSubmitted: '',
+        startDateFrom: '',
+        startDateTo: '',
+        primaryCompletionDateFrom: '',
+        primaryCompletionDateTo: '',
+        firstPostedDateFrom: '',
+        firstPostedDateTo: '',
+        resultsFirstPostedDateFrom: '',
+        resultsFirstPostedDateTo: '',
+        lastUpdatePostedDateFrom: '',
+        lastUpdatePostedDateTo: '',
+      },
     });
     this.formRef.current.resetFields();
   }
@@ -171,9 +175,11 @@ class SearchForm extends Component {
     const { target } = e;
     const value = target.type === 'checkbox' ? target.checked : target.value;
     const { name } = target;
+    let {searchParameters} = this.state;
+    searchParameters[name] = value;
 
     this.setState({
-      [name]: value,
+        searchParameters,
     });
   }
 
@@ -200,32 +206,43 @@ class SearchForm extends Component {
         showCityDistance: false,
       });
     }
+
+    let {searchParameters} = this.state;
+    searchParameters.country = e;
     this.setState({
-      country: e,
+      searchParameters,
     });
   }
 
   handleRoaChange(e) {
+    let {searchParameters} = this.state;
+    searchParameters.roa = e.join('|');
     this.setState({
-      roa: e,
+      searchParameters,
     });
   }
 
   handleStatusChange(e) {
+    let {searchParameters} = this.state;
+    searchParameters.status = e.join('|');
     this.setState({
-      status: e.join('|'),
+      searchParameters,
     });
   }
 
   handlePhaseChange(e) {
+    let {searchParameters} = this.state;
+    searchParameters.phase = e.join(',');
     this.setState({
-      phase: e.join(','),
+      searchParameters,
     });
   }
 
   handleResultsChange(e) {
+    let {searchParameters} = this.state;
+    searchParameters.results = e;
     this.setState({
-      results: e,
+      searchParameters,
     });
   }
 
@@ -243,8 +260,10 @@ class SearchForm extends Component {
     if (e === 'Expanded Access Studies') {
       type = 'Expanded Access';
     }
+    let {searchParameters} = this.state;
+    searchParameters.type = type;
     this.setState({
-      type,
+      searchParameters,
     });
   }
 
@@ -256,8 +275,10 @@ class SearchForm extends Component {
     if (e === 'Only Male Participants') {
       sexSelection = 'Male';
     }
+    let {searchParameters} = this.state;
+    searchParameters.sex = sexSelection;
     this.setState({
-      sex: sexSelection,
+      searchParameters,
     });
   }
 
@@ -277,33 +298,43 @@ class SearchForm extends Component {
     if (lastItem === 'Child (birth-17)') {
       maxAge = 17;
     }
+    let {searchParameters} = this.state;
+    searchParameters.minAge = minAge;
+    searchParameters.maxAge = maxAge;
     this.setState({
-      minAge,
-      maxAge,
+      searchParameters,
     });
   }
 
   handleEthnicityChange(e) {
+    let {searchParameters} = this.state;
+    searchParameters.ethnicity = e;
     this.setState({
-      ethnicity: e,
+      searchParameters,
     });
   }
 
   handleStateChange(e) {
+    let {searchParameters} = this.state;
+    searchParameters.state = e;
     this.setState({
-      state: e,
+      searchParameters,
     });
   }
 
   handleCityChange(e) {
+    let {searchParameters} = this.state;
+    searchParameters.city = e;
     this.setState({
-      city: e,
+      searchParameters,
     });
   }
 
   handleDistanceChange(e) {
+    let {searchParameters} = this.state;
+    searchParameters.distance = e;
     this.setState({
-      distance: e,
+      searchParameters,
     });
   }
 
@@ -322,8 +353,10 @@ class SearchForm extends Component {
     } else {
       funderType = this.state.studyFunderType;
     }
+    let {searchParameters} = this.state;
+    searchParameters.studyFunderType = funderType;
     this.setState({
-      studyFunderType: funderType,
+      searchParameters,
     });
   }
 
@@ -335,8 +368,10 @@ class SearchForm extends Component {
     if (e === 'Informed Consent Forms (ICFs)') {
       documentType = 'Informed Consent Forms';
     }
+    let {searchParameters} = this.state;
+    searchParameters.studyDocumentType = documentType;
     this.setState({
-      studyDocumentType: documentType,
+      searchParameters,
     });
   }
 
@@ -348,92 +383,104 @@ class SearchForm extends Component {
     if (e === 'Submitted with QC comments available') {
       resultsSubmitted = 'QC Done';
     }
+    let {searchParameters} = this.state;
+    searchParameters.studyResultsSubmitted = resultsSubmitted;
     this.setState({
-      studyResultsSubmitted: resultsSubmitted,
+      searchParameters,
     });
   }
 
   handleStartDateChange(e) {
+    let {searchParameters} = this.state;
+    searchParameters.startDateFrom = e[0].format('YYYY-MM-DD');
+    searchParameters.startDateTo = e[1].format('YYYY-MM-DD');
     this.setState({
-      startDateFrom: e[0].format('YYYY-MM-DD'),
-      startDateTo: e[1].format('YYYY-MM-DD'),
+      searchParameters,
     });
   }
 
   handlePrimaryCompletionDateChange(e) {
+    let {searchParameters} = this.state;
+    searchParameters.primaryCompletionDateFrom = e[0].format('YYYY-MM-DD');
+    searchParameters.primaryCompletionDateTo = e[1].format('YYYY-MM-DD');
     this.setState({
-      primaryCompletionDateFrom: e[0].format('YYYY-MM-DD'),
-      primaryCompletionDateTo: e[1].format('YYYY-MM-DD'),
+      searchParameters,
     });
   }
 
   handleFirstPostedDateChange(e) {
+    let {searchParameters} = this.state;
+    searchParameters.firstPostedDateFrom = e[0].format('YYYY-MM-DD');
+    searchParameters.firstPostedDateTo = e[1].format('YYYY-MM-DD');
     this.setState({
-      firstPostedDateFrom: e[0].format('YYYY-MM-DD'),
-      firstPostedDateTo: e[1].format('YYYY-MM-DD'),
+      searchParameters,
     });
   }
 
   handleResultsFirstPostedDateChange(e) {
+    let {searchParameters} = this.state;
+    searchParameters.resultsFirstPostedDateFrom = e[0].format('YYYY-MM-DD');
+    searchParameters.resultsFirstPostedDateTo = e[1].format('YYYY-MM-DD');
     this.setState({
-      resultsFirstPostedDateFrom: e[0].format('YYYY-MM-DD'),
-      resultsFirstPostedDateTo: e[1].format('YYYY-MM-DD'),
+      searchParameters,
     });
   }
 
   handleLastUpdatePostedDateChange(e) {
+    let {searchParameters} = this.state;
+    searchParameters.lastUpdatePostedDateFrom = e[0].format('YYYY-MM-DD');
+    searchParameters.lastUpdatePostedDateTo = e[1].format('YYYY-MM-DD');
     this.setState({
-      lastUpdatePostedDateFrom: e[0].format('YYYY-MM-DD'),
-      lastUpdatePostedDateTo: e[1].format('YYYY-MM-DD'),
+      searchParameters,
     });
   }
 
   async handleSearch(res) {
     this.handleLoading();
     const payload = {
-      status: this.state.status,
-      condition: this.state.condition,
-      other_terms: this.state.otherTerms,
-      country: this.state.country,
-      intervention: this.state.intervention,
-      target: this.state.target,
-      nct_id: this.state.nct_id,
+      status: this.state.searchParameters.status,
+      condition: this.state.searchParameters.condition,
+      other_terms: this.state.searchParameters.otherTerms,
+      country: this.state.searchParameters.country,
+      intervention: this.state.searchParameters.intervention,
+      target: this.state.searchParameters.target,
+      nct_id: this.state.searchParameters.nct_id,
       eligibility_criteria: '',
-      modality: this.state.modality,
-      sponsor: this.state.sponsor,
-      phase: this.state.phase,
-      start_date_from: this.state.startDateFrom,
-      start_date_to: this.state.startDateTo,
-      primary_completion_date_from: this.state.primaryCompletionDateFrom,
-      primary_completion_date_to: this.state.primaryCompletionDateTo,
-      first_posted_date_from: this.state.firstPostedDateFrom,
-      first_posted_date_to: this.state.firstPostedDateTo,
-      results_first_posted_date_from: this.state.resultsFirstPostedDateFrom,
-      results_first_posted_date_to: this.state.resultsFirstPostedDateTo,
-      last_update_posted_date_from: this.state.lastUpdatePostedDateFrom,
-      last_update_posted_date_to: this.state.lastUpdatePostedDateTo,
-      study_results: this.state.results,
-      study_type: this.state.type,
-      eligibility_age: this.state.age,
-      eligibility_min_age: this.state.minAge,
-      eligibility_max_age: this.state.maxAge,
-      eligibility_gender: this.state.sex,
-      eligibility_ethnicity: this.state.ethnicity,
+      modality: this.state.searchParameters.modality,
+      sponsor: this.state.searchParameters.sponsor,
+      phase: this.state.searchParameters.phase,
+      start_date_from: this.state.searchParameters.startDateFrom,
+      start_date_to: this.state.searchParameters.startDateTo,
+      primary_completion_date_from: this.state.searchParameters.primaryCompletionDateFrom,
+      primary_completion_date_to: this.state.searchParameters.primaryCompletionDateTo,
+      first_posted_date_from: this.state.searchParameters.firstPostedDateFrom,
+      first_posted_date_to: this.state.searchParameters.firstPostedDateTo,
+      results_first_posted_date_from: this.state.searchParameters.resultsFirstPostedDateFrom,
+      results_first_posted_date_to: this.state.searchParameters.resultsFirstPostedDateTo,
+      last_update_posted_date_from: this.state.searchParameters.lastUpdatePostedDateFrom,
+      last_update_posted_date_to: this.state.searchParameters.lastUpdatePostedDateTo,
+      study_results: this.state.searchParameters.results,
+      study_type: this.state.searchParameters.type,
+      eligibility_age: this.state.searchParameters.age,
+      eligibility_min_age: this.state.searchParameters.minAge,
+      eligibility_max_age: this.state.searchParameters.maxAge,
+      eligibility_gender: this.state.searchParameters.sex,
+      eligibility_ethnicity: this.state.searchParameters.ethnicity,
       eligibility_condition: '',
-      eligibility_healthy_volunteer: this.state.healthy === true ? 'Accepts Healthy Volunteers' : '',
-      study_title_acronym: this.state.title,
-      study_outcome_measure: this.state.studyOutcomeMeasure,
-      study_collaborator: this.state.studyCollaborator,
-      study_ids: this.state.studyIds,
-      study_location_terms: this.state.locationTerms,
-      study_funder_type: this.state.studyFunderType,
-      study_document_type: this.state.studyDocumentType,
-      study_results_submitted: this.state.studyResultsSubmitted,
-      study_roa: this.state.roa,
-      state: this.state.state,
-      city: this.state.city,
-      distance: this.state.distance,
-      subcondition: this.state.subcondition,
+      eligibility_healthy_volunteer: this.state.searchParameters.healthy === true ? 'Accepts Healthy Volunteers' : '',
+      study_title_acronym: this.state.searchParameters.title,
+      study_outcome_measure: this.state.searchParameters.studyOutcomeMeasure,
+      study_collaborator: this.state.searchParameters.studyCollaborator,
+      study_ids: this.state.searchParameters.studyIds,
+      study_location_terms: this.state.searchParameters.locationTerms,
+      study_funder_type: this.state.searchParameters.studyFunderType,
+      study_document_type: this.state.searchParameters.studyDocumentType,
+      study_results_submitted: this.state.searchParameters.studyResultsSubmitted,
+      study_roa: this.state.searchParameters.roa,
+      state: this.state.searchParameters.state,
+      city: this.state.searchParameters.city,
+      distance: this.state.searchParameters.distance,
+      subcondition: this.state.searchParameters.subcondition,
       first: 0,
       last: 100,
       metadata_required: true,
@@ -560,7 +607,11 @@ class SearchForm extends Component {
           push
           to={{
             pathname: '/trials',
-            state: { data: this.state.searchResults, payload: this.state.payload },
+            state: {
+              data: this.state.searchResults,
+              payload: this.state.payload,
+              searchParameters: this.state.searchParameters,
+            },
           }}
         />
       );
