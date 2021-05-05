@@ -129,6 +129,13 @@ Private functions
 
 
 def __bootstrap_custom():
+    # Create SLR for Elasticsearch
+    iam = boto3.client("iam")
+    role_names = [role["RoleName"] for role in iam.list_roles()["Roles"]]
+    if "AWSServiceRoleForAmazonElasticsearchService" not in role_names:
+        iam.create_service_linked_role(AWSServiceName="es.amazonaws.com")
+        click.echo("Created service linked role for Elasticsearch")
+
     # Create ECR repositories
     tags = ""
     for tag in aws.STACK_TAGS:

@@ -152,7 +152,7 @@ The project also includes a command line utility for interacting with CDK. This 
 * AWS credentials configured
 * AWS CLI 2.1.0+ installed and configured  <https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html>
 * Node.js 15.4.0+
-* The `aws-cdk` Node.js toolkit installed. `npm install -g aws-cdk@1.94.1`. (`npm list -g` to check the current versions of your globally installed node packages)
+* The `aws-cdk` Node.js toolkit installed. `npm install -g aws-cdk@latest`. (`npm list -g` to check the current versions of your globally installed node packages)
 
 **AWS Permissions**
 
