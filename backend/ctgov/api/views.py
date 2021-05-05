@@ -154,8 +154,7 @@ class TrialTimelinesApiView(APIView):
     def post(self, request, *args, **kwargs):
         logger.info("TrialTimelinesApiView: get()")
         nct_ids = request.data.get("nct_ids")
-        ncts = str(nct_ids).split(",")
-        nct_list = [str(item).strip(" ") for item in ncts]
+        nct_list = [nct_id.strip() for nct_id in nct_ids]
 
         trial_timelines = (
             SearchStudies.objects.all()
@@ -324,7 +323,6 @@ class SearchStudiesApiView(APIView):
 
         if metadata_required:
             logger.info("Metadata required, get count")
-            logger.warning(f"{type(search_results_all)}")
             results_count = search_results_all.count()
             logger.info(f"metadata got count {results_count}")
         else:
@@ -333,7 +331,7 @@ class SearchStudiesApiView(APIView):
 
         logger.info("Before serialization")
         serializer = SearchStudiesSerializer(search_results, many=True)
-        logger.info("After serialization")
+        logger.info(f"After serialization: {len(serializer.data)}")
         r = Response(
             {
                 "metadata": [{"results_count": str(results_count)}],
@@ -359,7 +357,7 @@ def valid_date(datestr):
             datetime.strptime(str(datestr), "%Y-%m-%d")
         else:
             status = False
-    except (ValueError):
+    except ValueError:
         status = False
 
     return status
@@ -577,14 +575,13 @@ def filter_eligibility_age(request):
 
 # Function to construct queryset filter for age groups
 def filter_age_between(request):
-    eligibility_age_group = request.data.get("eligibility_age_group")
+    age_group_list = request.data.get("eligibility_age_group")
 
     q_age_between = Q()
-    if eligibility_age_group:
-        age_group_list = str(eligibility_age_group).split(",")
+    if age_group_list:
         age_group_queries = []
         for age_group in age_group_list:
-            if age_group.lower().strip(" ") == "child":
+            if age_group.lower().strip() == "child":
                 age_group_queries.append(
                     Q(eligibility_min_age_numeric__gte=0)
                     & Q(eligibility_min_age_numeric__lte=17)
@@ -593,7 +590,7 @@ def filter_age_between(request):
                         | Q(eligibility_max_age_numeric__lte=17)
                     )
                 )
-            if age_group.lower().strip(" ") == "adult":
+            if age_group.lower().strip() == "adult":
                 age_group_queries.append(
                     Q(eligibility_min_age_numeric__gte=0)
                     & (
@@ -601,7 +598,7 @@ def filter_age_between(request):
                         | Q(eligibility_max_age_numeric=0)
                     )
                 )
-            if age_group.lower().strip(" ") == "older adult":
+            if age_group.lower().strip() == "older adult":
                 age_group_queries.append(
                     Q(eligibility_min_age_numeric__gte=0)
                     & (
@@ -622,34 +619,27 @@ def filter_study_roa(request):
 
     q_study_roa = Q()
     if study_roa:
-        roa_list = str(study_roa).split(",")
         roa_queries = [
-            Q(
-                study_brief_desc__iregex=r"'\y"
-                + roa.strip(" ")
-                .replace("]", "")
-                .replace("[", "")
-                .replace("'", "")
-                + r"\y'"
-            )
-            for roa in roa_list
+            Q(study_brief_desc__iregex=fr"\y{roa.strip()}\y")
+            for roa in study_roa
         ]
+
         q_study_roa = roa_queries.pop()
         for item in roa_queries:
             q_study_roa |= item
 
+    logger.info(f"Roa filter: {q_study_roa}")
     return q_study_roa
 
 
 # Function to construct queryset filter for pipe delimited values of study status
 def filter_study_status(request):
-    study_status = request.data.get("status")
+    study_status_list = request.data.get("status")
 
     q_study_status = Q()
-    if study_status:
-        status_list = str(study_status).split("|")
+    if study_status_list:
         status_queries = [
-            Q(status__iexact=status.strip(" ")) for status in status_list
+            Q(status__iexact=status.strip()) for status in study_status_list
         ]
         q_study_status = status_queries.pop()
         for item in status_queries:
@@ -660,13 +650,12 @@ def filter_study_status(request):
 
 # Function to construct queryset filter for comma separated values of study phases
 def filter_phase(request):
-    phase = request.data.get("phase")
+    phase_list = request.data.get("phase")
 
     q_phase = Q()
-    if phase:
-        phase_list = str(phase).split(",")
+    if phase_list:
         phase_queries = [
-            Q(study_phase__icontains=phase.strip(" ")) for phase in phase_list
+            Q(study_phase__icontains=phase.strip("")) for phase in phase_list
         ]
         q_phase = phase_queries.pop()
         for item in phase_queries:
