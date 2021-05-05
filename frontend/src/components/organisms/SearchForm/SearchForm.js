@@ -59,7 +59,7 @@ class SearchForm extends Component {
       otherTerms: '',
       subcondition: '',
       intervention: '',
-      roa: [],
+      roa: '',
       modality: '',
       target: '',
       nct_id: '',
@@ -207,7 +207,7 @@ class SearchForm extends Component {
 
   handleRoaChange(e) {
     this.setState({
-      roa: e,
+      roa: e.join(','),
     });
   }
 
