@@ -21,8 +21,6 @@ class TimelineChart extends Component {
       data,
     } = this.props;
 
-    console.log(data);
-
     let minDate = '2040-01-01';
     let maxDate = '1970-01-01';
     const timelineData = [];
@@ -51,8 +49,6 @@ class TimelineChart extends Component {
       } else {
         elementEndDate = element.primary_completion_date;
       }
-      console.log(element.study_start_date);
-      console.log(element.primary_completion_date);
       timelineData.push({
         nct_id: element.nct_id,
         dates: [elementStartDate, elementEndDate],
