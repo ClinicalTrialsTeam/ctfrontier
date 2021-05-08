@@ -55,8 +55,8 @@ class TimelineChart extends Component {
         phase: element.study_phase,
         brief_title: element.brief_title,
         status: element.status,
-        start_date: element.study_start_date,
-        completion_date: element.primary_completion_date,
+        start_date: (!element.study_start_date) ? 'unknown' : element.study_start_date,
+        completion_date: (!element.primary_completion_date) ? 'unknown' : element.primary_completion_date,
         sponsor: element.sponsor_name,
       });
     });

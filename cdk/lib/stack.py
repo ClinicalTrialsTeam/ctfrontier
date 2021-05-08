@@ -4,6 +4,7 @@ from .service import CtfBackendService, CtfFrontendService
 from .load_balancer import CtfLoadBalancer
 from .cluster import CtfCluster
 from .database import CtfDatabase
+from .elasticsearch import CtfElasticsearch
 from . import names, aws
 
 
@@ -132,3 +133,5 @@ class CtStack(core.Stack):
             backend_service,
             db_port=5432,
         )
+
+        CtfElasticsearch(self, "Elasticsearch", vpc, preferred_az, database_sg)
