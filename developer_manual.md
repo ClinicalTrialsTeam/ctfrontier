@@ -159,11 +159,11 @@ The project also includes a command line utility for interacting with CDK. This 
 Your default AWS user (configured with `aws configure`) or your named aws profile (configured with `aws configure --profile <profile-name>` and specified in `cdk/.env` with `AWS_PROFILE=<profile-name>`) must have the following AWS managed policies or equivalent permissions attached:
 
 * IAMFullAccess
+* SecretsManagerReadWrite
 * AmazonEC2ContainerRegistryFullAccess
 * AmazonS3FullAccess
 * CloudWatchFullAccess
 * AmazonSSMFullAccess
-* AmazonSSNFullAccess
 * AWSCloudFormationFullAccess
 * AWSLambda_FullAccess
 * AmazonEC2ContainerRegistryFullAccess

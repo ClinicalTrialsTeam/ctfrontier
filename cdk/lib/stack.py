@@ -1,10 +1,15 @@
-from aws_cdk import core, aws_ec2 as ec2
+from aws_cdk import (
+    core,
+    aws_ec2 as ec2,
+    aws_s3 as s3,
+)
 from .task import CtfFargateTaskDefinition, CtfBackendTaskDefinition
 from .service import CtfBackendService, CtfFrontendService
 from .load_balancer import CtfLoadBalancer
 from .cluster import CtfCluster
 from .database import CtfDatabase
 from .elasticsearch import CtfElasticsearch
+from .function import CtfFunction
 from . import names, aws
 
 
@@ -61,7 +66,7 @@ class CtStack(core.Stack):
             "FrontendTask",
             names.FRONTEND_TASK_FAMILY,
             "FrontendContainer",
-            "FrontendRespository",
+            "FrontendRepository",
             names.FRONTEND_REPOSITORY,
             mapped_port=80,
         )
@@ -72,7 +77,7 @@ class CtStack(core.Stack):
             ecs_cluster.cluster,
             frontend_task.task,
             site_sg,
-            preferred_az,
+            vpc_subnets=ec2.SubnetSelection(availability_zones=[preferred_az]),
         )
 
         backend_task = CtfBackendTaskDefinition(
@@ -94,7 +99,7 @@ class CtStack(core.Stack):
             ecs_cluster.cluster,
             backend_task.task,
             site_sg,
-            preferred_az,
+            vpc_subnets=ec2.SubnetSelection(availability_zones=[preferred_az]),
             port=80,
         )
 
@@ -124,7 +129,7 @@ class CtStack(core.Stack):
             backend_target=backend_service.service,
         )
 
-        CtfDatabase(
+        postgres_database = CtfDatabase(
             self,
             "PostgresDatabase",
             vpc,
@@ -135,3 +140,30 @@ class CtStack(core.Stack):
         )
 
         CtfElasticsearch(self, "Elasticsearch", vpc, preferred_az, database_sg)
+
+        lambda_code_bucket = s3.Bucket.from_bucket_name(
+            self,
+            "LambdaCodeBucket",
+            names.LAMBDA_CODE_BUCKET,
+        )
+
+        # Function to download files and save in S3
+        data_update = CtfFunction(
+            self,
+            "DataUpdateFunction",
+            names.DATA_UPDATE_FUNCTION,
+            lambda_code_bucket,
+            vpc,
+            ec2.SubnetSelection(availability_zones=[preferred_az]),
+            database_sg,
+            memory_size_mb=10240,  # max allowed
+            timeout_seconds=900,  # max allowed
+            env={
+                "DB_HOST": db_host,
+                "DB_PORT": "5432",
+                "DB_PASSWORD": db_password,
+            },
+        )
+
+        # Give the lambda permission to connect to the database
+        postgres_database.database.grant_connect(data_update.function)
