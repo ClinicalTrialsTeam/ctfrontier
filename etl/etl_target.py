@@ -3,7 +3,6 @@ import psycopg2
 import re
 import spacy
 import numpy
-import os
 from datetime import datetime
 from dotenv import load_dotenv
 from os.path import join, dirname
@@ -20,9 +19,9 @@ def connect_and_execute_psql(query, data):
         # Connect to an existing database
         connection = psycopg2.connect(
             user="postgres",
-            password=os.getenv("DB_PASSWORD"),
-            host=os.getenv("DB_HOST"),
-            port=os.getenv("DB_PORT"),
+            password=8653,
+            host="localhost",
+            port=5432,
             database="aact",
         )
 
@@ -96,19 +95,21 @@ def target_find():
     # descriptions then uses regex patterns to find terms for gene target and modality
     # from 1-s2.0-S153204641300155X-mmc1.xlsx and ModalityList.xlsx
     connect_and_execute_psql(
-        "AACT",
+        "DROP TABLE ctgov.recognized_entities, ctgov.target, ctgov.modality",
+        None,
+    )
+
+    connect_and_execute_psql(
         "CREATE TABLE ctgov.recognized_entities(nct_id TEXT, entity_group TEXT)",
         None,
     )
 
     connect_and_execute_psql(
-        "AACT",
         "CREATE TABLE ctgov.target(nct_id TEXT, target TEXT)",
         None,
     )
 
     connect_and_execute_psql(
-        "AACT",
         "CREATE TABLE ctgov.modality(nct_id TEXT, modality TEXT)",
         None,
     )
@@ -118,7 +119,6 @@ def target_find():
     sql_command = "SELECT bs.nct_id, CONCAT(bs.description, ' ',  dd.description) FROM ctgov.brief_summaries bs INNER JOIN ctgov.detailed_descriptions dd ON bs.nct_id = dd.nct_id"
     print(f"Run command: {sql_command}")
     study_description_records = connect_and_execute_psql(
-        "AACT",
         sql_command,
         None,
     )
@@ -152,13 +152,11 @@ def target_find():
     print(f"Run command: {sql_command}")
     for entry in nlp_data:
         connect_and_execute_psql(
-            "AACT",
             sql_command,
             (entry[0], entry[1]),
         )
 
     study_description_records = connect_and_execute_psql(  # open new connection and collect NER data limited to DRUG, BIOLOGICAL, and GENETIC types
-        "AACT",
         "SELECT nct_id, entity_group FROM ctgov.recognized_entities WHERE nct_id IN (SELECT nct_id FROM ctgov.interventions WHERE intervention_type = 'Drug' OR intervention_type = 'Genetic' OR intervention_type = 'Biological')",
         None,
     )
@@ -177,13 +175,11 @@ def target_find():
         if results:
             list_t = ",".join(str(r) for r in results)
             connect_and_execute_psql(
-                "AACT",
                 "INSERT INTO ctgov.target (nct_id, target) VALUES (%s, %s)",
                 (record[0], list_t),
             )
 
     study_description_records = connect_and_execute_psql(  # open new connection and collect NER data ALL
-        "AACT",
         "SELECT * FROM ctgov.recognized_entities",
         None,
     )
@@ -202,7 +198,6 @@ def target_find():
         if results:
             list_t = ",".join(str(r) for r in results)
             connect_and_execute_psql(
-                "AACT",
                 "INSERT INTO ctgov.modality (nct_id, modality) VALUES (%s, %s)",
                 (record[0], list_t),
             )
@@ -266,9 +261,9 @@ def endpoints():
     LEFT JOIN ctgov.modality mods
     WHERE oag.ctgov_group_code LIKE 'O%'
     ORDER BY spns.nct_id, oag.ctgov_group_code, conds.name, dg.title
-    LIMIT 100"""
+    LIMIT 1000"""
 
-    connect_and_execute_psql("AACT", sql_command, None)
+    connect_and_execute_psql(sql_command, None)
 
 
 def current_time():
@@ -276,6 +271,6 @@ def current_time():
 
 
 print(f"start time: {current_time()}")
-# target_find()
-endpoints()
+target_find()
+# endpoints()
 print(f"finish time: {current_time()}")
