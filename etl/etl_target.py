@@ -226,7 +226,7 @@ def endpoints():
     dgnotcms.time_frame arm_duration,
     otcms.title arm_endpoint,
     otcms.description endpoint_description,
-    CASE WHEN elig.minimum_age, maximum_age
+    concat(elig.minimum_age, maximum_age) AS arm_population_age_group,
     END AS arm_population_age_group
     CASE WHEN elig.gender = 'Male' THEN '100%'
     WHEN elig.gender = 'Female' THEN '0%'
@@ -271,6 +271,6 @@ def current_time():
 
 
 print(f"start time: {current_time()}")
-target_find()
-# endpoints()
+# target_find()
+endpoints()
 print(f"finish time: {current_time()}")
