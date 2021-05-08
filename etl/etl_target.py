@@ -208,6 +208,69 @@ def target_find():
             )
 
 
+def endpoints():
+    sql_command = """SELECT spns.name sponsor,
+    stds.brief_title study_title,
+    stds.study_type study_type,
+    cv.registered_in_calendar_year entry_year,
+    stds.nct_id study_id,
+    lnks.url url,
+    conds.name indication,
+    dg.title treatment_name,
+    dg.description treatment_duration,
+    dg.description treatment_duration_unit,
+    stds.phase study_phase,
+    oag.ctgov_group_code arm_number,
+    otcms.title arm_treatment,
+    otcms.time_frame arm_dose_unit_regimen,
+    bc.count total_study_number_participants,
+    oc.count arm_number_of_participants,
+    oa.p_value p_value,
+    oa.p_value_description p_value_description,
+    oa.method_description statistical_method,
+    dgnotcms.time_frame arm_duration,
+    otcms.title arm_endpoint,
+    otcms.description endpoint_description,
+    CASE WHEN elig.minimum_age, maximum_age
+    END AS arm_population_age_group
+    CASE WHEN elig.gender = 'Male' THEN '100%'
+    WHEN elig.gender = 'Female' THEN '0%'
+    WHEN elig.gender = 'All' THEN 'Between 1% and 99%'
+    END ASarm_population_male_percent
+    mods.modality 'arm modality'
+    FROM ctgov.sponsors spns
+    LEFT JOIN ctgov.studies stds
+    ON spns.nct_id = stds.nct_id
+    LEFT JOIN ctgov.calculated_values cv
+    ON spns.nct_id = cv.nct_id
+    LEFT JOIN ctgov.links lnks
+    ON spns.nct_id = lnks.nct_id
+    LEFT JOIN ctgov.conditions conds
+    ON spns.nct_id = conds.nct_id
+    LEFT JOIN ctgov.design_groups dg
+    ON spns.nct_id = dg.nct_id
+    LEFT JOIN ctgov.outcome_analysis_groups oag
+    ON spns.nct_id = oag.nct_id
+    LEFT JOIN ctgov.baseline_counts bc
+    ON spns.nct_id = bc.nct_id
+    LEFT JOIN ctgov.outcome_counts oc
+    ON spns.nct_id = oc.nct_id
+    LEFT JOIN ctgov.outcome_analyses oa
+    ON spns.nct_id = oa.nct_id
+    LEFT JOIN ctgov.design_outcomes dgnotcms
+    ON spns.nct_id = dgnotcms.nct_id
+    LEFT JOIN ctgov.outcomes otcms
+    ON spns.nct_id = otcms.nct_id
+    LEFT JOIN ctgov.eligibilities elig
+    ON spns.nct_id = elig.nct_id
+    LEFT JOIN ctgov.modality mods
+    WHERE oag.ctgov_group_code LIKE 'O%'
+    ORDER BY spns.nct_id, oag.ctgov_group_code, conds.name, dg.title
+    LIMIT 100"""
+
+    connect_and_execute_psql("AACT", sql_command, None)
+
+
 def current_time():
     return datetime.now().strftime("%H:%M:%S")
 
