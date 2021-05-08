@@ -3,6 +3,8 @@ PROJECT_NAME = "ctfrontier"
 CDK_BOOTSTRAP_BUCKET = "ctf-bootstrap-bucket"
 LAMBDA_CODE_BUCKET = "ctf-lambda-code-bucket"
 
+DATA_UPDATE_FUNCTION = "data-update"
+
 LAMBDA_REPOSITORY = "ctf-lambda-repository"
 FRONTEND_REPOSITORY = "ctf-frontend-repository"
 BACKEND_REPOSITORY = "ctf-backend-repository"
@@ -25,7 +27,6 @@ ETL_TASK_FAMILY = "etl-task"
 FRONTEND_IMAGE = "ctf-frontend"
 
 DATABASE = "aact"
-DATABASE_INSTANCE = "ctf-db-instance"
+DATABASE_SECRET = "CtfPostgresSecret"
 
-METRIC_NAMESPACE = "log-metrics"
-NOTIFICATIONS_TOPIC = "notifications"
+LAMBDA_RELEASE_ALIAS = "live"

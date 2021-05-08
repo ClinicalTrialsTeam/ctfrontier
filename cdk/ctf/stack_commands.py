@@ -129,6 +129,25 @@ Private functions
 
 
 def __bootstrap_custom():
+
+    # Create database secret
+    secrets_manager = boto3.client("secretsmanager")
+    secrets_manager.create_secret(Name=names.DATABASE_SECRET)
+
+    # Create S3 bucket to store lambda code
+    cmd = (
+        f"aws {profile_arg()} s3api create-bucket "
+        f"--bucket {names.LAMBDA_CODE_BUCKET}"
+    )
+    run_command(cmd)
+
+    # Create SLR for Elasticsearch
+    iam = boto3.client("iam")
+    role_names = [role["RoleName"] for role in iam.list_roles()["Roles"]]
+    if "AWSServiceRoleForAmazonElasticsearchService" not in role_names:
+        iam.create_service_linked_role(AWSServiceName="es.amazonaws.com")
+        click.echo("Created service linked role for Elasticsearch")
+
     # Create ECR repositories
     tags = ""
     for tag in aws.STACK_TAGS:
@@ -162,6 +181,15 @@ def __bootstrap_custom():
 
 
 def __delete_bootstrap_custom():
+    # Delete database secret
+    secrets_manager = boto3.client("secretsmanager")
+    secrets_manager.delete_secret(Name=names.DATABASE_SECRET)
+
+    # Clear lambda code S3 bucket and delete the bucket
+    __empty_s3_bucket(names.LAMBDA_CODE_BUCKET)
+    cmd = f"aws {profile_arg()} delete-bucket --bucket {names.LAMBDA_CODE_BUCKET}"
+    run_command(cmd)
+
     for repo in names.REPOSITORIES:
         # Find and all ECR repository images
         cmd = (
