@@ -276,5 +276,6 @@ def current_time():
 
 
 print(f"start time: {current_time()}")
-target_find()
+# target_find()
+endpoints()
 print(f"finish time: {current_time()}")
