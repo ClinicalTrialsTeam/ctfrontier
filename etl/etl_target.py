@@ -3,6 +3,7 @@ import psycopg2
 import re
 import spacy
 import numpy
+import os
 from datetime import datetime
 from dotenv import load_dotenv
 from os.path import join, dirname
@@ -19,9 +20,9 @@ def connect_and_execute_psql(query, data):
         # Connect to an existing database
         connection = psycopg2.connect(
             user="postgres",
-            password=8653,
-            host="localhost",
-            port=5432,
+            password=os.getenv("DB_PASSWORD"),
+            host=os.getenv("DB_HOST"),
+            port=os.getenv("DB_PORT"),
             database="aact",
         )
 
@@ -58,7 +59,7 @@ def connect_and_execute_psql(query, data):
 def ensure_supporting_infrastructure_exists():
     with open("SqlInfrastructure.sql", "r") as file:
         sql_inf = file.read()
-    connect_and_execute_psql("AACT", sql_inf, None)
+    connect_and_execute_psql(sql_inf, None)
     print("Sql Infrastructure Built", flush=True)
 
 
@@ -204,7 +205,7 @@ def target_find():
 
 
 def endpoints():
-    sql_command = """SELECT spns.name sponsor,
+    sql_command = """CREATE MATERIALIZED VIEW test AS SELECT spns.name sponsor,
     stds.brief_title study_title,
     stds.study_type study_type,
     cv.registered_in_calendar_year entry_year,
@@ -227,12 +228,11 @@ def endpoints():
     otcms.title arm_endpoint,
     otcms.description endpoint_description,
     concat(elig.minimum_age, maximum_age) AS arm_population_age_group,
-    END AS arm_population_age_group
     CASE WHEN elig.gender = 'Male' THEN '100%'
     WHEN elig.gender = 'Female' THEN '0%'
     WHEN elig.gender = 'All' THEN 'Between 1% and 99%'
-    END ASarm_population_male_percent
-    mods.modality 'arm modality'
+    END AS arm_population_male_percent,
+    mods.modality arm_modality
     FROM ctgov.sponsors spns
     LEFT JOIN ctgov.studies stds
     ON spns.nct_id = stds.nct_id
@@ -259,9 +259,9 @@ def endpoints():
     LEFT JOIN ctgov.eligibilities elig
     ON spns.nct_id = elig.nct_id
     LEFT JOIN ctgov.modality mods
+    ON spns.nct_id = mods.nct_id
     WHERE oag.ctgov_group_code LIKE 'O%'
-    ORDER BY spns.nct_id, oag.ctgov_group_code, conds.name, dg.title
-    LIMIT 1000"""
+    ORDER BY spns.nct_id, oag.ctgov_group_code, conds.name, dg.title"""
 
     connect_and_execute_psql(sql_command, None)
 
