@@ -2,6 +2,7 @@ from aws_cdk import (
     core,
     aws_rds as rds,
     aws_ec2 as ec2,
+    aws_secretsmanager as secretsmanager,
 )
 from . import names
 
@@ -23,14 +24,21 @@ class CtfDatabase(core.Construct):
             self,
             id,
             database_name=names.DATABASE,
-            instance_identifier=names.DATABASE_INSTANCE,
             engine=rds.DatabaseInstanceEngine.POSTGRES,
-            instance_type=ec2.InstanceType("t2.micro"),
+            instance_type=ec2.InstanceType("t3.small"),
+            credentials=rds.Credentials.from_secret(
+                secret=secretsmanager.Secret.from_secret_name(
+                    self,
+                    "CtfDatabaseSecret",
+                    secret_name=names.DATABASE_SECRET,
+                ),
+            ),
             vpc=vpc,
             vpc_subnets={"subnet_type": ec2.SubnetType.PRIVATE},
             security_groups=[sg],
             availability_zone=preferred_az,
             storage_encrypted=False,  # db.t2.micro does not support encryption at rest
+            enable_performance_insights=True,
             allocated_storage=30,
             backup_retention=core.Duration.days(1),
             delete_automated_backups=True,

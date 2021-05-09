@@ -203,7 +203,7 @@ class ListViewTable extends Component {
             <Link
               type="link"
               size="small"
-              href={'./trials/' + nctId}
+              href={'./' + nctId}
             >
               {nctId}
             </Link>

@@ -421,7 +421,6 @@ def construct_filters(request):
     study_results = request.data.get("study_results")
     study_type = request.data.get("study_type")
     eligibility_gender = request.data.get("eligibility_gender")
-    eligibility_ethnicity = request.data.get("eligibility_ethnicity")
     eligibility_condition = request.data.get("eligibility_condition")
     eligibility_healthy_volunteer = request.data.get(
         "eligibility_healthy_volunteer"
@@ -505,8 +504,6 @@ def construct_filters(request):
         filters["study_type__icontains"] = study_type
     if eligibility_gender:
         filters["eligibility_gender__iexact"] = eligibility_gender
-    if eligibility_ethnicity:
-        filters["eligibility_criteria__icontains"] = eligibility_ethnicity
     if eligibility_condition:
         filters["eligibility_criteria__icontains"] = eligibility_condition
     if eligibility_healthy_volunteer:
@@ -571,6 +568,23 @@ def filter_eligibility_age(request):
         ) | Q(eligibility_max_age_numeric=convert_to_number(eligibility_age))
 
     return q_eligibility_age
+
+
+# Function to construct queryset filter for eligibility ethnicity
+def filter_eligibility_ethnicity(request):
+    eligibility_ethnicity_list = request.data.get("eligibility_ethnicity")
+
+    q_eligibility_ethnicity = Q()
+    if eligibility_ethnicity_list:
+        ethnicity_queries = [
+            Q(status__iexact=ethnicity.strip())
+            for ethnicity in eligibility_ethnicity_list
+        ]
+        q_eligibility_ethnicity = ethnicity_queries.pop()
+        for item in ethnicity_queries:
+            q_eligibility_ethnicity |= item
+
+    return q_eligibility_ethnicity
 
 
 # Function to construct queryset filter for age groups

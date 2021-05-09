@@ -18,7 +18,7 @@ function App() {
         <Switch>
           <RouteWrapper path="/" component={SearchView} layout={TrialsLayout} exact />
           <RouteWrapper path="/trials" component={TrialListView} layout={TrialsLayout} exact />
-          <RouteWrapper path="/trials/:nctId" component={SingleTrialView} layout={TrialsLayout} />
+          <RouteWrapper path="/:nctId" component={SingleTrialView} layout={TrialsLayout} />
           <RouteWrapper path="/" component={PageNotFoundView} layout={TrialsLayout} />
         </Switch>
       </main>
