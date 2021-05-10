@@ -60,10 +60,11 @@ class ListViewTable extends Component {
       isDownloadModalVisible: false,
       isDashboardDisabled: true,
       isTimelineDisabled: true,
-      isDownloadDisabled: false,
+      isDownloadDisabled: true,
       payload: this.props.history.location.state.payload,
-      searchData: this.props.history.location.state.data,
+      // searchData: this.props.history.location.state.data,
       dashboardData: {},
+      exportData: {},
       timelineData: {},
       resultsByPage: {},
       studyCount: '...',
@@ -89,7 +90,7 @@ class ListViewTable extends Component {
         studyCount: '0',
       });
     }
-    // Getting dashboard data
+    // Getting dashboard and timeline data
     try {
       const dashboardResponse = await ctgov.post('trials_dashboard', payload);
       this.setState({
@@ -103,6 +104,17 @@ class ListViewTable extends Component {
       this.setState({
         timelineData: timelineResponse.data,
         isTimelineDisabled: false,
+      });
+    } catch (err) {
+      log.error(err);
+    }
+    // Getting export data
+    try {
+      const exportResponse = await ctgov.post('search_results_export', payload);
+      console.log(exportResponse.data);
+      this.setState({
+        exportData: exportResponse.data,
+        isDownloadDisabled: false,
       });
     } catch (err) {
       log.error(err);
@@ -350,7 +362,6 @@ class ListViewTable extends Component {
                       </Tooltip>
                       <Tooltip title="Download options">
                         <Button
-                          disabled={this.state.isDownloadDisabled}
                           key="btn_download"
                           onClick={() => {
                             return this.setDownloadModalVisible(true);
@@ -381,7 +392,8 @@ class ListViewTable extends Component {
                       />
                       <DownloadModal
                         isModalVisible={this.state.isDownloadModalVisible}
-                        data={this.state.searchData}
+                        isDownloading={this.state.isDownloadDisabled}
+                        data={this.state.exportData}
                         payload={this.state.payload}
                         handleOk={() => {
                           return this.setDownloadModalVisible(false, '');

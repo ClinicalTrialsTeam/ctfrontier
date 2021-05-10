@@ -11,6 +11,7 @@ class TrialsJSONDownload extends Component {
 
   render() {
     const {
+      isDownloading,
       data,
     } = this.props;
 
@@ -18,8 +19,10 @@ class TrialsJSONDownload extends Component {
       <>
         <img className="download-icon" src={image} alt="icon" />
         <Button
+          disabled={isDownloading}
+          loading={isDownloading}
           className="download-button"
-          onClick={() => { return TrialsJSONDownload.downloadSearchConfig(data.search_results); }}
+          onClick={() => { return TrialsJSONDownload.downloadSearchConfig(data); }}
           type="primary"
         >
           Save Search Results
@@ -30,6 +33,7 @@ class TrialsJSONDownload extends Component {
 }
 
 TrialsJSONDownload.propTypes = {
+  isDownloading: PropTypes.bool.isRequired,
   data: PropTypes.object.isRequired,
 };
 
