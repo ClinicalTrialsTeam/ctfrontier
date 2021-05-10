@@ -14,9 +14,11 @@ from pathlib import Path
 from os import getenv
 import requests
 
-PROD = True if getenv("MODE").lower() == "prod" else False
+PROD = True if getenv("MODE", "prod").lower() == "prod" else False
 ELASTICSEARCH_ENABLED = (
-    True if getenv("ELASTICSEARCH_ENABLED").lower() == "true" else False
+    True
+    if getenv("ELASTICSEARCH_ENABLED", "False").lower() == "true"
+    else False
 )
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
