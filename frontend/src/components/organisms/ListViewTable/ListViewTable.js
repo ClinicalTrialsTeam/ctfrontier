@@ -59,11 +59,12 @@ class ListViewTable extends Component {
       isTimelineModalVisible: false,
       isDownloadModalVisible: false,
       isDashboardDisabled: true,
-      isTimelineDisabled: false,
-      isDownloadDisabled: false,
+      isTimelineDisabled: true,
+      isDownloadDisabled: true,
       payload: this.props.history.location.state.payload,
-      searchData: this.props.history.location.state.data,
       dashboardData: {},
+      exportData: {},
+      timelineData: {},
       resultsByPage: {},
       studyCount: '...',
     };
@@ -88,12 +89,30 @@ class ListViewTable extends Component {
         studyCount: '0',
       });
     }
-    // Getting dashboard data
+    // Getting dashboard and timeline data
     try {
-      const response = await ctgov.post('trials_dashboard', payload);
+      const dashboardResponse = await ctgov.post('trials_dashboard', payload);
       this.setState({
-        dashboardData: response.data,
+        dashboardData: dashboardResponse.data,
         isDashboardDisabled: false,
+      });
+      const timelinePayload = {
+        nct_ids: dashboardResponse.data.nct_ids,
+      };
+      const timelineResponse = await ctgov.post('trial_timelines', timelinePayload);
+      this.setState({
+        timelineData: timelineResponse.data,
+        isTimelineDisabled: false,
+      });
+    } catch (err) {
+      log.error(err);
+    }
+    // Getting export data
+    try {
+      const exportResponse = await ctgov.post('search_results_export', payload);
+      this.setState({
+        exportData: exportResponse.data,
+        isDownloadDisabled: false,
       });
     } catch (err) {
       log.error(err);
@@ -203,7 +222,7 @@ class ListViewTable extends Component {
             <Link
               type="link"
               size="small"
-              href={'./trials/' + nctId}
+              href={'./' + nctId}
             >
               {nctId}
             </Link>
@@ -320,6 +339,7 @@ class ListViewTable extends Component {
                       <Tooltip title="View dashboard">
                         <Button
                           disabled={this.state.isDashboardDisabled}
+                          loading={this.state.isDashboardDisabled}
                           key="btn_dashboard"
                           onClick={() => {
                             return this.setDashboardModalVisible(true);
@@ -330,6 +350,7 @@ class ListViewTable extends Component {
                       <Tooltip title="View timeline">
                         <Button
                           disabled={this.state.isTimelineDisabled}
+                          loading={this.state.isTimelineDisabled}
                           key="btn_timeline"
                           onClick={() => {
                             return this.setTimelineModalVisible(true);
@@ -339,7 +360,6 @@ class ListViewTable extends Component {
                       </Tooltip>
                       <Tooltip title="Download options">
                         <Button
-                          disabled={this.state.isDownloadDisabled}
                           key="btn_download"
                           onClick={() => {
                             return this.setDownloadModalVisible(true);
@@ -360,7 +380,7 @@ class ListViewTable extends Component {
                       />
                       <TimelineModal
                         isModalVisible={this.state.isTimelineModalVisible}
-                        data={this.state.searchData}
+                        data={this.state.timelineData}
                         handleOk={() => {
                           return this.setTimelineModalVisible(false, '');
                         }}
@@ -370,7 +390,8 @@ class ListViewTable extends Component {
                       />
                       <DownloadModal
                         isModalVisible={this.state.isDownloadModalVisible}
-                        data={this.state.searchData}
+                        isDownloading={this.state.isDownloadDisabled}
+                        data={this.state.exportData}
                         payload={this.state.payload}
                         handleOk={() => {
                           return this.setDownloadModalVisible(false, '');

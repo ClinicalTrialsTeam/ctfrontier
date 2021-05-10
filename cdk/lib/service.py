@@ -18,7 +18,7 @@ class CtfFrontendService(core.Construct):
         cluster,
         task_definition,
         sg,
-        preferred_az,
+        vpc_subnets,
         desired_count=1,
     ):
         super().__init__(scope, id)
@@ -28,7 +28,7 @@ class CtfFrontendService(core.Construct):
             id=id,
             service_name=service_name,
             security_groups=[sg],
-            vpc_subnets=ec2.SubnetSelection(availability_zones=[preferred_az]),
+            vpc_subnets=vpc_subnets,
             cluster=cluster,
             desired_count=desired_count,
             task_definition=task_definition,
@@ -52,7 +52,7 @@ class CtfBackendService(core.Construct):
         cluster,
         task_definition,
         sg,
-        preferred_az,
+        vpc_subnets,
         port,
     ):
         super().__init__(scope, id)
@@ -63,7 +63,7 @@ class CtfBackendService(core.Construct):
             service_name=names.BACKEND_SERVICE,
             daemon=True,
             security_groups=[sg],
-            vpc_subnets=ec2.SubnetSelection(availability_zones=[preferred_az]),
+            vpc_subnets=vpc_subnets,
             cluster=cluster,
             cloud_map_options=ecs.CloudMapOptions(name="backend"),
             task_definition=task_definition,

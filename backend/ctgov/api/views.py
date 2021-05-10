@@ -2,6 +2,8 @@ import logging
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from elasticsearch import Elasticsearch
+from core.settings import ENABLE_ELASTIC
 
 # Create a logger for this file
 logger = logging.getLogger(__name__)
@@ -42,6 +44,10 @@ from django_elasticsearch_dsl_drf.pagination import PageNumberPagination
 from ctgov.documents import ClinicalTrialsSearchStudies
 
 
+DEFAULT_FROM_DATE = "1900-01-01"
+DEFAULT_TO_DATE = "2050-01-01"
+
+
 # API end point for elastic search
 class SearchStudiesDocumentView(BaseDocumentViewSet):
     document = ClinicalTrialsSearchStudies
@@ -61,17 +67,49 @@ class SearchStudiesDocumentView(BaseDocumentViewSet):
         "brief_title",
         "nct_id",
         "condition_name",
-        "study_detailed_desc",
         "country_name",
+        "city_name",
+        "state_name",
         "intervention_name",
         "eligibility_criteria",
         "study_brief_desc",
+        "sponsor_name",
+        "study_start_date",
+        "primary_completion_date",
+        "study_first_posted_date",
+        "results_first_posted_date",
+        "last_update_posted_date",
+        "study_type",
+        "eligibility_gender",
+        "sponsor_name",
+        "study_ids",
         "location_name",
+        "funder_type",
+        "results_submitted_qc_not_done",
+        "results_submitted_qc_done",
+        "document_types",
+        "official_title",
+        "acronym",
+        "primary_outcome_measures",
+        "secondary_outcome_measures",
+        "eligibility_min_age_numeric",
+        "eligibility_max_age_numeric",
+        "study_phase",
     )
 
+    filter_fields = {
+        "study_start_date": "study_start_date",
+        "primary_completion_date": "primary_completion_date",
+        "study_first_posted_date": "study_first_posted_date",
+        "results_first_posted_date": "results_first_posted_date",
+        "last_update_posted_date": "last_update_posted_date",
+        "eligibility_min_age_numeric": "eligibility_min_age_numeric",
+        "eligibility_max_age_numeric": "eligibility_max_age_numeric",
+    }
+
     ordering_fields = {
+        "study_start_date": "study_start_date.raw",
         "status": "status.raw",
-        "country_name": "country_name.raw",
     }
 
 
@@ -160,6 +198,9 @@ class TrialTimelinesApiView(APIView):
             SearchStudies.objects.all()
             .filter(nct_id__in=nct_list)
             .values(
+                "brief_title",
+                "status",
+                "sponsor_name",
                 "nct_id",
                 "study_start_date",
                 "primary_completion_date",
@@ -182,6 +223,7 @@ class SearchResultsExportApiView(APIView):
         q_title_acronym = filter_title_acronym(request)
         q_outcome_measure = filter_outcome_measure(request)
         q_eligibility_age = filter_eligibility_age(request)
+        q_eligibility_ethnicity = filter_eligibility_ethnicity(request)
         q_age_between = filter_age_between(request)
         q_study_roa = filter_study_roa(request)
         q_study_status = filter_study_status(request)
@@ -192,6 +234,7 @@ class SearchResultsExportApiView(APIView):
             .filter(q_title_acronym)
             .filter(q_outcome_measure)
             .filter(q_eligibility_age)
+            .filter(q_eligibility_ethnicity)
             .filter(q_age_between)
             .filter(q_study_roa)
             .filter(q_study_status)
@@ -212,6 +255,7 @@ class TrialsDashboardApiView(APIView):
         q_title_acronym = filter_title_acronym(request)
         q_outcome_measure = filter_outcome_measure(request)
         q_eligibility_age = filter_eligibility_age(request)
+        q_eligibility_ethnicity = filter_eligibility_ethnicity(request)
         q_age_between = filter_age_between(request)
         q_study_roa = filter_study_roa(request)
         q_study_status = filter_study_status(request)
@@ -222,6 +266,7 @@ class TrialsDashboardApiView(APIView):
             .filter(q_title_acronym)
             .filter(q_outcome_measure)
             .filter(q_eligibility_age)
+            .filter(q_eligibility_ethnicity)
             .filter(q_age_between)
             .filter(q_study_roa)
             .filter(q_study_status)
@@ -252,6 +297,9 @@ class TrialsDashboardApiView(APIView):
             .filter(nct__in=filter_results.all().values("nct_id"))
             .order_by("-trials_count")[:10]
         )
+        trials_dashboard_nct_ids = filter_results.all().values("nct_id")[:100]
+
+        nct_ids = [record["nct_id"] for record in trials_dashboard_nct_ids]
 
         r = Response(
             {
@@ -259,6 +307,7 @@ class TrialsDashboardApiView(APIView):
                 "phases": trials_dashboard_phase,
                 "interventions": trials_dashboard_interventions,
                 "status": trials_dashboard_status,
+                "nct_ids": nct_ids,
             },
             status=status.HTTP_200_OK,
         )
@@ -282,70 +331,101 @@ class SearchStudiesApiView(APIView):
         if not last:
             last = 100
 
-        logger.info("Construct filters")
-        filters = construct_filters(request)
-        q_title_acronym = filter_title_acronym(request)
-        q_outcome_measure = filter_outcome_measure(request)
-        q_eligibility_age = filter_eligibility_age(request)
-        q_age_between = filter_age_between(request)
-        q_study_roa = filter_study_roa(request)
-        q_study_status = filter_study_status(request)
-        q_phase = filter_phase(request)
+        # If elastic search configuration is enabled, perform elastic search; else do django search
+        if ENABLE_ELASTIC == "ON":
+            logger.info("Construct Elastic filters")
+            filters = construct_elastic_filters(request, first, last)
+            es = Elasticsearch(["elasticsearch:9200"])
+            res = es.search(
+                index="search_studies", doc_type=None, body=filters
+            )
 
-        search_results_all = (
-            SearchStudies.objects.filter(**filters)
-            .filter(q_title_acronym)
-            .filter(q_outcome_measure)
-            .filter(q_eligibility_age)
-            .filter(q_age_between)
-            .filter(q_study_roa)
-            .filter(q_study_status)
-            .filter(q_phase)
-            .all()
-        )
+            results_count = res["hits"]["total"]["value"]
+            search_results = []
+            for doc in res["hits"]["hits"]:
+                search_results.append(doc["_source"])
 
-        search_results = search_results_all.values(
-            "status",
-            "brief_title",
-            "nct_id",
-            "condition_name",
-            "intervention_name",
-            "location_name",
-            "study_phase",
-            "sponsor_name",
-            "location_name",
-            "study_brief_desc",
-            "primary_outcome_measures",
-            "secondary_outcome_measures",
-            "study_start_date",
-            "primary_completion_date",
-        )[first:last]
-
-        if metadata_required:
-            logger.info("Metadata required, get count")
-            results_count = search_results_all.count()
-            logger.info(f"metadata got count {results_count}")
+            return Response(
+                {
+                    "metadata": [{"results_count": str(results_count)}],
+                    "search_results": search_results,
+                },
+                status=status.HTTP_200_OK,
+            )
         else:
-            logger.info("Metadata not required")
-            results_count = "NA"
+            logger.info("Construct Django filters")
+            filters = construct_filters(request)
+            q_title_acronym = filter_title_acronym(request)
+            q_outcome_measure = filter_outcome_measure(request)
+            q_eligibility_age = filter_eligibility_age(request)
+            q_eligibility_ethnicity = filter_eligibility_ethnicity(request)
+            q_age_between = filter_age_between(request)
+            q_study_roa = filter_study_roa(request)
+            q_study_status = filter_study_status(request)
+            q_phase = filter_phase(request)
 
-        logger.info("Before serialization")
-        serializer = SearchStudiesSerializer(search_results, many=True)
-        logger.info(f"After serialization: {len(serializer.data)}")
-        r = Response(
-            {
-                "metadata": [{"results_count": str(results_count)}],
-                "search_results": serializer.data,
-            },
-            status=status.HTTP_200_OK,
-        )
-        logger.info("SearchStudiesAPIView: return results")
-        return r
+            search_results_all = (
+                SearchStudies.objects.filter(**filters)
+                .filter(q_title_acronym)
+                .filter(q_outcome_measure)
+                .filter(q_eligibility_age)
+                .filter(q_eligibility_ethnicity)
+                .filter(q_age_between)
+                .filter(q_study_roa)
+                .filter(q_study_status)
+                .filter(q_phase)
+                .all()
+            )
+
+            search_results = search_results_all.values(
+                "status",
+                "brief_title",
+                "nct_id",
+                "condition_name",
+                "intervention_name",
+                "location_name",
+                "study_phase",
+                "sponsor_name",
+                "location_name",
+                "study_brief_desc",
+                "primary_outcome_measures",
+                "secondary_outcome_measures",
+                "study_start_date",
+                "primary_completion_date",
+            )[first:last]
+
+            if metadata_required:
+                logger.info("Metadata required, get count")
+                results_count = search_results_all.count()
+                logger.info(f"metadata got count {results_count}")
+            else:
+                logger.info("Metadata not required")
+                results_count = "NA"
+
+            logger.info("Before serialization")
+            serializer = SearchStudiesSerializer(search_results, many=True)
+            logger.info(f"After serialization: {len(serializer.data)}")
+            r = Response(
+                {
+                    "metadata": [{"results_count": str(results_count)}],
+                    "search_results": serializer.data,
+                },
+                status=status.HTTP_200_OK,
+            )
+            logger.info("SearchStudiesAPIView: return results")
+            return r
 
 
 # Convert passed date parameter to match with db format
 def convert_to_date(datestr):
     date = datetime.strptime(datestr, "%Y-%m-%d")
+    return date
+
+
+# Format date time for elastic search
+def format_date_time(datestr):
+    dateobj = datetime.strptime(datestr, "%Y-%m-%d")
+    date = datetime.strftime(dateobj, "%Y-%m-%d" "T" "%H:%M:%S")
     return date
 
 
@@ -382,7 +462,7 @@ def convert_to_number(agestr):
     return float(agestr)
 
 
-# Function to construct filters based on search parameters posted to REST API
+# Function to construct django filters based on search parameters posted to REST API
 def construct_filters(request):
     nct_id = request.data.get("nct_id")
     condition = request.data.get("condition")
@@ -421,7 +501,6 @@ def construct_filters(request):
     study_results = request.data.get("study_results")
     study_type = request.data.get("study_type")
     eligibility_gender = request.data.get("eligibility_gender")
-    eligibility_ethnicity = request.data.get("eligibility_ethnicity")
     eligibility_condition = request.data.get("eligibility_condition")
     eligibility_healthy_volunteer = request.data.get(
         "eligibility_healthy_volunteer"
@@ -505,8 +584,6 @@ def construct_filters(request):
         filters["study_type__icontains"] = study_type
     if eligibility_gender:
         filters["eligibility_gender__iexact"] = eligibility_gender
-    if eligibility_ethnicity:
-        filters["eligibility_criteria__icontains"] = eligibility_ethnicity
     if eligibility_condition:
         filters["eligibility_criteria__icontains"] = eligibility_condition
     if eligibility_healthy_volunteer:
@@ -571,6 +648,26 @@ def filter_eligibility_age(request):
         ) | Q(eligibility_max_age_numeric=convert_to_number(eligibility_age))
 
     return q_eligibility_age
+
+
+# Function to construct queryset filter for eligibility ethnicity
+def filter_eligibility_ethnicity(request):
+    eligibility_ethnicity_list = request.data.get("eligibility_ethnicity")
+
+    if any(s.lower() == "white" for s in eligibility_ethnicity_list):
+        eligibility_ethnicity_list.append("caucasian")
+
+    q_eligibility_ethnicity = Q()
+    if eligibility_ethnicity_list:
+        ethnicity_queries = [
+            Q(eligibility_criteria__iregex=fr"\y{ethnicity.strip()}\y")
+            for ethnicity in eligibility_ethnicity_list
+        ]
+        q_eligibility_ethnicity = ethnicity_queries.pop()
+        for item in ethnicity_queries:
+            q_eligibility_ethnicity |= item
+
+    return q_eligibility_ethnicity
 
 
 # Function to construct queryset filter for age groups
@@ -662,3 +759,514 @@ def filter_phase(request):
             q_phase |= item
 
     return q_phase
+
+
+# Function to construct elastic search filters based on search parameters posted to REST API
+def construct_elastic_filters(request, first, last):
+    study_status = (
+        request.data.get("status") if request.data.get("status") else ""
+    )
+    nct_id = (
+        str(request.data.get("nct_id")) if request.data.get("nct_id") else ""
+    )
+    condition = (
+        str(request.data.get("condition"))
+        if request.data.get("condition")
+        else ""
+    )
+    condition_terms = (
+        str(request.data.get("condition_terms"))
+        if request.data.get("condition_terms")
+        else ""
+    )
+    other_terms = (
+        str(request.data.get("other_terms"))
+        if request.data.get("other_terms")
+        else ""
+    )
+    country = (
+        str(request.data.get("country")) if request.data.get("country") else ""
+    )
+    city = str(request.data.get("city")) if request.data.get("city") else ""
+    state = str(request.data.get("state")) if request.data.get("state") else ""
+    intervention = (
+        str(request.data.get("intervention"))
+        if request.data.get("intervention")
+        else ""
+    )
+    target_moa = (
+        str(request.data.get("target")) if request.data.get("target") else ""
+    )
+    eligibility_criteria = (
+        str(request.data.get("eligibility_criteria"))
+        if request.data.get("eligibility_criteria")
+        else ""
+    )
+
+    # new fields based on client demo
+    modality = (
+        str(request.data.get("modality"))
+        if request.data.get("modality")
+        else ""
+    )
+    sponsor = (
+        str(request.data.get("sponsor")) if request.data.get("sponsor") else ""
+    )
+
+    start_date_from = request.data.get("start_date_from")
+    if valid_date(start_date_from):
+        start_date_from = format_date_time(start_date_from)
+    else:
+        start_date_from = ""
+
+    start_date_to = request.data.get("start_date_to")
+    if valid_date(start_date_to):
+        start_date_to = format_date_time(start_date_to)
+    else:
+        start_date_to = ""
+
+    primary_completion_date_from = request.data.get(
+        "primary_completion_date_from"
+    )
+    if valid_date(primary_completion_date_from):
+        primary_completion_date_from = format_date_time(
+            primary_completion_date_from
+        )
+    else:
+        primary_completion_date_from = ""
+
+    primary_completion_date_to = request.data.get("primary_completion_date_to")
+    if valid_date(primary_completion_date_to):
+        primary_completion_date_to = format_date_time(
+            primary_completion_date_to
+        )
+    else:
+        primary_completion_date_to = ""
+
+    first_posted_date_from = request.data.get("first_posted_date_from")
+    if valid_date(first_posted_date_from):
+        first_posted_date_from = format_date_time(first_posted_date_from)
+    else:
+        first_posted_date_from = ""
+
+    first_posted_date_to = request.data.get("first_posted_date_to")
+    if valid_date(first_posted_date_to):
+        first_posted_date_to = format_date_time(first_posted_date_to)
+    else:
+        first_posted_date_to = ""
+
+    results_first_posted_date_from = request.data.get(
+        "results_first_posted_date_from"
+    )
+    if valid_date(results_first_posted_date_from):
+        results_first_posted_date_from = format_date_time(
+            results_first_posted_date_from
+        )
+    else:
+        results_first_posted_date_from = ""
+
+    results_first_posted_date_to = request.data.get(
+        "results_first_posted_date_to"
+    )
+    if valid_date(results_first_posted_date_to):
+        results_first_posted_date_to = format_date_time(
+            results_first_posted_date_to
+        )
+    else:
+        results_first_posted_date_to = ""
+
+    last_update_posted_date_from = request.data.get(
+        "last_update_posted_date_from"
+    )
+    if valid_date(last_update_posted_date_from):
+        last_update_posted_date_from = format_date_time(
+            last_update_posted_date_from
+        )
+    else:
+        last_update_posted_date_from = ""
+
+    last_update_posted_date_to = request.data.get("last_update_posted_date_to")
+    if valid_date(last_update_posted_date_to):
+        last_update_posted_date_to = format_date_time(
+            last_update_posted_date_to
+        )
+    else:
+        last_update_posted_date_to = ""
+
+    # Advanced search parameters
+    study_results = request.data.get("study_results")
+    study_results_query_type = ""
+    if study_results:
+        if str(study_results).lower() == "studies with results":
+            study_results_query_type = "not null"
+        if str(study_results).lower() == "studies without results":
+            study_results_query_type = "null"
+
+    study_type = (
+        str(request.data.get("study_type"))
+        if request.data.get("study_type")
+        else ""
+    )
+    eligibility_gender = (
+        str(request.data.get("eligibility_gender"))
+        if request.data.get("eligibility_gender")
+        else ""
+    )
+    eligibility_ethnicity = (
+        str(request.data.get("eligibility_ethnicity"))
+        if request.data.get("eligibility_ethnicity")
+        else ""
+    )
+    eligibility_condition = (
+        str(request.data.get("eligibility_condition"))
+        if request.data.get("eligibility_condition")
+        else ""
+    )
+
+    eligibility_healthy_volunteer = request.data.get(
+        "eligibility_healthy_volunteer"
+    )
+    if not eligibility_healthy_volunteer:
+        eligibility_healthy_volunteer = ""
+
+    study_collaborator = (
+        str(request.data.get("study_collaborator"))
+        if request.data.get("study_collaborator")
+        else ""
+    )
+    study_ids = (
+        str(request.data.get("study_ids"))
+        if request.data.get("study_ids")
+        else ""
+    )
+    study_location_terms = (
+        str(request.data.get("study_location_terms"))
+        if request.data.get("study_location_terms")
+        else ""
+    )
+    study_funder_type = (
+        str(request.data.get("study_funder_type"))
+        if request.data.get("study_funder_type")
+        else ""
+    )
+    study_document_type = (
+        str(request.data.get("study_document_type"))
+        if request.data.get("study_document_type")
+        else ""
+    )
+
+    study_results_submitted = request.data.get("study_results_submitted")
+    query_type_qc_not_done = ""
+    query_type_qc_done = ""
+
+    if study_results_submitted:
+        if str(study_results_submitted).lower() == "not submitted":
+            query_type_qc_not_done = "null"
+        elif str(study_results_submitted).lower() == "submitted":
+            query_type_qc_not_done = "not null"
+        else:
+            query_type_qc_done = "not null"
+
+    study_title_acronym = (
+        str(request.data.get("study_title_acronym"))
+        if request.data.get("study_title_acronym")
+        else ""
+    )
+    study_outcome_measure = (
+        str(request.data.get("study_outcome_measure"))
+        if request.data.get("study_outcome_measure")
+        else ""
+    )
+
+    eligibility_age = request.data.get("eligibility_age")
+    if valid_number(eligibility_age):
+        eligibility_age_lower_limit = convert_to_number(eligibility_age)
+        eligibility_age_upper_limit = convert_to_number(eligibility_age)
+    else:
+        eligibility_age_lower_limit = 0
+        eligibility_age_upper_limit = 200
+
+    eligibility_age_group = request.data.get("eligibility_age_group")
+    if eligibility_age_group:
+        age_group_list = str(eligibility_age_group).split(",")
+        for age_group in age_group_list:
+            if age_group.lower().strip(" ") == "child":
+                eligibility_age_group_lower_limit_1 = 0
+                eligibility_age_group_lower_limit_2 = 0
+                eligibility_age_group_upper_limit_1 = 17
+                eligibility_age_group_upper_limit_2 = 17
+            if age_group.lower().strip(" ") == "adult":
+                eligibility_age_group_lower_limit_1 = 0
+                eligibility_age_group_lower_limit_2 = 18
+                eligibility_age_group_upper_limit_1 = 0
+                eligibility_age_group_upper_limit_2 = 65
+            if age_group.lower().strip(" ") == "older adult":
+                eligibility_age_group_lower_limit_1 = 0
+                eligibility_age_group_lower_limit_2 = 65
+                eligibility_age_group_upper_limit_1 = 0
+                eligibility_age_group_upper_limit_2 = 200
+    else:
+        eligibility_age_group_lower_limit_1 = 0
+        eligibility_age_group_lower_limit_2 = 0
+        eligibility_age_group_upper_limit_1 = 200
+        eligibility_age_group_upper_limit_2 = 200
+
+    study_roa = (
+        request.data.get("study_roa") if request.data.get("study_roa") else ""
+    )
+    phase = request.data.get("phase") if request.data.get("phase") else ""
+
+    # Construct filter json object
+    filters = (
+        "{ "
+        + '"from" :'
+        + str(first)
+        + ", "
+        + '"size" :'
+        + str(last)
+        + ", "
+        + '"track_total_hits": true, '
+        + '"query": { '
+        + '"bool": { '
+        + '"must": [ '
+        + get_match_query("status", study_status)
+        + ", "
+        + get_match_query("condition_name", condition)
+        + ", "
+        + get_match_query("condition_name", condition_terms)
+        + ", "
+        + get_match_query("brief_title", other_terms)
+        + ", "
+        + get_match_query("nct_id", nct_id)
+        + ", "
+        + get_match_query("country_name", country)
+        + ", "
+        + get_match_query("city_name", city)
+        + ", "
+        + get_match_query("state_name", state)
+        + ", "
+        + get_match_query("intervention_name", intervention)
+        + ", "
+        + get_match_query("study_brief_desc", target_moa)
+        + ", "
+        + get_match_query("eligibility_criteria", eligibility_criteria)
+        + ", "
+        + get_match_query("brief_title", modality)
+        + ", "
+        + get_match_query("sponsor_name", sponsor)
+        + ", "
+        + get_date_range("study_start_date", start_date_from, start_date_to)
+        + get_date_range(
+            "primary_completion_date",
+            primary_completion_date_from,
+            primary_completion_date_to,
+        )
+        + get_date_range(
+            "study_first_posted_date",
+            first_posted_date_from,
+            first_posted_date_to,
+        )
+        + get_date_range(
+            "results_first_posted_date",
+            results_first_posted_date_from,
+            results_first_posted_date_to,
+        )
+        + get_date_range(
+            "last_update_posted_date",
+            last_update_posted_date_from,
+            last_update_posted_date_to,
+        )
+        + get_exists_query(
+            "results_first_posted_date", study_results_query_type
+        )
+        + get_match_query("study_type", study_type)
+        + ", "
+        + get_match_query("eligibility_gender", eligibility_gender)
+        + ", "
+        + get_match_query("eligibility_criteria", eligibility_ethnicity)
+        + ", "
+        + get_match_query("eligibility_criteria", eligibility_condition)
+        + ", "
+        + get_match_query("sponsor_name", study_collaborator)
+        + ", "
+        + get_match_query("study_ids", study_ids)
+        + ", "
+        + get_match_query("location_name", study_location_terms)
+        + ", "
+        + get_match_query("funder_type", study_funder_type)
+        + ", "
+        + get_exists_query(
+            "results_submitted_qc_not_done", query_type_qc_not_done
+        )
+        + get_exists_query("results_submitted_qc_done", query_type_qc_done)
+        + get_match_query("document_types", study_document_type)
+        + ", "
+        + get_match_query("official_title", study_title_acronym)
+        + ", "
+        + get_match_query("acronym", study_title_acronym)
+        + ", "
+        + get_match_query("primary_outcome_measures", study_outcome_measure)
+        + ", "
+        + get_match_query("secondary_outcome_measures", study_outcome_measure)
+        + ", "
+        + get_gte_query(
+            "eligibility_min_age_numeric", eligibility_age_lower_limit
+        )
+        + ", "
+        + get_lte_query(
+            "eligibility_max_age_numeric", eligibility_age_upper_limit
+        )
+        + ", "
+        + get_range_query(
+            "eligibility_min_age_numeric",
+            eligibility_age_group_lower_limit_1,
+            eligibility_age_group_upper_limit_1,
+        )
+        + ", "
+        + get_range_query(
+            "eligibility_max_age_numeric",
+            eligibility_age_group_lower_limit_2,
+            eligibility_age_group_upper_limit_2,
+        )
+        + ", "
+        + get_match_query("study_phase", phase)
+        + ", "
+        + get_match_query("study_brief_desc", study_roa)
+        + "] "
+        + "} "
+        + "} "
+        + "} "
+    )
+
+    return filters
+
+
+# Function to construct fuzzy match query json for elastic search
+def get_match_query(field, param):
+    match_query = (
+        "{ "
+        + '"match": { '
+        + '"'
+        + str(field)
+        + '": { '
+        + '"query": "'
+        + str(param)
+        + '", '
+        + '"zero_terms_query" : "all", '
+        + '"fuzziness": "AUTO" '
+        + "} "
+        + "} "
+        + "}"
+    )
+    return match_query
+
+
+# Function to match exact term
+def get_term_query(field, param):
+    if len(param) != 0:
+        if len(param) == 1:
+            terms = "".join('"' + term + '"' for term in param)
+        else:
+            terms = ", ".join('"' + term + '"' for term in param)
+        term_query = (
+            "{ "
+            + '"terms": { '
+            + '"'
+            + str(field)
+            + '": ['
+            + terms
+            + "], "
+            + '"boost": 1.0'
+            + "} "
+            + "}, "
+        )
+        return term_query
+    else:
+        return ""
+
+
+#  Function to construct range query for elastic search
+def get_range_query(field, lower_range, upper_range):
+    range_query = (
+        "{ "
+        + '"range": { '
+        + '"'
+        + str(field)
+        + '": { '
+        + '"gte": "'
+        + str(lower_range)
+        + '", '
+        + '"lte": "'
+        + str(upper_range)
+        + '"'
+        + "} "
+        + "} "
+        + "}"
+    )
+    return range_query
+
+
+#  Function to construct less than or equal to query for elastic search
+def get_lte_query(field, limit):
+    lte_query = (
+        "{ "
+        + '"range": { '
+        + '"'
+        + str(field)
+        + '": { '
+        + '"lte": "'
+        + str(limit)
+        + '"'
+        + "} "
+        + "} "
+        + "}"
+    )
+    return lte_query
+
+
+#  Function to construct greater than or equal to query for elastic search
+def get_gte_query(field, limit):
+    gte_query = (
+        "{ "
+        + '"range": { '
+        + '"'
+        + str(field)
+        + '": { '
+        + '"gte": "'
+        + str(limit)
+        + '"'
+        + "} "
+        + "} "
+        + "}"
+    )
+    return gte_query
+
+
+# Function to construct date range query for elastic search
+def get_date_range(strDateField, strFromDate, strToDate):
+    if strFromDate and strToDate:
+        return get_range_query(strDateField, strFromDate, strToDate) + ", "
+    elif strFromDate:
+        strToDate = format_date_time(DEFAULT_TO_DATE)
+        return get_range_query(strDateField, strFromDate, strToDate) + ", "
+    elif strFromDate:
+        strToDate = format_date_time(DEFAULT_FROM_DATE)
+        return get_range_query(strDateField, strFromDate, strToDate) + ", "
+    else:
+        return ""
+
+
+# Function to construct exists query for elastic search to check existence of null values
+def get_exists_query(field, query_type):
+    exists_query = ""
+    if query_type == "not null":
+        exists_query = (
+            "{ "
+            + '"exists": { '
+            + '"field": "'
+            + str(field)
+            + '"'
+            + "} "
+            + "}, "
+        )
+    return exists_query
