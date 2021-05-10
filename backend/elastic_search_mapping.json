@@ -1,0 +1,22 @@
+{
+    "properties": {
+      "location_name": {
+        "type": "text",
+        "fields": {
+          "keyword":{
+            "type": "keyword",
+            "ignore_above": 32766
+          }
+        }
+      },
+      "city_name":{
+        "type": "text",
+        "fields": {
+          "keyword":{
+            "type": "keyword",
+            "ignore_above": 32766
+          }
+        }
+      }
+    }
+}

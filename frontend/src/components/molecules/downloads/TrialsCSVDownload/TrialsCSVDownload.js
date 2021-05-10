@@ -18,6 +18,7 @@ class TrialsCSVDownload extends Component {
 
   render() {
     const {
+      isDownloading,
       data,
     } = this.props;
 
@@ -25,8 +26,10 @@ class TrialsCSVDownload extends Component {
       <>
         <img className="download-icon" src={image} alt="icon" />
         <Button
+          disabled={isDownloading}
+          loading={isDownloading}
           className="download-button"
-          onClick={() => { return TrialsCSVDownload.downloadSearchConfig(data.search_results); }}
+          onClick={() => { return TrialsCSVDownload.downloadSearchConfig(data); }}
           type="primary"
         >
           Save Search Results
@@ -37,6 +40,7 @@ class TrialsCSVDownload extends Component {
 }
 
 TrialsCSVDownload.propTypes = {
+  isDownloading: PropTypes.bool.isRequired,
   data: PropTypes.object.isRequired,
 };
 
