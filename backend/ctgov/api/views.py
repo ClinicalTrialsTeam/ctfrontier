@@ -198,6 +198,9 @@ class TrialTimelinesApiView(APIView):
             SearchStudies.objects.all()
             .filter(nct_id__in=nct_list)
             .values(
+                "brief_title",
+                "status",
+                "sponsor_name",
                 "nct_id",
                 "study_start_date",
                 "primary_completion_date",

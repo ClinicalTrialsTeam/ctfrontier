@@ -72,6 +72,9 @@ class TrialTimelinesSerializer(serializers.ModelSerializer):
     class Meta:
         model = SearchStudies
         fields = [
+            "brief_title",
+            "status",
+            "sponsor_name",
             "nct_id",
             "study_start_date",
             "primary_completion_date",

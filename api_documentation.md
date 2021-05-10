@@ -440,7 +440,7 @@ Example query located in `database/examples/trial_timelines_query.json`:
 The POST request to the API should be as below.
 
 	{
-		"nct_ids":"NCT04727437, NCT04322357, NCT04727931, NCT04727424, NCT04322370, NCT04083053"
+		"nct_ids":["NCT04727437", "NCT04322357", "NCT04727931"]
 	}
 
 #### Output
@@ -449,38 +449,29 @@ Sample result of Trial Timelines API is given below.
 
 	[
 		{
-			"nct_id": "NCT04322370",
-			"study_start_date": "2020-08-21",
-			"primary_completion_date": "2022-05-31",
-			"study_phase": "N/A"
-		},
-		{
+			"brief_title": "Prevalence of Cognitive Disorders in Newly Diagnosed Epilepsy",
+			"status": "Not yet recruiting",
+			"sponsor_name": "Central Hospital, Nancy, France",
 			"nct_id": "NCT04727931",
 			"study_start_date": "2021-03-01",
 			"primary_completion_date": "2021-03-01",
 			"study_phase": null
 		},
 		{
-			"nct_id": "NCT04083053",
-			"study_start_date": "2019-09-17",
-			"primary_completion_date": "2021-01-15",
-			"study_phase": "N/A"
-		},
-		{
+			"brief_title": "Weekend Steroids and Exercise as Therapy for DMD",
+			"status": "Recruiting",
+			"sponsor_name": "University of Florida|U.S. Army Medical Research and Development Command",
 			"nct_id": "NCT04322357",
 			"study_start_date": "2020-07-30",
 			"primary_completion_date": "2022-10-31",
 			"study_phase": "Phase 2"
 		},
 		{
-			"nct_id": "NCT04727424",
-			"study_start_date": "2021-01-19",
-			"primary_completion_date": "2022-02-01",
-			"study_phase": "Phase 3"
-		},
-		{
+			"brief_title": "STOPping Anticoagulation for Isolated or Incidental Subsegmental Pulmonary Embolism",
+			"status": "Recruiting",
+			"sponsor_name": "Cimar|Royal United Hospitals Bath NHS Foundation Trust|University of Birmingham",
 			"nct_id": "NCT04727437",
-			"study_start_date": "2021-03-31",
+			"study_start_date": "2021-04-30",
 			"primary_completion_date": "2023-07-31",
 			"study_phase": "Phase 3"
 		}
