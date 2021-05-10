@@ -1033,3 +1033,37 @@ class StudySearches(models.Model):
     class Meta:
         managed = False
         db_table = "study_searches"
+
+
+class StatsExport(models.Model):
+    sponsor = models.CharField()
+    study_title = models.TextField()
+    study_type = models.CharField()
+    entry_year = models.IntegerField()
+    study_ID = models.CharField()
+    url = models.CharField()
+    indication = models.CharField()
+    treatment_name = models.CharField()
+    treatment_duration = models.TextField()
+    treatment_duration_unit = models.TextField()
+    study_phase = models.CharField()
+    arm_number = models.CharField()
+    arm_treatment = models.TextField()
+    arm_dose = models.TextField()
+    arm_dose_unit = models.TextField()
+    arm_regimen = models.TextField()
+    total_study_number_participants = models.IntegerField()
+    arm_number_of_participants = models.IntegerField()
+    p_value = models.DecimalField()
+    p_value_description = models.CharField()
+    method_description = models.TextField()
+    time_frame = models.TextField()
+    title = models.TextField()
+    description = models.TextField()
+    arm_population_age_group = models.CharField()
+    arm_population_male_percent = models.CharField()
+    arm_modality = models.TextField()
+
+    class Meta:
+        managed = False
+        db_table = "stats_export"
