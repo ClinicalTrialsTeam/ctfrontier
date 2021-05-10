@@ -23,6 +23,8 @@ services:
       - MODE=dev
       - DB_HOST=pgdb
       - DB_PORT=5432
+      - ES_HOST=elasticsearch
+      - ES_PORT=9200
     build: 
       context: ./backend
       dockerfile: Dockerfile.dev

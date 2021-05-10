@@ -2,8 +2,6 @@
 
 1. Bring up docker container using the command: `docker-compose -f elasticsearch.yml up`
 
-1. Kibana gives error while buildig index for elasticsearch. We don't use Kibana and so remove/kill Kibana container: `docker kill kibana`
-
 1. Connect to django container: `docker exec -it django /bin/sh`
 
 1. Run the command: `python manage.py search_index --create -f`
