@@ -482,13 +482,13 @@ Sample result of Trial Timelines API is given below.
 The endpoint for Trials Dashboard API is:
 http://localhost:8000/ctgov/api/trials_dashboard
 
-Trials Dashboard API accepts same parameter list as that of Clinical Studies Search API except that "first", "last" and "metadata_required" parameters are not required. The API will return trials count by phases, intervention types, status and top 10 sponsors.
+Trials Dashboard API accepts same parameter list as that of Clinical Studies Search API except that "first", "last" and "metadata_required" parameters are not required. The API will return trials count by phases, intervention types, status, top 10 sponsors and up to 100 nct_ids.
 
 Example query located in `database/examples/trials_dashboard_query.json`:
 The POST request to the API should be as below.
 
 	{
-		"status":"Recruiting|Completed|Active, not recruiting",
+		"status": ["Recruiting", "Completed", "Active, not recruiting"],
 		"condition":"",
 		"other_terms":"",
 		"country":"",
@@ -498,7 +498,7 @@ The POST request to the API should be as below.
 		"eligibility_criteria":"",
 		"modality":"",
 		"sponsor":"",
-		"phase":"Phase 1, Phase 2, Phase 3",
+		"phase": ["Phase 1", "Phase 2", "Phase 3"],
 		"start_date_from":"2019-01-01",
 		"start_date_to":"2020-01-01",
 		"primary_completion_date_from":"",
@@ -512,7 +512,7 @@ The POST request to the API should be as below.
 		"study_results":"",
 		"study_type":"",
 		"eligibility_age":"",
-		"eligibility_age_group":"child, adult, older adult",
+		"eligibility_age_group":["child", "adult", "older adult"],
 		"eligibility_gender":"",
 		"eligibility_ethnicity":"",
 		"eligibility_condition":"",
@@ -525,7 +525,7 @@ The POST request to the API should be as below.
 		"study_funder_type":"",
 		"study_document_type":"",
 		"study_results_submitted":"",
-		"study_roa":"Oral, Intradermal, Intravenous",
+		"study_roa":["Oral", "Intradermal", "Intravenous"],
 		"condition_terms":"",
 		"city":"",
 		"state":""
@@ -538,106 +538,136 @@ Sample result of Trials Dashboard API is given below.
 	{
 		"sponsors": [
 			{
-				"name": "GlaxoSmithKline",
-				"trials_count": 3
-			},
-			{
-				"name": "Chong Kun Dang Pharmaceutical",
-				"trials_count": 3
+				"name": "Boehringer Ingelheim",
+				"trials_count": 24
 			},
 			{
 				"name": "National Institute of Allergy and Infectious Diseases (NIAID)",
-				"trials_count": 3
+				"trials_count": 14
 			},
 			{
-				"name": "Novo Nordisk A/S",
-				"trials_count": 2
+				"name": "Pfizer",
+				"trials_count": 10
 			},
 			{
-				"name": "Galapagos NV",
-				"trials_count": 2
+				"name": "GlaxoSmithKline",
+				"trials_count": 10
+			},
+			{
+				"name": "Celgene",
+				"trials_count": 8
+			},
+			{
+				"name": "Ain Shams University",
+				"trials_count": 8
+			},
+			{
+				"name": "Hoffmann-La Roche",
+				"trials_count": 8
 			},
 			{
 				"name": "AstraZeneca",
-				"trials_count": 1
+				"trials_count": 8
 			},
 			{
-				"name": "Astellas Pharma Global Development, Inc.",
-				"trials_count": 1
+				"name": "Janssen Research & Development, LLC",
+				"trials_count": 7
 			},
 			{
-				"name": "AllVascular",
-				"trials_count": 1
-			},
-			{
-				"name": "Cairo University",
-				"trials_count": 1
-			},
-			{
-				"name": "Aptuit Srl",
-				"trials_count": 1
+				"name": "Merck Sharp & Dohme Corp.",
+				"trials_count": 7
 			}
 		],
 		"phases": [
 			{
 				"study_phase": "Early Phase 1",
-				"trials_count": 2
+				"trials_count": 33
 			},
 			{
 				"study_phase": "Phase 1",
-				"trials_count": 29
+				"trials_count": 290
 			},
 			{
 				"study_phase": "Phase 1/Phase 2",
-				"trials_count": 4
+				"trials_count": 48
 			},
 			{
 				"study_phase": "Phase 2",
-				"trials_count": 3
+				"trials_count": 172
 			},
 			{
 				"study_phase": "Phase 2/Phase 3",
-				"trials_count": 1
+				"trials_count": 31
 			},
 			{
 				"study_phase": "Phase 3",
-				"trials_count": 11
+				"trials_count": 108
 			}
 		],
 		"interventions": [
 			{
+				"intervention_type": "Behavioral",
+				"trials_count": 3
+			},
+			{
 				"intervention_type": "Biological",
-				"trials_count": 4
+				"trials_count": 56
 			},
 			{
 				"intervention_type": "Combination Product",
-				"trials_count": 2
+				"trials_count": 11
 			},
 			{
 				"intervention_type": "Device",
+				"trials_count": 12
+			},
+			{
+				"intervention_type": "Diagnostic Test",
 				"trials_count": 2
 			},
 			{
+				"intervention_type": "Dietary Supplement",
+				"trials_count": 10
+			},
+			{
 				"intervention_type": "Drug",
-				"trials_count": 45
+				"trials_count": 609
+			},
+			{
+				"intervention_type": "Genetic",
+				"trials_count": 1
 			},
 			{
 				"intervention_type": "Other",
-				"trials_count": 3
+				"trials_count": 51
+			},
+			{
+				"intervention_type": "Procedure",
+				"trials_count": 7
+			},
+			{
+				"intervention_type": "Radiation",
+				"trials_count": 4
 			}
 		],
 		"status": [
 			{
 				"status": "Active, not recruiting",
-				"trials_count": 5
+				"trials_count": 70
 			},
 			{
 				"status": "Completed",
-				"trials_count": 26
+				"trials_count": 264
 			},
 			{
 				"status": "Recruiting",
-				"trials_count": 19
+				"trials_count": 348
 			}
+		],
+		"nct_ids": [
+			"NCT03560011",
+			"NCT03526874",
+			"NCT03775096",
+			...
 		]
 	}

@@ -13,6 +13,7 @@ import './DownloadModal.css';
 class DownloadModal extends Component {
   render() {
     const {
+      isDownloading,
       isModalVisible,
       handleOk,
       handleCancel,
@@ -33,10 +34,10 @@ class DownloadModal extends Component {
         <Divider plain orientation="left">Search Results Download Options</Divider>
         <Row key="row-downloads-standard" justify="space-around">
           <Col key="col-downloads-1" span={12}>
-            <TrialsCSVDownload data={data} />
+            <TrialsCSVDownload data={data} isDownloading={isDownloading} />
           </Col>
           <Col key="col-downloads-2" span={12}>
-            <TrialsJSONDownload data={data} />
+            <TrialsJSONDownload data={data} isDownloading={isDownloading} />
           </Col>
         </Row>
         <br />
@@ -55,6 +56,7 @@ class DownloadModal extends Component {
 }
 
 DownloadModal.propTypes = {
+  isDownloading: PropTypes.bool.isRequired,
   isModalVisible: PropTypes.bool.isRequired,
   handleOk: PropTypes.func.isRequired,
   handleCancel: PropTypes.func.isRequired,

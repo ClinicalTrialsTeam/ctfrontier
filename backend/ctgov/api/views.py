@@ -223,6 +223,7 @@ class SearchResultsExportApiView(APIView):
         q_title_acronym = filter_title_acronym(request)
         q_outcome_measure = filter_outcome_measure(request)
         q_eligibility_age = filter_eligibility_age(request)
+        q_eligibility_ethnicity = filter_eligibility_ethnicity(request)
         q_age_between = filter_age_between(request)
         q_study_roa = filter_study_roa(request)
         q_study_status = filter_study_status(request)
@@ -233,6 +234,7 @@ class SearchResultsExportApiView(APIView):
             .filter(q_title_acronym)
             .filter(q_outcome_measure)
             .filter(q_eligibility_age)
+            .filter(q_eligibility_ethnicity)
             .filter(q_age_between)
             .filter(q_study_roa)
             .filter(q_study_status)
@@ -253,6 +255,7 @@ class TrialsDashboardApiView(APIView):
         q_title_acronym = filter_title_acronym(request)
         q_outcome_measure = filter_outcome_measure(request)
         q_eligibility_age = filter_eligibility_age(request)
+        q_eligibility_ethnicity = filter_eligibility_ethnicity(request)
         q_age_between = filter_age_between(request)
         q_study_roa = filter_study_roa(request)
         q_study_status = filter_study_status(request)
@@ -263,6 +266,7 @@ class TrialsDashboardApiView(APIView):
             .filter(q_title_acronym)
             .filter(q_outcome_measure)
             .filter(q_eligibility_age)
+            .filter(q_eligibility_ethnicity)
             .filter(q_age_between)
             .filter(q_study_roa)
             .filter(q_study_status)
@@ -293,6 +297,9 @@ class TrialsDashboardApiView(APIView):
             .filter(nct__in=filter_results.all().values("nct_id"))
             .order_by("-trials_count")[:10]
         )
+        trials_dashboard_nct_ids = filter_results.all().values("nct_id")[:100]
+
+        nct_ids = [record["nct_id"] for record in trials_dashboard_nct_ids]
 
         r = Response(
             {
@@ -300,6 +307,7 @@ class TrialsDashboardApiView(APIView):
                 "phases": trials_dashboard_phase,
                 "interventions": trials_dashboard_interventions,
                 "status": trials_dashboard_status,
+                "nct_ids": nct_ids,
             },
             status=status.HTTP_200_OK,
         )
@@ -350,6 +358,7 @@ class SearchStudiesApiView(APIView):
             q_title_acronym = filter_title_acronym(request)
             q_outcome_measure = filter_outcome_measure(request)
             q_eligibility_age = filter_eligibility_age(request)
+            q_eligibility_ethnicity = filter_eligibility_ethnicity(request)
             q_age_between = filter_age_between(request)
             q_study_roa = filter_study_roa(request)
             q_study_status = filter_study_status(request)
@@ -360,6 +369,7 @@ class SearchStudiesApiView(APIView):
                 .filter(q_title_acronym)
                 .filter(q_outcome_measure)
                 .filter(q_eligibility_age)
+                .filter(q_eligibility_ethnicity)
                 .filter(q_age_between)
                 .filter(q_study_roa)
                 .filter(q_study_status)
@@ -644,10 +654,13 @@ def filter_eligibility_age(request):
 def filter_eligibility_ethnicity(request):
     eligibility_ethnicity_list = request.data.get("eligibility_ethnicity")
 
+    if any(s.lower() == "white" for s in eligibility_ethnicity_list):
+        eligibility_ethnicity_list.append("caucasian")
+
     q_eligibility_ethnicity = Q()
     if eligibility_ethnicity_list:
         ethnicity_queries = [
-            Q(status__iexact=ethnicity.strip())
+            Q(eligibility_criteria__iregex=fr"\y{ethnicity.strip()}\y")
             for ethnicity in eligibility_ethnicity_list
         ]
         q_eligibility_ethnicity = ethnicity_queries.pop()

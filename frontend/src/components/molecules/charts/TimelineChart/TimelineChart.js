@@ -13,6 +13,7 @@ class TimelineChart extends Component {
           tempArray.push(myArray[i].start_date);
           tempArray.push(myArray[i].completion_date);
           tempArray.push(myArray[i].sponsor);
+          tempArray.push(myArray[i].status);
         }
       }
       return tempArray;
@@ -25,7 +26,7 @@ class TimelineChart extends Component {
     let maxDate = '1970-01-01';
     const timelineData = [];
 
-    data.search_results.forEach((element) => {
+    data.forEach((element) => {
       const startDate = element.study_start_date;
       if (startDate < minDate) {
         minDate = startDate;
@@ -36,7 +37,7 @@ class TimelineChart extends Component {
       }
     });
 
-    data.search_results.forEach((element) => {
+    data.forEach((element) => {
       let elementStartDate;
       if (!element.study_start_date) {
         elementStartDate = minDate;
@@ -120,6 +121,7 @@ class TimelineChart extends Component {
               const startDate = resultObject[2];
               const completionDate = resultObject[3];
               const sponsor = resultObject[4];
+              const status = resultObject[5];
               return (
                 <div width="100px">
                   <br />
@@ -142,6 +144,10 @@ class TimelineChart extends Component {
                   <p>
                     <b>Sponsor: </b>
                     {sponsor}
+                  </p>
+                  <p>
+                    <b>Status: </b>
+                    {status}
                   </p>
                 </div>
               );
