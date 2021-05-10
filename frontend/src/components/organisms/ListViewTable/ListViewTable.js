@@ -62,7 +62,6 @@ class ListViewTable extends Component {
       isTimelineDisabled: true,
       isDownloadDisabled: true,
       payload: this.props.history.location.state.payload,
-      // searchData: this.props.history.location.state.data,
       dashboardData: {},
       exportData: {},
       timelineData: {},
@@ -111,7 +110,6 @@ class ListViewTable extends Component {
     // Getting export data
     try {
       const exportResponse = await ctgov.post('search_results_export', payload);
-      console.log(exportResponse.data);
       this.setState({
         exportData: exportResponse.data,
         isDownloadDisabled: false,

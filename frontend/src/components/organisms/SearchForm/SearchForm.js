@@ -452,15 +452,12 @@ class SearchForm extends Component {
     try {
       if (!('condition' in res)) {
         const response = await ctgov.post('search_studies', payload);
-        console.log(payload);
-        console.log(response.data);
         this.setState({
           searchResults: response.data,
           payload,
         });
       } else {
         log.info(`ctgov.post("search_studies") - ${JSON.stringify(res, null, 1)}`);
-        console.log(res);
         const response = await ctgov.post('search_studies', res);
         log.info(`Search studies returned response size ${byteSize(JSON.stringify(res.data, null, 1))}`);
         this.setState({
