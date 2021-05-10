@@ -39,8 +39,10 @@ def connect_and_execute_psql(query, data):
             cursor = connection.cursor()
             # Executing a SQL query
             cursor.execute(query, data)
-            if query.__contains__("SELECT") and not query.__contains__(
-                "CREATE"
+            if (
+                query.__contains__("SELECT")
+                and not query.__contains__("CREATE")
+                and not query.__contains__("DROP")
             ):
                 # Fetch result
                 record = cursor.fetchall()
@@ -294,5 +296,5 @@ def current_time():
 
 print(f"start time: {current_time()}")
 target_find()
-endpoints()
+# endpoints()
 print(f"finish time: {current_time()}")
