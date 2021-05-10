@@ -22,8 +22,6 @@ class TimelineChart extends Component {
       data,
     } = this.props;
 
-    console.log(data);
-
     let minDate = '2040-01-01';
     let maxDate = '1970-01-01';
     const timelineData = [];
