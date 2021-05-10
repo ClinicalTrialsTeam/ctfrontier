@@ -284,8 +284,19 @@ class SearchForm extends Component {
   }
 
   handleEthnicityChange(e) {
+    const displayedValues = ['All', 'White / Caucasian', 'Hispanic or Latino', 'Black or African American', 'Asian', 'American Indian or Alaska Native', 'Native Hawaiian or Pacific Islander'];
+    const expectedValues = ['', 'White', 'Hispanic', 'African', 'Asian', 'Native', 'Hawai'];
+    const ethnicitiesPayload = [];
+    e.forEach((item) => {
+      if (displayedValues.includes(item)) {
+        const index = displayedValues.indexOf(item);
+        if (index !== -1) {
+          ethnicitiesPayload.push(expectedValues[index]);
+        }
+      }
+    });
     this.setState({
-      ethnicity: e,
+      ethnicity: ethnicitiesPayload,
     });
   }
 
