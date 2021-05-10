@@ -33,7 +33,9 @@ def connect_and_execute_psql(query, data):
             cursor = connection.cursor()
             # Executing a SQL query
             cursor.execute(query, data)
-            if query.__contains__("SELECT"):
+            if query.__contains__("SELECT") and not query.__contains__(
+                "CREATE"
+            ):
                 # Fetch result
                 record = cursor.fetchall()
                 return record
@@ -205,7 +207,7 @@ def target_find():
 
 
 def endpoints():
-    sql_command = """CREATE MATERIALIZED VIEW test AS SELECT spns.name sponsor,
+    sql_command = """CREATE MATERIALIZED VIEW ctgov.test AS SELECT spns.name sponsor,
     stds.brief_title study_title,
     stds.study_type study_type,
     cv.registered_in_calendar_year entry_year,
@@ -261,7 +263,7 @@ def endpoints():
     LEFT JOIN ctgov.modality mods
     ON spns.nct_id = mods.nct_id
     WHERE oag.ctgov_group_code LIKE 'O%'
-    ORDER BY spns.nct_id, oag.ctgov_group_code, conds.name, dg.title"""
+    ORDER BY spns.nct_id, oag.ctgov_group_code, conds.name, dg.title LIMIT 2000"""
 
     connect_and_execute_psql(sql_command, None)
 
