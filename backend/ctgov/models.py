@@ -1348,7 +1348,7 @@ class Endpoints(models.Model):
     arm_endpoint = models.TextField()
     endpoint_description = models.TextField()
     arm_population_age_group = models.TextField()
-    arm_population_male_percent = models.TestField()
+    arm_population_male_percent = models.TextField()
     arm_modality = models.TextField()
 
     class Meta:
