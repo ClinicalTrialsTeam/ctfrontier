@@ -59,11 +59,12 @@ class ListViewTable extends Component {
       isTimelineModalVisible: false,
       isDownloadModalVisible: false,
       isDashboardDisabled: true,
-      isTimelineDisabled: false,
+      isTimelineDisabled: true,
       isDownloadDisabled: false,
       payload: this.props.history.location.state.payload,
       searchData: this.props.history.location.state.data,
       dashboardData: {},
+      timelineData: {},
       resultsByPage: {},
       studyCount: '...',
     };
@@ -90,10 +91,18 @@ class ListViewTable extends Component {
     }
     // Getting dashboard data
     try {
-      const response = await ctgov.post('trials_dashboard', payload);
+      const dashboardResponse = await ctgov.post('trials_dashboard', payload);
       this.setState({
-        dashboardData: response.data,
+        dashboardData: dashboardResponse.data,
         isDashboardDisabled: false,
+      });
+      const timelinePayload = {
+        nct_ids: dashboardResponse.data.nct_ids,
+      };
+      const timelineResponse = await ctgov.post('trial_timelines', timelinePayload);
+      this.setState({
+        timelineData: timelineResponse.data,
+        isTimelineDisabled: false,
       });
     } catch (err) {
       log.error(err);
@@ -320,6 +329,7 @@ class ListViewTable extends Component {
                       <Tooltip title="View dashboard">
                         <Button
                           disabled={this.state.isDashboardDisabled}
+                          loading={this.state.isDashboardDisabled}
                           key="btn_dashboard"
                           onClick={() => {
                             return this.setDashboardModalVisible(true);
@@ -330,6 +340,7 @@ class ListViewTable extends Component {
                       <Tooltip title="View timeline">
                         <Button
                           disabled={this.state.isTimelineDisabled}
+                          loading={this.state.isTimelineDisabled}
                           key="btn_timeline"
                           onClick={() => {
                             return this.setTimelineModalVisible(true);
@@ -360,7 +371,7 @@ class ListViewTable extends Component {
                       />
                       <TimelineModal
                         isModalVisible={this.state.isTimelineModalVisible}
-                        data={this.state.searchData}
+                        data={this.state.timelineData}
                         handleOk={() => {
                           return this.setTimelineModalVisible(false, '');
                         }}
