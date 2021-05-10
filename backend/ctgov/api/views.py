@@ -293,6 +293,9 @@ class TrialsDashboardApiView(APIView):
             .filter(nct__in=filter_results.all().values("nct_id"))
             .order_by("-trials_count")[:10]
         )
+        trials_dashboard_nct_ids = filter_results.all().values("nct_id")[:100]
+
+        nct_ids = [record["nct_id"] for record in trials_dashboard_nct_ids]
 
         r = Response(
             {
@@ -300,6 +303,7 @@ class TrialsDashboardApiView(APIView):
                 "phases": trials_dashboard_phase,
                 "interventions": trials_dashboard_interventions,
                 "status": trials_dashboard_status,
+                "nct_ids": nct_ids,
             },
             status=status.HTTP_200_OK,
         )
