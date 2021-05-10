@@ -12,6 +12,12 @@ from os.path import join, dirname
 dotenv_path = join(dirname(__file__), ".env")
 load_dotenv(dotenv_path)
 
+# SET VALUE TO LIMIT QUERY SIZE ACROSS ALL THREE DB PULLS ex. "LIMIT 500"
+#
+LIMIT_VALUE = ""
+
+#
+
 
 def connect_and_execute_psql(query, data):
 
@@ -119,7 +125,9 @@ def target_find():
 
     nlp = spacy.load("en_core_sci_sm")
 
-    sql_command = "SELECT bs.nct_id, CONCAT(bs.description, ' ',  dd.description) FROM ctgov.brief_summaries bs INNER JOIN ctgov.detailed_descriptions dd ON bs.nct_id = dd.nct_id"
+    sql_command = "SELECT bs.nct_id, CONCAT(bs.description, ' ',  dd.description) FROM ctgov.brief_summaries bs INNER JOIN ctgov.detailed_descriptions dd ON bs.nct_id = dd.nct_id {limit}".format(
+        limit=LIMIT_VALUE
+    )
     print(f"Run command: {sql_command}")
     study_description_records = connect_and_execute_psql(
         sql_command,
@@ -160,7 +168,9 @@ def target_find():
         )
 
     study_description_records = connect_and_execute_psql(  # open new connection and collect NER data limited to DRUG, BIOLOGICAL, and GENETIC types
-        "SELECT nct_id, entity_group FROM ctgov.recognized_entities WHERE nct_id IN (SELECT nct_id FROM ctgov.interventions WHERE intervention_type = 'Drug' OR intervention_type = 'Genetic' OR intervention_type = 'Biological')",
+        "SELECT nct_id, entity_group FROM ctgov.recognized_entities WHERE nct_id IN (SELECT nct_id FROM ctgov.interventions WHERE intervention_type = 'Drug' OR intervention_type = 'Genetic' OR intervention_type = 'Biological') {limit}".format(
+            limit=LIMIT_VALUE
+        ),
         None,
     )
 
@@ -182,8 +192,11 @@ def target_find():
                 (record[0], list_t),
             )
 
+    materialized_view_query = "CREATE MATERIALIZED VIEW ctgov.target_view AS SELECT * FROM ctgov.target"
+    connect_and_execute_psql(materialized_view_query, None)
+
     study_description_records = connect_and_execute_psql(  # open new connection and collect NER data ALL
-        "SELECT * FROM ctgov.recognized_entities",
+        "SELECT * FROM ctgov.recognized_entities LIMIT 500",
         None,
     )
 
@@ -205,9 +218,12 @@ def target_find():
                 (record[0], list_t),
             )
 
+    materialized_view_query = "CREATE MATERIALIZED VIEW ctgov.modality_view AS SELECT * FROM ctgov.modality"
+    connect_and_execute_psql(materialized_view_query, None)
+
 
 def endpoints():
-    sql_command = """CREATE MATERIALIZED VIEW ctgov.test AS SELECT spns.name sponsor,
+    sql_command = """CREATE MATERIALIZED VIEW ctgov.endpoint_view AS SELECT spns.name sponsor,
     stds.brief_title study_title,
     stds.study_type study_type,
     cv.registered_in_calendar_year entry_year,
@@ -263,8 +279,12 @@ def endpoints():
     LEFT JOIN ctgov.modality mods
     ON spns.nct_id = mods.nct_id
     WHERE oag.ctgov_group_code LIKE 'O%'
-    ORDER BY spns.nct_id, oag.ctgov_group_code, conds.name, dg.title LIMIT 2000"""
-
+    ORDER BY spns.nct_id, oag.ctgov_group_code, conds.name, dg.title {limit}""".format(
+        limit=LIMIT_VALUE
+    )
+    print(
+        "Running: CREATE MATERIALIZED VIEW ctgov.endpoint_view AS SELECT...."
+    )
     connect_and_execute_psql(sql_command, None)
 
 
@@ -273,6 +293,6 @@ def current_time():
 
 
 print(f"start time: {current_time()}")
-# target_find()
+target_find()
 endpoints()
 print(f"finish time: {current_time()}")
