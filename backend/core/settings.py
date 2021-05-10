@@ -235,3 +235,7 @@ if not PROD:
         "debug_toolbar.panels.redirects.RedirectsPanel",
         "debug_toolbar.panels.profiling.ProfilingPanel",
     ]
+
+
+# Configuration to enable elastic search logic in views.py
+ENABLE_ELASTIC = "OFF"
