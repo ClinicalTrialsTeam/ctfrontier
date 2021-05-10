@@ -72,6 +72,9 @@ class TrialTimelinesSerializer(serializers.ModelSerializer):
     class Meta:
         model = SearchStudies
         fields = [
+            "brief_title",
+            "status",
+            "sponsor_name",
             "nct_id",
             "study_start_date",
             "primary_completion_date",
@@ -131,10 +134,14 @@ class SearchStudiesDocumentSerializer(DocumentSerializer):
             "brief_title",
             "nct_id",
             "condition_name",
-            "study_detailed_desc",
-            "country_name",
             "intervention_name",
-            "eligibility_criteria",
-            "study_brief_desc",
             "location_name",
+            "study_phase",
+            "sponsor_name",
+            "location_name",
+            "study_brief_desc",
+            "primary_outcome_measures",
+            "secondary_outcome_measures",
+            "study_start_date",
+            "primary_completion_date",
         ]
