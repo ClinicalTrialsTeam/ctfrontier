@@ -5,7 +5,7 @@ from elasticsearch import Elasticsearch
 from . import models
 
 
-connections.create_connection(timeout=3000)
+connections.create_connection(timeout=300)
 
 
 def bulk_indexing():

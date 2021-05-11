@@ -53,7 +53,6 @@ ELASTICSEARCH_DSL = {
         "timeout": 90,
     },
 }
-logger.info(f"ELASTICSEARCH_DSL = {ELASTICSEARCH_DSL}")
 
 # Application definition
 

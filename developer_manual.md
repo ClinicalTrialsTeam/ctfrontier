@@ -81,6 +81,16 @@ There are two options for running the CTFrontier application.
 
 Because Elasticsearch and Kibana are highly resource intensive, `docker-compose up` does not run them by default. To run the application with Elasticsearch run `docker-compose -f elasticsearch.yml up`.
 
+*Steps To Build Initial Elasticsearch Index*
+
+1. In another terminal, connect to django container: `docker exec -it django /bin/sh`
+
+1. Run `python setup_elasticsearch.py`
+
+1. Once above command is complete, exit django container: `exit`
+
+1. If you want to delete the index, connect to the django container run the command: `python manage.py search_index --delete`.
+
 
 ### Usage: Where to reach each service
 
@@ -235,6 +245,8 @@ CTFrontier uses a config which is stored in AWS SSM Parameter. Using a config st
 	`django_secret` - Autogenerate this from `scripts/gen_random_key.py` 
 	`db_host` - Put a placeholder here initially.  
 	`db_password` - Put a placeholder here initially. 
+	`es_host` - Put a placeholder here initially.
+	`elasticsearch_enabled` - Set as false initially.
 
 1. Run the command `ctf config create`. You will be prompted to enter an initial config file. Enter the name of your config file.
 
@@ -273,7 +285,7 @@ At this point you should have an AWS ECS cluster running with a backend and a fr
 
 Now that your stack is running you can update the database related config variables.
 
-Use `ctf config edit` to edit. Set `db_host` to your RDS instance endpoint and `db_password` to the database password stored in AWS Secrets Manager.
+Use `ctf config edit` to edit. Set `db_host` to your RDS instance endpoint, set `db_password` to the database password stored in AWS Secrets Manager, and set `es_host` to your Elasticsearch VPC endpoint.
 
 After the config has been edited. You can use `ctf config show` to confirm the correct values are set.
 
@@ -319,6 +331,26 @@ Finally, disconnect from the RDS instance and run `psql -h localhost -p 10101 -U
 
 The `search_studies.sql` script can be found in `database/scripts`.
 
+### Setup: Set up elasticsearch
+
+1. Start with `ELASTICSEARCH_ENABLED` set to false in the config. (See the config with `ctf config show`)
+
+1. Connect to the EC2 instance running django with `ssh -i CtfBackendKeyPair.pem ec2-user@[ec2-DNS]`.
+
+1. From within the EC2 instance, run `docker ps` to find the name of the running container and then `docker exec -it <name> /bin/sh` to connect to the container.
+
+1. From within the django container run `python setup_elasticsearch.py`. This may take a long time but only has to be done once.
+
+1. Exit out of the docker container / EC2 instance, then run `ctf config edit` and set `ELASTICSEARCH_ENABLED` to true.
+
+1. Propagate this change to the CloudFormation stack resources by running `ctf stack update` to update the environment variables for the backend task. This should automatically restart the backend task with the new environment variables but if it doesn't then you can run `ctf container deploy.backend` to force a new deployment of the backend.
+
+1. Now the website should use Elasticsearch for the "search_studies" endpoint.
+
+1. To delete index run `python manage.py search_index --delete` from a running django task.
+
 **At this point you should have a working version of ctfrontier in the cloud!**
+
+
 
 
