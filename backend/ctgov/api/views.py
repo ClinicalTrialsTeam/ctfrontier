@@ -460,11 +460,6 @@ def valid_number(agestr):
     return status
 
 
-# Convert passed age parameter to number
-def convert_to_number(agestr):
-    return float(agestr)
-
-
 # Function to construct django filters based on search parameters posted to REST API
 def construct_filters(request):
     nct_id = request.data.get("nct_id")
@@ -647,8 +642,8 @@ def filter_eligibility_age(request):
     q_eligibility_age = Q()
     if valid_number(eligibility_age):
         q_eligibility_age = Q(
-            eligibility_min_age_numeric=convert_to_number(eligibility_age)
-        ) | Q(eligibility_max_age_numeric=convert_to_number(eligibility_age))
+            eligibility_min_age_numeric=float(eligibility_age)
+        ) | Q(eligibility_max_age_numeric=float(eligibility_age))
 
     return q_eligibility_age
 
@@ -870,8 +865,8 @@ def construct_elastic_filters(request, first, last):
 
     eligibility_age = request.data.get("eligibility_age")
     if valid_number(eligibility_age):
-        eligibility_age_lower_limit = convert_to_number(eligibility_age)
-        eligibility_age_upper_limit = convert_to_number(eligibility_age)
+        eligibility_age_lower_limit = float(eligibility_age)
+        eligibility_age_upper_limit = float(eligibility_age)
     else:
         eligibility_age_lower_limit = 0
         eligibility_age_upper_limit = 200
@@ -902,53 +897,56 @@ def construct_elastic_filters(request, first, last):
         eligibility_age_group_upper_limit_2 = 200
 
     match_query_input = [
-        ("status", request.data.get("status", "")),
-        ("condition_name", request.data.get("condition", "")),
-        ("condition_name", request.data.get("condition_terms", "")),
-        ("brief_title", request.data.get("other_terms", "")),
-        ("nct_id", request.data.get("nct_id", "")),
-        ("country_name", request.data.get("country", "")),
-        ("city_name", request.data.get("city", "")),
-        ("state_name", request.data.get("state", "")),
-        ("intervention_name", request.data.get("intervention", "")),
-        ("study_brief_desc", request.data.get("target", "")),
-        ("eligibility_criteria", request.data.get("eligibility_criteria", "")),
+        ("status", request.data.get("status")),
+        ("condition_name", request.data.get("condition")),
+        ("condition_name", request.data.get("condition_terms")),
+        ("brief_title", request.data.get("other_terms")),
+        ("nct_id", request.data.get("nct_id")),
+        ("country_name", request.data.get("country")),
+        ("city_name", request.data.get("city")),
+        ("state_name", request.data.get("state")),
+        ("intervention_name", request.data.get("intervention")),
+        ("study_brief_desc", request.data.get("target")),
+        ("eligibility_criteria", request.data.get("eligibility_criteria")),
         (
             "eligibility_healthy_volunteer",
-            request.data.get("eligibility_healthy_volunteer", ""),
+            request.data.get("eligibility_healthy_volunteer"),
         ),
-        ("brief_title", request.data.get("modality", "")),
-        ("sponsor_name", request.data.get("sponsor", "")),
-        ("eligibility_gender", request.data.get("eligibility_gender", "")),
+        ("brief_title", request.data.get("modality")),
+        ("sponsor_name", request.data.get("sponsor")),
+        ("eligibility_gender", request.data.get("eligibility_gender")),
         (
             "eligibility_criteria",
-            request.data.get("eligibility_ethnicity", ""),
+            request.data.get("eligibility_ethnicity"),
         ),
         (
             "eligibility_criteria",
-            request.data.get("eligibility_condition", ""),
+            request.data.get("eligibility_condition"),
         ),
-        ("sponsor_name", request.data.get("study_collaborator", "")),
-        ("study_ids", request.data.get("study_ids", "")),
-        ("location_name", request.data.get("study_location_terms", "")),
-        ("funder_type", request.data.get("study_funder_type", "")),
-        ("official_title", request.data.get("study_title_acronym", "")),
-        ("acronym", request.data.get("study_title_acronym", "")),
+        ("sponsor_name", request.data.get("study_collaborator")),
+        ("study_ids", request.data.get("study_ids")),
+        ("location_name", request.data.get("study_location_terms")),
+        ("funder_type", request.data.get("study_funder_type")),
+        ("official_title", request.data.get("study_title_acronym")),
+        ("acronym", request.data.get("study_title_acronym")),
         (
             "primary_outcome_measures",
-            request.data.get("study_outcome_measure", ""),
+            request.data.get("study_outcome_measure"),
         ),
         (
             "secondary_outcome_measures",
-            request.data.get("study_outcome_measure", ""),
+            request.data.get("study_outcome_measure"),
         ),
-        ("study_phase", request.data.get("phase", "")),
-        ("study_brief_desc", request.data.get("study_roa", "")),
-        ("study_type", request.data.get("study_type", "")),
-        ("document_types", request.data.get("study_document_type", "")),
+        ("study_phase", request.data.get("phase")),
+        ("study_brief_desc", request.data.get("study_roa")),
+        ("study_type", request.data.get("study_type")),
+        ("document_types", request.data.get("study_document_type")),
     ]
 
-    queries = [match_query(field, param) for field, param in match_query_input]
+    must_queries = []
+    for field, param in match_query_input:
+        if param:
+            must_queries.append(match_query(field, param))
 
     date_query_input = [
         ("study_start_date", start_date_from, start_date_to),
@@ -977,7 +975,7 @@ def construct_elastic_filters(request, first, last):
     for field, from_date, to_date in date_query_input:
         query = get_date_range(field, from_date, to_date)
         if query:
-            queries.append(query)
+            must_queries.append(query)
 
     exists_query_input = [
         ("results_first_posted_date", study_results_query_type),
@@ -988,9 +986,9 @@ def construct_elastic_filters(request, first, last):
     for field, query_type in exists_query_input:
         query = get_exists_query(field, query_type)
         if query:
-            queries.append(query)
+            must_queries.append(query)
 
-    queries.extend(
+    must_queries.extend(
         [
             get_gte_query(
                 "eligibility_min_age_numeric",
@@ -1021,8 +1019,8 @@ def construct_elastic_filters(request, first, last):
             "track_total_hits": True,
             "query": {
                 "bool": {
-                    "must": queries,
-                }
+                    "must": must_queries,
+                },
             },
         }
     )
@@ -1033,6 +1031,8 @@ def construct_elastic_filters(request, first, last):
 
 # Function to construct fuzzy match query json for elastic search
 def match_query(field, param):
+    if not param:
+        return None
     match_query = {
         "match": {
             field: {

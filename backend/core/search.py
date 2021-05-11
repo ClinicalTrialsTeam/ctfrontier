@@ -10,7 +10,7 @@ connections.create_connection(timeout=3000)
 
 def bulk_indexing():
     ResponsibleParties.init()
-    es = Elasticsearch(timeout=3000, max_retries=10, retry_on_timeout=True)
+    es = Elasticsearch(timeout=300, max_retries=10, retry_on_timeout=True)
 
     success, failed = 0, 0
     for ok, item in streaming_bulk(
@@ -22,7 +22,7 @@ def bulk_indexing():
         chunk_size=100,
         max_retries=10,
         max_backoff=600,
-        request_timeout=3000,
+        request_timeout=300,
     ):
         if not ok:
             print(f"Request failed: {item}")
