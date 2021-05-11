@@ -1036,7 +1036,7 @@ def match_query(field, param):
     match_query = {
         "match": {
             field: {
-                "query": param,
+                "query": str(param),
                 "zero_terms_query": "all",
                 "fuzziness": "AUTO",
             }
