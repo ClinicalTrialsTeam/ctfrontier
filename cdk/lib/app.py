@@ -12,6 +12,8 @@ stack_props = {
     "django_secret": Param("django_secret").get_value(decrypt=True),
     "db_host": Param("db_host").get_value(),
     "db_password": Param("db_password").get_value(decrypt=True),
+    "es_host": Param("es_host").get_value(),
+    "elasticsearch_enabled": Param("elasticsearch_enabled").get_value(),
 }
 
 app = core.App()

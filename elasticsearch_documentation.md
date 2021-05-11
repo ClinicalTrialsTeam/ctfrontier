@@ -14,14 +14,16 @@
 
 1. Once above command is complete, exit django container: `exit`
 
-1. If you want to delete the index, run the command: `curl -XDELETE 'http://localhost:9200/search_studies'` from your shell/command prompt.
+1. If you want to delete the index, connect to the django conatiner run the command: `python manage.py search_index --delete`.
 
 
 #### Cloud Instructions
 
 1. Run `ctf config edit` and set ELASTICSEARCH_ENABLED to true.
 
-1. Propogate this change to the CloudFormation stack resouces by running `ctf stack update`.
+1. Propogate this change to the CloudFormation stack resouces by running `ctf stack update` to update the environment variables for the backend task and then run `ctf container deploy.backend` to restart the backend task with the new config.
+
+1. 
 
 (Have django container automatically run commands if elasticsearch is enabled)
 

@@ -13,10 +13,12 @@ class CtfElasticsearch(core.Construct):
         vpc,
         preferred_az,
         database_sg,
+        backend_service,
+        es_port,
     ):
         super().__init__(scope, id)
 
-        es.Domain(
+        self.domain = es.Domain(
             self,
             "Domain",
             version=es.ElasticsearchVersion.V7_9,
@@ -42,4 +44,8 @@ class CtfElasticsearch(core.Construct):
                     subnet_type=ec2.SubnetType.PRIVATE,
                 )
             ],
+        )
+
+        self.domain.connections.allow_from(
+            backend_service.service, ec2.Port.tcp(es_port)
         )

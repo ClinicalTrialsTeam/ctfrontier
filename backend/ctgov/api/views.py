@@ -5,7 +5,12 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from elasticsearch import Elasticsearch
-from core.settings import ELASTICSEARCH_ENABLED
+
+ELASTICSEARCH_ENABLED = (
+    True
+    if getenv("ELASTICSEARCH_ENABLED", "False").lower() == "true"
+    else False
+)
 
 # Create a logger for this file
 logger = logging.getLogger(__name__)
@@ -939,90 +944,91 @@ def construct_elastic_filters(request, first, last):
         ),
         ("study_phase", request.data.get("phase", "")),
         ("study_brief_desc", request.data.get("study_roa", "")),
+        ("study_type", request.data.get("study_type", "")),
+        ("document_types", request.data.get("study_document_type", "")),
     ]
 
-    match_queries = [
-        match_query(field, param) for field, param in match_query_input
+    queries = [match_query(field, param) for field, param in match_query_input]
+
+    date_query_input = [
+        ("study_start_date", start_date_from, start_date_to),
+        (
+            "primary_completion_date",
+            primary_completion_date_from,
+            primary_completion_date_to,
+        ),
+        (
+            "study_first_posted_date",
+            first_posted_date_from,
+            first_posted_date_to,
+        ),
+        (
+            "results_first_posted_date",
+            results_first_posted_date_from,
+            results_first_posted_date_to,
+        ),
+        (
+            "last_update_posted_date",
+            last_update_posted_date_from,
+            last_update_posted_date_to,
+        ),
     ]
+
+    for field, from_date, to_date in date_query_input:
+        query = get_date_range(field, from_date, to_date)
+        if query:
+            queries.append(query)
+
+    exists_query_input = [
+        ("results_first_posted_date", study_results_query_type),
+        ("results_submitted_qc_not_done", query_type_qc_not_done),
+        ("results_submitted_qc_done", query_type_qc_done),
+    ]
+
+    for field, query_type in exists_query_input:
+        query = get_exists_query(field, query_type)
+        if query:
+            queries.append(query)
+
+    queries.extend(
+        [
+            get_gte_query(
+                "eligibility_min_age_numeric",
+                eligibility_age_lower_limit,
+            ),
+            get_lte_query(
+                "eligibility_max_age_numeric",
+                eligibility_age_upper_limit,
+            ),
+            get_range_query(
+                "eligibility_min_age_numeric",
+                eligibility_age_group_lower_limit_1,
+                eligibility_age_group_upper_limit_1,
+            ),
+            get_range_query(
+                "eligibility_max_age_numeric",
+                eligibility_age_group_lower_limit_2,
+                eligibility_age_group_upper_limit_2,
+            ),
+        ]
+    )
 
     # Construct filter json object
-    filters = {
-        "from": first,
-        "size": last,
-        "track_total_hits": True,
-        "query": {
-            "bool": {
-                "must": [
-                    match_queries,
-                    get_gte_query(
-                        "eligibility_min_age_numeric",
-                        eligibility_age_lower_limit,
-                    ),
-                    get_lte_query(
-                        "eligibility_max_age_numeric",
-                        eligibility_age_upper_limit,
-                    ),
-                    get_range_query(
-                        "eligibility_min_age_numeric",
-                        eligibility_age_group_lower_limit_1,
-                        eligibility_age_group_upper_limit_1,
-                    ),
-                    get_range_query(
-                        "eligibility_max_age_numeric",
-                        eligibility_age_group_lower_limit_2,
-                        eligibility_age_group_upper_limit_2,
-                    ),
-                    (
-                        get_date_range(
-                            "study_start_date", start_date_from, start_date_to
-                        )
-                        + get_date_range(
-                            "primary_completion_date",
-                            primary_completion_date_from,
-                            primary_completion_date_to,
-                        )
-                        + get_date_range(
-                            "study_first_posted_date",
-                            first_posted_date_from,
-                            first_posted_date_to,
-                        )
-                        + get_date_range(
-                            "results_first_posted_date",
-                            results_first_posted_date_from,
-                            results_first_posted_date_to,
-                        )
-                        + get_date_range(
-                            "last_update_posted_date",
-                            last_update_posted_date_from,
-                            last_update_posted_date_to,
-                        )
-                        + get_exists_query(
-                            "results_first_posted_date",
-                            study_results_query_type,
-                        )
-                        + match_query(
-                            "study_type", request.data.get("study_type", "")
-                        )
-                    ),
-                    (
-                        get_exists_query(
-                            "results_submitted_qc_not_done",
-                            query_type_qc_not_done,
-                        )
-                        + get_exists_query(
-                            "results_submitted_qc_done", query_type_qc_done
-                        )
-                        + match_query(
-                            "document_types",
-                            request.data.get("study_document_type", ""),
-                        )
-                    ),
-                ]
-            }
-        },
-    }
+    filters = json.dumps(
+        {
+            "from": first,
+            "size": last,
+            "track_total_hits": True,
+            "query": {
+                "bool": {
+                    "must": queries,
+                }
+            },
+        }
+    )
+    logger.info(filters)
 
-    return json.dumps(filters)
+    return filters
 
 
 # Function to construct fuzzy match query json for elastic search
@@ -1070,15 +1076,15 @@ def get_gte_query(field, limit):
 
 
 # Function to construct date range query for elastic search
-def get_date_range(strDateField, strFromDate, strToDate):
-    if strFromDate and strToDate:
-        return get_range_query(strDateField, strFromDate, strToDate) + ", "
-    elif strFromDate:
-        strToDate = format_date_time(datetime.date.max)
-        return get_range_query(strDateField, strFromDate, strToDate) + ", "
-    elif strFromDate:
-        strToDate = format_date_time(datetime.date.min)
-        return get_range_query(strDateField, strFromDate, strToDate) + ", "
+def get_date_range(date_field, from_date, to_date):
+    if from_date and to_date:
+        return get_range_query(date_field, from_date, to_date)
+    elif from_date:
+        to_date = format_date_time(datetime.date.max)
+        return get_range_query(date_field, from_date, to_date)
+    elif from_date:
+        to_date = format_date_time(datetime.date.min)
+        return get_range_query(date_field, from_date, to_date)
     else:
         return ""
 
