@@ -12,6 +12,12 @@ from os.path import join, dirname
 dotenv_path = join(dirname(__file__), ".env")
 load_dotenv(dotenv_path)
 
+# SET VALUE TO LIMIT QUERY SIZE ACROSS ALL THREE DB PULLS ex. "LIMIT 500"
+#
+LIMIT_VALUE = ""
+
+#
+
 
 def connect_and_execute_psql(query, data):
 
@@ -33,7 +39,11 @@ def connect_and_execute_psql(query, data):
             cursor = connection.cursor()
             # Executing a SQL query
             cursor.execute(query, data)
-            if query.__contains__("SELECT"):
+            if (
+                query.__contains__("SELECT")
+                and not query.__contains__("CREATE")
+                and not query.__contains__("DROP")
+            ):
                 # Fetch result
                 record = cursor.fetchall()
                 return record
@@ -117,7 +127,9 @@ def target_find():
 
     nlp = spacy.load("en_core_sci_sm")
 
-    sql_command = "SELECT bs.nct_id, CONCAT(bs.description, ' ',  dd.description) FROM ctgov.brief_summaries bs INNER JOIN ctgov.detailed_descriptions dd ON bs.nct_id = dd.nct_id"
+    sql_command = "SELECT bs.nct_id, CONCAT(bs.description, ' ',  dd.description) FROM ctgov.brief_summaries bs INNER JOIN ctgov.detailed_descriptions dd ON bs.nct_id = dd.nct_id {limit}".format(
+        limit=LIMIT_VALUE
+    )
     print(f"Run command: {sql_command}")
     study_description_records = connect_and_execute_psql(
         sql_command,
@@ -158,7 +170,9 @@ def target_find():
         )
 
     study_description_records = connect_and_execute_psql(  # open new connection and collect NER data limited to DRUG, BIOLOGICAL, and GENETIC types
-        "SELECT nct_id, entity_group FROM ctgov.recognized_entities WHERE nct_id IN (SELECT nct_id FROM ctgov.interventions WHERE intervention_type = 'Drug' OR intervention_type = 'Genetic' OR intervention_type = 'Biological')",
+        "SELECT nct_id, entity_group FROM ctgov.recognized_entities WHERE nct_id IN (SELECT nct_id FROM ctgov.interventions WHERE intervention_type = 'Drug' OR intervention_type = 'Genetic' OR intervention_type = 'Biological') {limit}".format(
+            limit=LIMIT_VALUE
+        ),
         None,
     )
 
@@ -179,6 +193,9 @@ def target_find():
                 "INSERT INTO ctgov.target (nct_id, target) VALUES (%s, %s)",
                 (record[0], list_t),
             )
+
+    materialized_view_query = "CREATE MATERIALIZED VIEW ctgov.target_view AS SELECT * FROM ctgov.target"
+    connect_and_execute_psql(materialized_view_query, None)
 
     study_description_records = connect_and_execute_psql(  # open new connection and collect NER data ALL
         "SELECT * FROM ctgov.recognized_entities",
@@ -203,67 +220,74 @@ def target_find():
                 (record[0], list_t),
             )
 
+    materialized_view_query = "CREATE MATERIALIZED VIEW ctgov.modality_view AS SELECT * FROM ctgov.modality"
+    connect_and_execute_psql(materialized_view_query, None)
 
-def endpoints():
-    sql_command = """CREATE MATERIALIZED VIEW test AS SELECT spns.name sponsor,
-    stds.brief_title study_title,
-    stds.study_type study_type,
-    cv.registered_in_calendar_year entry_year,
-    stds.nct_id study_id,
-    lnks.url url,
-    conds.name indication,
-    dg.title treatment_name,
-    dg.description treatment_duration,
-    dg.description treatment_duration_unit,
-    stds.phase study_phase,
-    oag.ctgov_group_code arm_number,
-    otcms.title arm_treatment,
-    otcms.time_frame arm_dose_unit_regimen,
-    bc.count total_study_number_participants,
-    oc.count arm_number_of_participants,
-    oa.p_value p_value,
-    oa.p_value_description p_value_description,
-    oa.method_description statistical_method,
-    dgnotcms.time_frame arm_duration,
-    otcms.title arm_endpoint,
-    otcms.description endpoint_description,
-    concat(elig.minimum_age, maximum_age) AS arm_population_age_group,
-    CASE WHEN elig.gender = 'Male' THEN '100%'
-    WHEN elig.gender = 'Female' THEN '0%'
-    WHEN elig.gender = 'All' THEN 'Between 1% and 99%'
-    END AS arm_population_male_percent,
-    mods.modality arm_modality
-    FROM ctgov.sponsors spns
-    LEFT JOIN ctgov.studies stds
-    ON spns.nct_id = stds.nct_id
-    LEFT JOIN ctgov.calculated_values cv
-    ON spns.nct_id = cv.nct_id
-    LEFT JOIN ctgov.links lnks
-    ON spns.nct_id = lnks.nct_id
-    LEFT JOIN ctgov.conditions conds
-    ON spns.nct_id = conds.nct_id
-    LEFT JOIN ctgov.design_groups dg
-    ON spns.nct_id = dg.nct_id
-    LEFT JOIN ctgov.outcome_analysis_groups oag
-    ON spns.nct_id = oag.nct_id
-    LEFT JOIN ctgov.baseline_counts bc
-    ON spns.nct_id = bc.nct_id
-    LEFT JOIN ctgov.outcome_counts oc
-    ON spns.nct_id = oc.nct_id
-    LEFT JOIN ctgov.outcome_analyses oa
-    ON spns.nct_id = oa.nct_id
-    LEFT JOIN ctgov.design_outcomes dgnotcms
-    ON spns.nct_id = dgnotcms.nct_id
-    LEFT JOIN ctgov.outcomes otcms
-    ON spns.nct_id = otcms.nct_id
-    LEFT JOIN ctgov.eligibilities elig
-    ON spns.nct_id = elig.nct_id
-    LEFT JOIN ctgov.modality mods
-    ON spns.nct_id = mods.nct_id
-    WHERE oag.ctgov_group_code LIKE 'O%'
-    ORDER BY spns.nct_id, oag.ctgov_group_code, conds.name, dg.title"""
 
-    connect_and_execute_psql(sql_command, None)
+# def endpoints():
+#     sql_command = """CREATE MATERIALIZED VIEW ctgov.endpoint_view AS SELECT spns.name sponsor,
+#     stds.brief_title study_title,
+#     stds.study_type study_type,
+#     cv.registered_in_calendar_year entry_year,
+#     stds.nct_id study_id,
+#     lnks.url url,
+#     conds.name indication,
+#     dg.title treatment_name,
+#     dg.description treatment_duration,
+#     dg.description treatment_duration_unit,
+#     stds.phase study_phase,
+#     oag.ctgov_group_code arm_number,
+#     otcms.title arm_treatment,
+#     otcms.time_frame arm_dose_unit_regimen,
+#     bc.count total_study_number_participants,
+#     oc.count arm_number_of_participants,
+#     oa.p_value p_value,
+#     oa.p_value_description p_value_description,
+#     oa.method_description statistical_method,
+#     dgnotcms.time_frame arm_duration,
+#     otcms.title arm_endpoint,
+#     otcms.description endpoint_description,
+#     concat(elig.minimum_age, maximum_age) AS arm_population_age_group,
+#     CASE WHEN elig.gender = 'Male' THEN '100%'
+#     WHEN elig.gender = 'Female' THEN '0%'
+#     WHEN elig.gender = 'All' THEN 'Between 1% and 99%'
+#     END AS arm_population_male_percent,
+#     mods.modality arm_modality
+#     FROM ctgov.sponsors spns
+#     LEFT JOIN ctgov.studies stds
+#     ON spns.nct_id = stds.nct_id
+#     LEFT JOIN ctgov.calculated_values cv
+#     ON spns.nct_id = cv.nct_id
+#     LEFT JOIN ctgov.links lnks
+#     ON spns.nct_id = lnks.nct_id
+#     LEFT JOIN ctgov.conditions conds
+#     ON spns.nct_id = conds.nct_id
+#     LEFT JOIN ctgov.design_groups dg
+#     ON spns.nct_id = dg.nct_id
+#     LEFT JOIN ctgov.outcome_analysis_groups oag
+#     ON spns.nct_id = oag.nct_id
+#     LEFT JOIN ctgov.baseline_counts bc
+#     ON spns.nct_id = bc.nct_id
+#     LEFT JOIN ctgov.outcome_counts oc
+#     ON spns.nct_id = oc.nct_id
+#     LEFT JOIN ctgov.outcome_analyses oa
+#     ON spns.nct_id = oa.nct_id
+#     LEFT JOIN ctgov.design_outcomes dgnotcms
+#     ON spns.nct_id = dgnotcms.nct_id
+#     LEFT JOIN ctgov.outcomes otcms
+#     ON spns.nct_id = otcms.nct_id
+#     LEFT JOIN ctgov.eligibilities elig
+#     ON spns.nct_id = elig.nct_id
+#     LEFT JOIN ctgov.modality mods
+#     ON spns.nct_id = mods.nct_id
+#     WHERE oag.ctgov_group_code LIKE 'O%'
+#     ORDER BY spns.nct_id, oag.ctgov_group_code, conds.name, dg.title {limit}""".format(
+#         limit=LIMIT_VALUE
+#     )
+#     print(
+#         "Running: CREATE MATERIALIZED VIEW ctgov.endpoint_view AS SELECT...."
+#     )
+#     connect_and_execute_psql(sql_command, None)
 
 
 def current_time():
@@ -271,6 +295,6 @@ def current_time():
 
 
 print(f"start time: {current_time()}")
-# target_find()
-endpoints()
+target_find()
+# endpoints()
 print(f"finish time: {current_time()}")
