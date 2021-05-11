@@ -1322,3 +1322,53 @@ class SearchStudies(models.Model):
     class Meta:
         managed = False  # Created from a view. Don't remove.
         db_table = "search_studies"
+
+
+class Endpoints(models.Model):
+    sponsor = models.TextField()
+    study_title = models.TextField()
+    study_type = models.TextField()
+    entry_year = models.IntegerField()
+    study_id = models.CharField()
+    url = models.CharField()
+    indication = models.CharField()
+    treatment_name = models.CharField()
+    treatment_duration = models.TextField()
+    treatment_duration_unit = models.TextField()
+    study_phase = models.CharField()
+    arm_number = models.CharField()
+    arm_treatment = models.TextField()
+    arm_dose_unit_regimen = models.TextField()
+    total_study_number_participants = models.IntegerField()
+    arm_number_of_participants = models.IntegerField()
+    p_value = models.DecimalField()
+    p_value_description = models.CharField()
+    statistical_method = models.TextField()
+    arm_duration = models.TextField()
+    arm_endpoint = models.TextField()
+    endpoint_description = models.TextField()
+    arm_population_age_group = models.TextField()
+    arm_population_male_percent = models.TextField()
+    arm_modality = models.TextField()
+
+    class Meta:
+        managed = False  # Created from a view. Don't remove.
+        db_table = "endpoint_view"
+
+
+class Target(models.Model):
+    nct_id = models.TextField(blank=True, null=True)
+    modality = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False  # Created from a view. Don't remove.
+        db_table = "target_view"
+
+
+class Modality(models.Model):
+    nct_id = models.TextField(blank=True, null=True)
+    names = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False  # Created from a view. Don't remove.
+        db_table = "modality_view"
