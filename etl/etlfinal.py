@@ -52,7 +52,7 @@ def elt_connection(queries, data):
                     ctf_connection.commit()
 
     except (Exception, psycopg2.Error) as error:
-        print("Error while connecting to PostgreSQL", error, flush=True)
+        print("Error while connecting to PostgreSQL", error)
     finally:
         if ctti_connection:
             if ctti_cursor:
@@ -105,7 +105,7 @@ def get_etl_metadata():
         return ctf_cursor.fetchone()
 
     except (Exception, psycopg2.Error) as error:
-        print("Error while connecting to PostgreSQL", error, flush=True)
+        print("Error while connecting to PostgreSQL", error)
     finally:
         if ctti_connection:
             if ctti_cursor:
@@ -130,7 +130,28 @@ def update_last_run():
         ctf_connection.commit()
 
     except (Exception, psycopg2.Error) as error:
-        print("Error while connecting to PostgreSQL", error, flush=True)
+        print("Error while connecting to PostgreSQL", error)
+    finally:
+        if ctf_connection:
+            if ctf_cursor:
+                ctf_cursor.close()
+
+
+# Update the ctgov.etl table with the current date so when it runs next it can
+# pull the next set of data
+def rebuild_views():
+    # ctf_connection = None
+    ctf_cursor = None
+
+    try:
+        # Update last run date
+        ctf_cursor = ctf_connection.cursor()
+        ctf_cursor.execute(sql_scripts.rebuild_search_studies)
+        ctf_cursor.execute(sql_scripts.rebuild_all_sponsors_type)
+        ctf_cursor.execute(sql_scripts.rebuild_all_documents)
+
+    except (Exception, psycopg2.Error) as error:
+        print("Error while connecting to PostgreSQL", error)
     finally:
         if ctf_connection:
             if ctf_cursor:
@@ -191,11 +212,14 @@ update_queries = [
     sql_scripts.update_id_information,
     sql_scripts.update_documents,
 ]
+
 for offset in range(0, update_max_rows, limit):
-    elt_connection(
-        update_queries, (last_run_date, last_run_date, limit, offset)
-    )
+    elt_connection(update_queries, (last_run_date, last_run_date, limit,
+                   offset))
 
 print("Update Complete")
 update_last_run()
+
+rebuild_views()
+
 print(datetime.now())
