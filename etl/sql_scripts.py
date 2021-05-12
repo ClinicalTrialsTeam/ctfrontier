@@ -7,7 +7,7 @@ class SqlScripts:
     update_count_from_ctti = """
     SELECT COUNT(*)
     FROM ctgov.studies
-    WHERE created_at >= %s
+    WHERE last_update_submitted_date >= %s
     AND study_first_submitted_date < %s |
 
     UPDATE ctgov.etl
@@ -33,16 +33,17 @@ class SqlScripts:
     """
 
     insert_studies = """
-    SELECT nct_id, nlm_download_date_description, study_first_submitted_date,
-           results_first_submitted_date, disposition_first_submitted_date,
-           last_update_submitted_date, study_first_submitted_qc_date,
-           study_first_posted_date, study_first_posted_date_type,
-           results_first_submitted_qc_date, results_first_posted_date,
-           results_first_posted_date_type, disposition_first_submitted_qc_date,
-           disposition_first_posted_date, disposition_first_posted_date_type,
-           last_update_submitted_qc_date, last_update_posted_date,
-           last_update_posted_date_type, start_month_year, start_date_type,
-           start_date, verification_month_year, verification_date,
+    SELECT nct_id, nlm_download_date_description,
+           study_first_submitted_date, results_first_submitted_date,
+           disposition_first_submitted_date, last_update_submitted_date,
+           study_first_submitted_qc_date, study_first_posted_date,
+           study_first_posted_date_type, results_first_submitted_qc_date,
+           results_first_posted_date, results_first_posted_date_type,
+           disposition_first_submitted_qc_date, disposition_first_posted_date,
+           disposition_first_posted_date_type, last_update_submitted_qc_date,
+           last_update_posted_date, last_update_posted_date_type,
+           start_month_year, start_date_type, start_date,
+           verification_month_year, verification_date,
            completion_month_year, completion_date_type, completion_date,
            primary_completion_month_year, primary_completion_date_type,
            primary_completion_date, target_duration, study_type, acronym,
@@ -129,7 +130,7 @@ class SqlScripts:
            plan_to_share_ipd, plan_to_share_ipd_description, created_at,
            updated_at, nct_id
     FROM ctgov.studies
-    WHERE created_at >= %s
+    WHERE last_update_submitted_date >= %s
     AND study_first_submitted_date < %s
     ORDER BY created_at LIMIT %s OFFSET %s |
 
@@ -201,14 +202,14 @@ class SqlScripts:
     """
 
     insert_conditions = """
-    SELECT nct_id, name, downcase_name
+    SELECT id, nct_id, name, downcase_name
     FROM ctgov.conditions
     WHERE nct_id IN (SELECT nct_id
                      FROM ctgov.studies
                      WHERE study_first_submitted_date >= %s
                      ORDER BY created_at LIMIT %s OFFSET %s) |
-    INSERT INTO ctgov.conditions(nct_id, name, downcase_name)
-    VALUES (%s, %s, %s);
+    INSERT INTO ctgov.conditions(id, nct_id, name, downcase_name)
+    VALUES (%s, %s, %s, %s);
     """
 
     update_conditions = """
@@ -216,7 +217,7 @@ class SqlScripts:
     FROM ctgov.conditions
     WHERE nct_id IN (SELECT nct_id
                      FROM ctgov.studies
-                     WHERE created_at >= %s
+                     WHERE last_update_submitted_date >= %s
                      AND study_first_submitted_date < %s
                      ORDER BY created_at LIMIT %s OFFSET %s) |
 
@@ -227,14 +228,14 @@ class SqlScripts:
     """
 
     insert_detailed_descriptions = """
-    SELECT nct_id, description
+    SELECT id, nct_id, description
     FROM ctgov.detailed_descriptions
     WHERE nct_id IN (SELECT nct_id
                      FROM ctgov.studies
                      WHERE study_first_submitted_date >= %s
                      ORDER BY created_at LIMIT %s OFFSET %s) |
-    INSERT INTO ctgov.detailed_descriptions(nct_id, description)
-    VALUES (%s, %s)
+    INSERT INTO ctgov.detailed_descriptions(id, nct_id, description)
+    VALUES (%s, %s, %s)
     """
 
     update_detailed_descriptions = """
@@ -242,7 +243,7 @@ class SqlScripts:
     FROM ctgov.detailed_descriptions
     WHERE nct_id IN (SELECT nct_id
                      FROM ctgov.studies
-                     WHERE created_at >= %s
+                     WHERE last_update_submitted_date >= %s
                      AND study_first_submitted_date < %s
                      ORDER BY created_at LIMIT %s OFFSET %s) |
     UPDATE ctgov.detailed_descriptions
@@ -251,14 +252,14 @@ class SqlScripts:
     """
 
     insert_countries = """
-    SELECT nct_id, name, removed
+    SELECT id, nct_id, name, removed
     FROM ctgov.countries
     WHERE nct_id IN (SELECT nct_id
                      FROM ctgov.studies
                      WHERE study_first_submitted_date >= %s
                      ORDER BY created_at LIMIT %s OFFSET %s) |
-    INSERT INTO ctgov.countries(nct_id, name, removed)
-    VALUES (%s, %s, %s);
+    INSERT INTO ctgov.countries(id, nct_id, name, removed)
+    VALUES (%s, %s, %s, %s);
     """
 
     update_countries = """
@@ -266,7 +267,7 @@ class SqlScripts:
     FROM ctgov.countries
     WHERE nct_id IN (SELECT nct_id
                      FROM ctgov.studies
-                     WHERE created_at >= %s
+                     WHERE last_update_submitted_date >= %s
                      AND study_first_submitted_date < %s
                      ORDER BY created_at LIMIT %s OFFSET %s) |
     UPDATE ctgov.countries
@@ -275,15 +276,15 @@ class SqlScripts:
     """
 
     insert_interventions = """
-    SELECT nct_id, intervention_type, name, description
+    SELECT id, nct_id, intervention_type, name, description
     FROM ctgov.interventions
     WHERE nct_id IN (SELECT nct_id
                      FROM ctgov.studies
                      WHERE study_first_submitted_date >= %s
                      ORDER BY created_at LIMIT %s OFFSET %s) |
     INSERT INTO ctgov.interventions
-    (nct_id, intervention_type, name, description)
-    VALUES (%s, %s, %s, %s);
+    (id, nct_id, intervention_type, name, description)
+    VALUES (%s, %s, %s, %s, %s);
     """
 
     update_interventions = """
@@ -291,7 +292,7 @@ class SqlScripts:
     FROM ctgov.interventions
     WHERE nct_id IN (SELECT nct_id
                      FROM ctgov.studies
-                     WHERE created_at >= %s
+                     WHERE last_update_submitted_date >= %s
                      AND study_first_submitted_date < %s
                      ORDER BY created_at LIMIT %s OFFSET %s) |
     UPDATE ctgov.interventions
@@ -300,14 +301,14 @@ class SqlScripts:
     """
 
     insert_keywords = """
-    SELECT nct_id, name, downcase_name
+    SELECT id, nct_id, name, downcase_name
     FROM ctgov.keywords
     WHERE nct_id IN (SELECT nct_id
                      FROM ctgov.studies
                      WHERE study_first_submitted_date >= %s
                      ORDER BY created_at LIMIT %s OFFSET %s) |
-    INSERT INTO ctgov.keywords(nct_id, name, downcase_name)
-    VALUES (%s, %s, %s);
+    INSERT INTO ctgov.keywords(id, nct_id, name, downcase_name)
+    VALUES (%s, %s, %s, %s);
     """
 
     update_keywords = """
@@ -315,7 +316,7 @@ class SqlScripts:
     FROM ctgov.keywords
     WHERE nct_id IN (SELECT nct_id
                      FROM ctgov.studies
-                     WHERE created_at >= %s
+                     WHERE last_update_submitted_date >= %s
                      AND study_first_submitted_date < %s
                      ORDER BY created_at LIMIT %s OFFSET %s) |
     UPDATE ctgov.keywords
@@ -324,7 +325,7 @@ class SqlScripts:
     """
 
     insert_eligibilities = """
-    SELECT nct_id, sampling_method, gender, minimum_age, maximum_age,
+    SELECT id, nct_id, sampling_method, gender, minimum_age, maximum_age,
            healthy_volunteers, population, criteria, gender_description,
            gender_based
     FROM ctgov.eligibilities
@@ -332,11 +333,11 @@ class SqlScripts:
                      FROM ctgov.studies
                      WHERE study_first_submitted_date >= %s
                      ORDER BY created_at LIMIT %s OFFSET %s) |
-    INSERT INTO ctgov.eligibilities(nct_id, sampling_method, gender,
+    INSERT INTO ctgov.eligibilities(id, nct_id, sampling_method, gender,
                                     minimum_age, maximum_age,
                                     healthy_volunteers, population, criteria,
                                     gender_description, gender_based)
-    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
+    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
     """
 
     update_eligibilities = """
@@ -346,7 +347,7 @@ class SqlScripts:
     FROM ctgov.eligibilities
     WHERE nct_id IN (SELECT nct_id
                      FROM ctgov.studies
-                     WHERE created_at >= %s
+                     WHERE last_update_submitted_date >= %s
                      AND study_first_submitted_date < %s
                      ORDER BY created_at LIMIT %s OFFSET %s) |
     UPDATE ctgov.eligibilities
@@ -357,15 +358,15 @@ class SqlScripts:
     """
 
     insert_facilities = """
-    SELECT nct_id, status, name, city, state, zip, country
+    SELECT id, nct_id, status, name, city, state, zip, country
     FROM ctgov.facilities
     WHERE nct_id IN (SELECT nct_id
                      FROM ctgov.studies
                      WHERE study_first_submitted_date >= %s
                      ORDER BY created_at LIMIT %s OFFSET %s) |
     INSERT INTO ctgov.facilities(
-    nct_id, status, name, city, state, zip, country)
-    VALUES (%s, %s, %s, %s, %s, %s, %s);
+    id, nct_id, status, name, city, state, zip, country)
+    VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
     """
 
     update_facilities = """
@@ -373,7 +374,7 @@ class SqlScripts:
     FROM ctgov.facilities
     WHERE nct_id IN (SELECT nct_id
                      FROM ctgov.studies
-                     WHERE created_at >= %s
+                     WHERE last_update_submitted_date >= %s
                      AND study_first_submitted_date < %s
                      ORDER BY created_at LIMIT %s OFFSET %s) |
     UPDATE ctgov.facilities
@@ -382,14 +383,14 @@ class SqlScripts:
     """
 
     insert_brief_summaries = """
-    SELECT nct_id, description
+    SELECT id, nct_id, description
     FROM ctgov.brief_summaries
     WHERE nct_id IN (SELECT nct_id
                      FROM ctgov.studies
                      WHERE study_first_submitted_date >= %s
                      ORDER BY created_at LIMIT %s OFFSET %s) |
-    INSERT INTO ctgov.brief_summaries(nct_id, description)
-    VALUES (%s, %s);
+    INSERT INTO ctgov.brief_summaries(id, nct_id, description)
+    VALUES (%s, %s, %s);
     """
 
     update_brief_summaries = """
@@ -397,7 +398,7 @@ class SqlScripts:
     FROM ctgov.brief_summaries
     WHERE nct_id IN (SELECT nct_id
                      FROM ctgov.studies
-                     WHERE created_at >= %s
+                     WHERE last_update_submitted_date >= %s
                      AND study_first_submitted_date < %s
                      ORDER BY created_at LIMIT %s OFFSET %s) |
     UPDATE ctgov.brief_summaries
@@ -406,15 +407,15 @@ class SqlScripts:
     """
 
     insert_sponsors = """
-    SELECT nct_id, agency_class, lead_or_collaborator, name
+    SELECT id, nct_id, agency_class, lead_or_collaborator, name
     FROM ctgov.sponsors
     WHERE nct_id IN (SELECT nct_id
                      FROM ctgov.studies
                      WHERE study_first_submitted_date >= %s
                      ORDER BY created_at LIMIT %s OFFSET %s) |
     INSERT INTO ctgov.sponsors(
-    nct_id, agency_class, lead_or_collaborator, name)
-    VALUES (%s, %s, %s, %s);
+    id, nct_id, agency_class, lead_or_collaborator, name)
+    VALUES (%s, %s, %s, %s, %s);
     """
 
     update_sponsors = """
@@ -422,7 +423,7 @@ class SqlScripts:
     FROM ctgov.sponsors
     WHERE nct_id IN (SELECT nct_id
                      FROM ctgov.studies
-                     WHERE created_at >= %s
+                     WHERE last_update_submitted_date >= %s
                      AND study_first_submitted_date < %s
                      ORDER BY created_at LIMIT %s OFFSET %s) |
     UPDATE ctgov.sponsors
@@ -441,7 +442,7 @@ class SqlScripts:
                      WHERE study_first_submitted_date >= %s
                      ORDER BY created_at LIMIT %s OFFSET %s) |
     INSERT INTO ctgov.outcomes(
-    nct_id, outcome_type, title, description, time_frame, population,
+    id, nct_id, outcome_type, title, description, time_frame, population,
     anticipated_posting_date, anticipated_posting_month_year, units,
     units_analyzed, dispersion_type, param_type)
     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
@@ -454,7 +455,7 @@ class SqlScripts:
     FROM ctgov.outcomes
     WHERE nct_id IN (SELECT nct_id
                      FROM ctgov.studies
-                     WHERE created_at >= %s
+                     WHERE last_update_submitted_date >= %s
                      AND study_first_submitted_date < %s
                      ORDER BY created_at LIMIT %s OFFSET %s) |
     UPDATE ctgov.outcomes
@@ -473,7 +474,7 @@ class SqlScripts:
                      WHERE study_first_submitted_date >= %s
                      ORDER BY created_at LIMIT %s OFFSET %s) |
     INSERT INTO ctgov.result_groups(
-    nct_id, ctgov_group_code, result_type, title, description)
+    id, nct_id, ctgov_group_code, result_type, title, description)
     VALUES (%s, %s, %s, %s, %s, %s);
     """
 
@@ -482,7 +483,7 @@ class SqlScripts:
     FROM ctgov.result_groups
     WHERE nct_id IN (SELECT nct_id
                      FROM ctgov.studies
-                     WHERE created_at >= %s
+                     WHERE last_update_submitted_date >= %s
                      AND study_first_submitted_date < %s
                      ORDER BY created_at LIMIT %s OFFSET %s) |
     UPDATE ctgov.result_groups
@@ -491,7 +492,7 @@ class SqlScripts:
     """
 
     insert_outcome_measures = """
-    SELECT nct_id, outcome_id, result_group_id, ctgov_group_code,
+    SELECT id, nct_id, outcome_id, result_group_id, ctgov_group_code,
            classification, category, title, description, units, param_type,
            param_value, param_value_num, dispersion_type, dispersion_value,
            dispersion_value_num, dispersion_lower_limit,
@@ -502,12 +503,12 @@ class SqlScripts:
                      WHERE study_first_submitted_date >= %s
                      ORDER BY created_at LIMIT %s OFFSET %s) |
     INSERT INTO ctgov.outcome_measurements(
-    nct_id, outcome_id, result_group_id, ctgov_group_code, classification,
+    id, nct_id, outcome_id, result_group_id, ctgov_group_code, classification,
     category, title, description, units, param_type, param_value,
     param_value_num, dispersion_type, dispersion_value, dispersion_value_num,
     dispersion_lower_limit, dispersion_upper_limit, explanation_of_na)
     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
-    %s, %s);
+    %s, %s, %s);
     """
 
     update_outcome_measures = """
@@ -519,7 +520,7 @@ class SqlScripts:
     FROM ctgov.outcome_measurements
     WHERE nct_id IN (SELECT nct_id
                      FROM ctgov.studies
-                     WHERE created_at >= %s
+                     WHERE last_update_submitted_date >= %s
                      AND study_first_submitted_date < %s
                      ORDER BY created_at LIMIT %s OFFSET %s) |
     UPDATE ctgov.outcome_measurements
@@ -533,14 +534,14 @@ class SqlScripts:
     """
 
     insert_id_information = """
-    SELECT nct_id, id_type, id_value
+    SELECT id, nct_id, id_type, id_value
     FROM ctgov.id_information
     WHERE nct_id IN (SELECT nct_id
                      FROM ctgov.studies
                      WHERE study_first_submitted_date >= %s
                      ORDER BY created_at LIMIT %s OFFSET %s) |
-    INSERT INTO ctgov.id_information(nct_id, id_type, id_value)
-    VALUES (%s, %s, %s);
+    INSERT INTO ctgov.id_information(id, nct_id, id_type, id_value)
+    VALUES (%s, %s, %s, %s);
     """
 
     update_id_information = """
@@ -548,7 +549,7 @@ class SqlScripts:
     FROM ctgov.id_information
     WHERE nct_id IN (SELECT nct_id
                      FROM ctgov.studies
-                     WHERE created_at >= %s
+                     WHERE last_update_submitted_date >= %s
                      AND study_first_submitted_date < %s
                      ORDER BY created_at LIMIT %s OFFSET %s) |
     UPDATE ctgov.id_information
@@ -557,15 +558,15 @@ class SqlScripts:
     """
 
     insert_documents = """
-    SELECT nct_id, document_id, document_type, url, comment
+    SELECT id, nct_id, document_id, document_type, url, comment
     FROM ctgov.documents
     WHERE nct_id IN (SELECT nct_id
                      FROM ctgov.studies
                      WHERE study_first_submitted_date >= %s
                      ORDER BY created_at LIMIT %s OFFSET %s) |
     INSERT INTO ctgov.documents(
-    nct_id, document_id, document_type, url, comment)
-    VALUES (%s, %s, %s, %s, %s);
+    id, nct_id, document_id, document_type, url, comment)
+    VALUES (%s, %s, %s, %s, %s, %s);
     """
 
     update_documents = """
@@ -573,7 +574,7 @@ class SqlScripts:
     FROM ctgov.documents
     WHERE nct_id IN (SELECT nct_id
                      FROM ctgov.studies
-                     WHERE created_at >= %s
+                     WHERE last_update_submitted_date >= %s
                      AND study_first_submitted_date < %s
                      ORDER BY created_at LIMIT %s OFFSET %s) |
     UPDATE ctgov.documents
@@ -584,4 +585,16 @@ class SqlScripts:
     update_last_run_date = """
     UPDATE ctgov.etl
     SET last_run_date = %s
+    """
+
+    rebuild_search_studies = """
+    REFRESH MATERIALIZED VIEW ctgov.search_studies
+    """
+
+    rebuild_all_sponsors_type = """
+    REFRESH MATERIALIZED VIEW ctgov.all_sponsors_type
+    """
+
+    rebuild_all_documents = """
+    REFRESH MATERIALIZED VIEW ctgov.all_documents
     """

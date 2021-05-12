@@ -137,7 +137,28 @@ def update_last_run():
                 ctf_cursor.close()
 
 
-print(datetime.now())
+# Update the ctgov.etl table with the current date so when it runs next it can
+# pull the next set of data
+def rebuild_views():
+    # ctf_connection = None
+    ctf_cursor = None
+
+    try:
+        # Update last run date
+        ctf_cursor = ctf_connection.cursor()
+        ctf_cursor.execute(sql_scripts.rebuild_search_studies)
+        ctf_cursor.execute(sql_scripts.rebuild_all_sponsors_type)
+        ctf_cursor.execute(sql_scripts.rebuild_all_documents)
+
+    except (Exception, psycopg2.Error) as error:
+        print("Error while connecting to PostgreSQL", error)
+    finally:
+        if ctf_connection:
+            if ctf_cursor:
+                ctf_cursor.close()
+
+
+print(datetime.now(), flush=True)
 
 # Pull back initial metadata
 etl_metadata = get_etl_metadata()
@@ -171,7 +192,7 @@ insert_queries = [
 for offset in range(0, insert_max_rows, limit):
     elt_connection(insert_queries, (last_run_date, limit, offset))
 
-print("Insert Complete")
+print("Insert Complete", flush=True)
 
 # Updates
 update_queries = [
@@ -191,11 +212,14 @@ update_queries = [
     sql_scripts.update_id_information,
     sql_scripts.update_documents,
 ]
-for offset in range(0, update_max_rows, limit):
-    elt_connection(
-        update_queries, (last_run_date, last_run_date, limit, offset)
-    )
 
-print("Update Complete")
+for offset in range(0, update_max_rows, limit):
+    elt_connection(update_queries, (last_run_date, last_run_date, limit,
+                   offset))
+
+print("Update Complete", flush=True)
 update_last_run()
-print(datetime.now())
+
+rebuild_views()
+
+print(datetime.now(), flush=True)
