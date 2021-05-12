@@ -52,7 +52,7 @@ def elt_connection(queries, data):
                     ctf_connection.commit()
 
     except (Exception, psycopg2.Error) as error:
-        print("Error while connecting to PostgreSQL", error)
+        print("Error while connecting to PostgreSQL", error, flush=True)
     finally:
         if ctti_connection:
             if ctti_cursor:
@@ -105,7 +105,7 @@ def get_etl_metadata():
         return ctf_cursor.fetchone()
 
     except (Exception, psycopg2.Error) as error:
-        print("Error while connecting to PostgreSQL", error)
+        print("Error while connecting to PostgreSQL", error, flush=True)
     finally:
         if ctti_connection:
             if ctti_cursor:
@@ -130,7 +130,7 @@ def update_last_run():
         ctf_connection.commit()
 
     except (Exception, psycopg2.Error) as error:
-        print("Error while connecting to PostgreSQL", error)
+        print("Error while connecting to PostgreSQL", error, flush=True)
     finally:
         if ctf_connection:
             if ctf_cursor:
@@ -158,7 +158,7 @@ def rebuild_views():
                 ctf_cursor.close()
 
 
-print(datetime.now())
+print(datetime.now(), flush=True)
 
 # Pull back initial metadata
 etl_metadata = get_etl_metadata()
@@ -192,7 +192,7 @@ insert_queries = [
 for offset in range(0, insert_max_rows, limit):
     elt_connection(insert_queries, (last_run_date, limit, offset))
 
-print("Insert Complete")
+print("Insert Complete", flush=True)
 
 # Updates
 update_queries = [
@@ -217,9 +217,9 @@ for offset in range(0, update_max_rows, limit):
     elt_connection(update_queries, (last_run_date, last_run_date, limit,
                    offset))
 
-print("Update Complete")
+print("Update Complete", flush=True)
 update_last_run()
 
 rebuild_views()
 
-print(datetime.now())
+print(datetime.now(), flush=True)
