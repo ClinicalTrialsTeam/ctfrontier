@@ -6,6 +6,27 @@ DROP MATERIALIZED VIEW IF EXISTS all_sponsors_type;
 DROP VIEW IF EXISTS all_documents;
 DROP MATERIALIZED VIEW IF EXISTS all_documents;
 
+DROP TABLE IF EXISTS ctgov.etl;
+
+CREATE TABLE ctgov.etl
+(
+    last_run_date date,
+    insert_current_offset integer Default(0),
+    insert_max_rows integer Default(0),
+    update_current_offset integer Default(0),
+    update_max_rows integer Default(0)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE ctgov.etl
+    OWNER to postgres;
+
+INSERT INTO ctgov.etl(last_run_date)
+SELECT CAST (max(created_at) AS date) + 1
+FROM ctgov.studies;
+
+
 CREATE MATERIALIZED VIEW ctgov.all_sponsors_type
 TABLESPACE pg_default
 AS
@@ -131,7 +152,7 @@ LEFT JOIN all_states P
 ORDER BY A.start_date;
 
 CREATE INDEX search_studies_optimize_idx
-    ON search_studies USING btree
+    ON ctgov.search_studies USING btree
 	(study_start_date ASC NULLS LAST,
 	 nct_id ASC NULLS LAST
 	)
