@@ -10,5 +10,11 @@
     },
     "db_password": {
         "type": "SecureString"
+    },
+    "es_host": {
+        "type": "String"
+    },
+    "elasticsearch_enabled": {
+        "type": "String"
     }
 }

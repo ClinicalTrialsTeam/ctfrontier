@@ -23,6 +23,7 @@ services:
       - MODE=dev
       - DB_HOST=pgdb
       - DB_PORT=5432
+      - ELASTICSEARCH_ENABLED=false
     build: 
       context: ./backend
       dockerfile: Dockerfile.dev

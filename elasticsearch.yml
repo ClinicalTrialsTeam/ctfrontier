@@ -9,6 +9,10 @@ services:
     extends:
       file: docker-compose.yml
       service: django
+    environment:
+      - ES_HOST=elasticsearch
+      - ES_PORT=9200
+      - ELASTICSEARCH_ENABLED=true
     depends_on:
       - pgdb
       - elasticsearch
@@ -40,18 +44,6 @@ services:
       - 9300:9300
     volumes:
       - elsdata:/usr/share/elasticsearch/data
-    networks:
-      - ctf
-  kibana:
-    container_name: kibana
-    image: docker.elastic.co/kibana/kibana:7.11.2
-    environment:
-      ELASTICSEARCH_URL: http://elasticsearch:9200
-      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
-    ports:
-      - 5601:5601
-    depends_on:
-      - elasticsearch
     networks:
       - ctf
 

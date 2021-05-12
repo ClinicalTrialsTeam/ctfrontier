@@ -13,8 +13,12 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 from pathlib import Path
 from os import getenv
 import requests
+import logging
 
-PROD = True if getenv("MODE") == "prod" else False
+# Create a logger for this file
+logger = logging.getLogger(__name__)
+
+PROD = True if getenv("MODE", "prod").lower() == "prod" else False
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -44,7 +48,10 @@ else:
 # Elastic Search
 # https://django-elasticsearch-dsl.readthedocs.io/en/latest/quickstart.html
 ELASTICSEARCH_DSL = {
-    "default": {"hosts": "elasticsearch:9200"},
+    "default": {
+        "hosts": f"{getenv('ES_HOST')}:{getenv('ES_PORT')}",
+        "timeout": 90,
+    },
 }
 
 # Application definition
@@ -235,7 +242,3 @@ if not PROD:
         "debug_toolbar.panels.redirects.RedirectsPanel",
         "debug_toolbar.panels.profiling.ProfilingPanel",
     ]
-
-
-# Configuration to enable elastic search logic in views.py
-ENABLE_ELASTIC = "OFF"

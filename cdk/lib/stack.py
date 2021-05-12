@@ -12,6 +12,9 @@ from .elasticsearch import CtfElasticsearch
 from .function import CtfFunction
 from . import names, aws
 
+POSTGRES_PORT = 5432
+ES_PORT = 443
+
 
 class CtStack(core.Stack):
     def __init__(
@@ -22,6 +25,8 @@ class CtStack(core.Stack):
         django_secret,
         db_host,
         db_password,
+        es_host,
+        elasticsearch_enabled,
         **kwargs,
     ) -> None:
 
@@ -87,9 +92,12 @@ class CtStack(core.Stack):
                 "MODE": "prod",
                 "DJANGO_SECRET": django_secret,
                 "DB_HOST": db_host,
-                "DB_PORT": "5432",
+                "DB_PORT": str(POSTGRES_PORT),
                 "DB_PASSWORD": db_password,
                 "SITE_DOMAIN": site_domain,
+                "ES_HOST": es_host,
+                "ES_PORT": str(ES_PORT),
+                "ELASTICSEARCH_ENABLED": elasticsearch_enabled,
             },
             port=80,
         )
@@ -112,7 +120,7 @@ class CtStack(core.Stack):
             names.ETL_REPOSITORY,
             environment={
                 "DB_HOST": db_host,
-                "DB_PORT": "5432",
+                "DB_PORT": str(POSTGRES_PORT),
                 "DB_PASSWORD": db_password,
             },
             cpu=2048,
@@ -136,10 +144,21 @@ class CtStack(core.Stack):
             database_sg,
             preferred_az,
             backend_service,
-            db_port=5432,
+            db_port=POSTGRES_PORT,
         )
 
-        CtfElasticsearch(self, "Elasticsearch", vpc, preferred_az, database_sg)
+        ctf_elasticsearch = CtfElasticsearch(
+            self,
+            "Elasticsearch",
+            vpc,
+            preferred_az,
+            database_sg,
+            backend_service,
+            es_port=ES_PORT,
+        )
+
+        # Give backend task permission to read/write elasticsearch
+        ctf_elasticsearch.domain.grant_read_write(backend_task.task.task_role)
 
         lambda_code_bucket = s3.Bucket.from_bucket_name(
             self,
@@ -160,7 +179,7 @@ class CtStack(core.Stack):
             timeout_seconds=900,  # max allowed
             env={
                 "DB_HOST": db_host,
-                "DB_PORT": "5432",
+                "DB_PORT": str(POSTGRES_PORT),
                 "DB_PASSWORD": db_password,
             },
         )
