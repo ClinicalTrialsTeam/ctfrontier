@@ -175,6 +175,11 @@ STATIC_URL = "/static/"
 # https://docs.djangoproject.com/en/3.2/releases/3.2/#customizing-type-of-auto-created-primary-keys
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
+if PROD:
+    log_folder = "/var/log/"
+else:
+    log_folder = "var/log/"
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
@@ -183,13 +188,13 @@ LOGGING = {
         "django_log_handler": {
             "level": "INFO",
             "class": "logging.FileHandler",
-            "filename": "var/log/django.log",
+            "filename": f"{log_folder}django.log",
             "formatter": "app",
         },
         "react_log_handler": {
             "level": "INFO",
             "class": "logging.FileHandler",
-            "filename": "var/log/react.log",
+            "filename": f"{log_folder}react.log",
             "formatter": "app",
         },
     },

@@ -242,11 +242,12 @@ class SearchResultsExportApiView(APIView):
             .filter(q_study_roa)
             .filter(q_study_status)
             .filter(q_phase)
-            .all()
+            .all()[:100]
         )
 
         serializer = SearchStudiesSerializer(filter_results, many=True)
         logger.info("SearchResultsExportApiView: return response")
+
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
